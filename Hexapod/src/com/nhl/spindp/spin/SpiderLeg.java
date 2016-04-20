@@ -2,7 +2,7 @@ package com.nhl.spindp.spin;
 
 class SpiderLeg implements Runnable
 {
-	Servo[] servos = new Servo[3];
+	SpiderJoint[] servos = new SpiderJoint[3];
 	
 	@Override
 	public void run()
@@ -11,9 +11,9 @@ class SpiderLeg implements Runnable
 		
 	}
 	
-	private class Servo
+	private class SpiderJoint
 	{
-		private Servo()
+		private SpiderJoint()
 		{
 			
 		}
