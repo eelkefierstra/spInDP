@@ -8,7 +8,7 @@ public class Main
 {
 	ServoConnection conn;
 	
-	public static void main(String[] args) throws SerialPortException
+	public static void main(String[] args) throws SerialPortException, InterruptedException
 	{
 		
 		Main p = new Main();
@@ -18,10 +18,21 @@ public class Main
 		p.sPort.writeBytes(DatatypeConverter.parseHexBinary("FF FF 01 05 03 1E 32 03 A3"));*/
 		
 		p.conn = new ServoConnection("/dev/ttyAMA0");
+		System.out.print("Sending reset... ");
 		p.conn.sendResetToAll();
-		if (!p.conn.sendInstruction((byte)1))
+		System.out.println("Reset send.");
+		for (int i = 0; i < Byte.MAX_VALUE; i++)
 		{
-			System.err.println("Instruction not recieved");
+			System.out.println("Sending instruction to: " + String.valueOf(i));
+			if (!p.conn.sendInstruction((byte)i))
+			{
+				System.err.println("Instruction not recieved: " + String.valueOf(p.conn.getError()));
+				//System.exit(1);
+			}
+			else
+			{
+				System.out.println("Sent instruction to: " + String.valueOf(i));
+			}
 		}
 		
 		/*String[] portNames = SerialPortList.getPortNames();

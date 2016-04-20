@@ -92,20 +92,37 @@ public class ServoConnection
 		signalPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18, "Signal Pin", PinState.LOW);
 	}
 	
-	public void sendResetToAll() throws SerialPortException
+	public byte getError()
 	{
-		signalPin.setState(PinState.HIGH);
-		serialPort.writeBytes(new byte[]
-				{	(byte)(INSTRUCTION_PREFIX & 0xff),
-					(byte)((INSTRUCTION_PREFIX >> 8) & 0xff),
-					Servo.BCASTID,
-					(byte)0x02,
-					INSTRUCTION_RESET,
-					(byte)0xF7 });
-		signalPin.setState(PinState.LOW);
+		return reader.getError();
 	}
 	
-	public boolean sendInstruction(byte id) throws SerialPortException
+	public void sendResetToAll() throws SerialPortException, InterruptedException
+	{
+		int[] baudrates = { Servo.BAUDRATE_1, Servo.BAUDRATE_3, Servo.BAUDRATE_7, Servo.BAUDRATE_9 };
+		for (int rate : baudrates)
+		{
+			serialPort.setParams(rate, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
+			for (int i = 0; i < Servo.BCASTID; i++)
+			{
+				synchronized (reader.lock)
+				{
+					signalPin.setState(PinState.HIGH);
+					serialPort.writeBytes(new byte[]
+							{	(byte)(INSTRUCTION_PREFIX & 0xff),
+								(byte)((INSTRUCTION_PREFIX >> 8) & 0xff),
+								(byte)i,
+								(byte)0x02,
+								INSTRUCTION_RESET,
+								(byte)0xF7 });
+					Thread.sleep(25);
+					signalPin.setState(PinState.LOW);
+				}
+			}
+		}
+	}
+	
+	public boolean sendInstruction(byte id) throws SerialPortException, InterruptedException
 	{
 		signalPin.setState(PinState.HIGH);
 		serialPort.writeBytes(new byte[]
@@ -117,6 +134,7 @@ public class ServoConnection
 					(byte)0x2B,
 					(byte)0x01,
 					(byte)0xCC });
+		Thread.sleep(25);
 		signalPin.setState(PinState.LOW);
 		for (byte b : reader.getData())
 		{
@@ -125,10 +143,11 @@ public class ServoConnection
 		return reader.getRecieved();
 	}
 	
-	public void sendAsyncInstruction() throws SerialPortException
+	public void sendAsyncInstruction() throws SerialPortException, InterruptedException
 	{
 		signalPin.setState(PinState.HIGH);
 		
+		Thread.sleep(1);
 		signalPin.setState(PinState.LOW);
 		
 	}
@@ -153,10 +172,16 @@ public class ServoConnection
 		private boolean recieved = false;
 		private byte error = 0;
 		private byte[] data = new byte[0];
+		private Object lock = new Object();
 		
 		public boolean getRecieved()
 		{
 			return recieved;
+		}
+		
+		public byte getError()
+		{
+			return error;
 		}
 		
 		public byte[] getData()
@@ -167,43 +192,63 @@ public class ServoConnection
 		@Override
 		public void serialEvent(SerialPortEvent serialPortEvent)
 		{
-			if (serialPortEvent.isRXCHAR())
+			synchronized (lock)
 			{
-				try
+				System.out.print("Recieved something");
+				if (serialPortEvent.isRXCHAR())
 				{
-					byte[] buffer = serialPort.readBytes(serialPortEvent.getEventValue());
-					byte id = buffer[2];
-					error   = buffer[4];
-					if (error != 0) return;
-					System.arraycopy(buffer, 5, data, 0, buffer.length - 6);
-					
-				} catch (SerialPortException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.out.println(" RXCHAR");
+					try
+					{
+						byte[] buffer = serialPort.readBytes(serialPortEvent.getEventValue());
+						System.out.println("Recieved " + String.valueOf(buffer.length) + "bytes");
+						for (byte b : buffer)
+						{
+							System.out.println(b);
+						}
+						if (buffer.length > 4)
+						{
+							byte id = buffer[2];
+							error   = buffer[4];
+							if (error != 0) return;
+						}
+						if (buffer.length > 5)
+						{
+							data = new byte[buffer.length - 6];
+							System.arraycopy(buffer, 5, data, 0, buffer.length - 6);
+						}
+						
+					}
+					catch (SerialPortException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			}
-			else if (serialPortEvent.isCTS())
-			{
-				if (serialPortEvent.getEventValue() == 1)
+				else if (serialPortEvent.isCTS())
 				{
-					System.out.println("CTS - ON");
+					System.out.println(" CTS");
+					if (serialPortEvent.getEventValue() == 1)
+					{
+						System.out.println("CTS - ON");
+					}
+					else
+					{
+						System.out.println("CTS - OFF");
+					}
 				}
-				else
+				else if (serialPortEvent.isDSR())
 				{
-					System.out.println("CTS - OFF");
+					System.out.println(" DSR");
+					if(serialPortEvent.getEventValue() == 1)
+					{
+	                    System.out.println("DSR - ON");
+	                }
+	                else
+	                {
+	                    System.out.println("DSR - OFF");
+	                }
 				}
-			}
-			else if (serialPortEvent.isDSR())
-			{
-				if(serialPortEvent.getEventValue() == 1)
-				{
-                    System.out.println("DSR - ON");
-                }
-                else
-                {
-                    System.out.println("DSR - OFF");
-                }
 			}
 			recieved = true;
 		}
