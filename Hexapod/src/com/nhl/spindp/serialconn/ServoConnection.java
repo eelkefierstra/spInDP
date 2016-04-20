@@ -1,5 +1,11 @@
 package com.nhl.spindp.serialconn;
 
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.PinState;
+import com.pi4j.io.gpio.RaspiPin;
+
 import jssc.*;
 
 @SuppressWarnings("unused")
@@ -8,6 +14,8 @@ public class ServoConnection
 	private SerialPort serialPort;
 	private SerialPortReader reader;
 	private Servo[] servos;
+	private GpioPinDigitalOutput signalPin;
+	private final GpioController gpio = GpioFactory.getInstance();
 	
 	/**
 	 * Prefix for every instruction. Can be converted to two bytes with: 
@@ -57,6 +65,7 @@ public class ServoConnection
 	{
 		reader = new SerialPortReader();
 		servos = new Servo[18];
+		signalPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18, "Signal Pin", PinState.LOW);
 	}
 	
 	// /dev/ttyAMA0
@@ -69,6 +78,7 @@ public class ServoConnection
 		serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
 		serialPort.addEventListener(reader, SerialPort.MASK_RXCHAR);
 		servos = new Servo[18];
+		signalPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18, "Signal Pin", PinState.LOW);
 	}
 	
 	public void connect(String device) throws SerialPortException
@@ -79,10 +89,12 @@ public class ServoConnection
 		serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
 		serialPort.addEventListener(reader, SerialPort.MASK_RXCHAR);
 		servos = new Servo[18];
+		signalPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18, "Signal Pin", PinState.LOW);
 	}
 	
 	public void sendResetToAll() throws SerialPortException
 	{
+		signalPin.setState(PinState.HIGH);
 		serialPort.writeBytes(new byte[]
 				{	(byte)(INSTRUCTION_PREFIX & 0xff),
 					(byte)((INSTRUCTION_PREFIX >> 8) & 0xff),
@@ -90,11 +102,12 @@ public class ServoConnection
 					(byte)0x02,
 					INSTRUCTION_RESET,
 					(byte)0xF7 });
+		signalPin.setState(PinState.LOW);
 	}
 	
 	public boolean sendInstruction(byte id) throws SerialPortException
 	{
-		//
+		signalPin.setState(PinState.HIGH);
 		serialPort.writeBytes(new byte[]
 				{	(byte)(INSTRUCTION_PREFIX & 0xff),
 					(byte)((INSTRUCTION_PREFIX >> 8) & 0xff),
@@ -104,6 +117,7 @@ public class ServoConnection
 					(byte)0x2B,
 					(byte)0x01,
 					(byte)0xCC });
+		signalPin.setState(PinState.LOW);
 		for (byte b : reader.getData())
 		{
 			System.out.println(b);
@@ -113,6 +127,9 @@ public class ServoConnection
 	
 	public void sendAsyncInstruction() throws SerialPortException
 	{
+		signalPin.setState(PinState.HIGH);
+		
+		signalPin.setState(PinState.LOW);
 		
 	}
 	
@@ -135,7 +152,7 @@ public class ServoConnection
 	{
 		private boolean recieved = false;
 		private byte error = 0;
-		private byte[] data;
+		private byte[] data = new byte[0];
 		
 		public boolean getRecieved()
 		{

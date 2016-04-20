@@ -7,5 +7,25 @@
 			<attribute name="javadoc_location" value="jar:file:/home/dudecake/Dropbox/IDP/jSSC-2.7.0-Release/javadoc/jssc-2.7.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-core.jar" sourcepath="/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-core-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-core-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-device.jar" sourcepath="/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-device-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-device-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-gpio-extension.jar" sourcepath="/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-gpio-extension-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-gpio-extension-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-service.jar" sourcepath="/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-service-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/dudecake/Dropbox/IDP/pi4j-1.0/lib/pi4j-service-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
