@@ -19,7 +19,9 @@ class SpiderLeg implements Runnable
 	private static final double DELTA   = Math.toRadians(Math.atan(D / E));
 	
 	private double coxaAngle  = 0.0;
+	@SuppressWarnings("unused")
 	private double femurAngle = 0.0;
+	@SuppressWarnings("unused")
 	private double tibiaAngle = 0.0;
 	
 	public double coxaChange = 0.0;
@@ -37,12 +39,12 @@ class SpiderLeg implements Runnable
 	@Override
 	public void run()
 	{
-		coxaAngle  = Math.abs(coxaChange - (.5 * A_MAX));
+		servos[SpiderJoint.COXA].angle = coxaAngle  = Math.abs(coxaChange - (.5 * A_MAX));
 		double lAccent = LACCENT / Math.cos(Math.toDegrees(coxaAngle));
 		double d = lAccent - F;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E, 2.0));
-		femurAngle = Math.toRadians(Math.acos(Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A));
-		tibiaAngle = Math.toRadians(Math.acos(Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C));
+		servos[SpiderJoint.FEMUR].angle = femurAngle = Math.toRadians(Math.acos(Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A));
+		servos[SpiderJoint.TIBIA].angle = tibiaAngle = Math.toRadians(Math.acos(Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C));
 	}
 	
 	private class SpiderJoint
@@ -52,9 +54,17 @@ class SpiderLeg implements Runnable
 		private static final int TIBIA = 2;
 		private static final int MAX   = TIBIA;
 		
+		@SuppressWarnings("unused")
+		private double angle;
+		
 		private SpiderJoint()
 		{
-			
+			angle = 0.0;
+		}
+		
+		private SpiderJoint(double angle)
+		{
+			this.angle = angle;
 		}
 	}
 

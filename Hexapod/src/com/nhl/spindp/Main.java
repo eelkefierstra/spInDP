@@ -1,6 +1,7 @@
 package com.nhl.spindp;
 
 import com.nhl.spindp.serialconn.ServoConnection;
+import com.nhl.spindp.spin.SpiderBody;
 
 import jssc.SerialPortException;
 
@@ -16,6 +17,10 @@ public class Main
 		p.sPort.openPort();
 		p.sPort.writeBytes(DatatypeConverter.parseHexBinary("FF FF 01 05 03 1E 32 03 A3"));*/
 		
+		SpiderBody body = new SpiderBody();
+		body.testCalcs();
+		
+		/*
 		p.conn = new ServoConnection("/dev/ttyAMA0");
 		System.out.print("Sending reset... ");
 		p.conn.sendResetToAll();
@@ -45,6 +50,6 @@ public class Main
 				System.out.println(s);
 			}
 		}*/
-		System.exit(0);
+		//System.exit(0);
 	}
 }
