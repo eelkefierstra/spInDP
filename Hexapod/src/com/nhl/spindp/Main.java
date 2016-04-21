@@ -10,7 +10,6 @@ public class Main
 	
 	public static void main(String[] args) throws SerialPortException, InterruptedException
 	{
-		
 		Main p = new Main();
 		/*p.sPort = new SerialPort("/dev/ttyAMA0");
 		p.sPort.setParams(1000000, 8, 1, 0);
@@ -21,20 +20,19 @@ public class Main
 		System.out.print("Sending reset... ");
 		p.conn.sendResetToAll();
 		System.out.println("Reset send.");
-		for (int i = 0; i < Byte.MAX_VALUE; i++)
+		for (int i = 0; i < 254; i++)
 		{
-			System.out.println("Sending instruction to: " + String.valueOf(i));
+			System.out.println("Sending instruction to: " + String.format("%2x", i).toUpperCase());
 			if (!p.conn.sendInstruction((byte)i))
 			{
-				System.err.println("Instruction not recieved: " + String.valueOf(p.conn.getError()));
+				System.err.println("Instruction not recieved: " + String.format("%2x", p.conn.getError()).toUpperCase());
 				//System.exit(1);
 			}
 			else
 			{
-				System.out.println("Sent instruction to: " + String.valueOf(i));
+				System.out.println("Sent instruction to: " + String.format("%2x", i).toUpperCase());
 			}
 		}
-		
 		/*String[] portNames = SerialPortList.getPortNames();
 		if (portNames.length == 0)
 		{
@@ -47,7 +45,6 @@ public class Main
 				System.out.println(s);
 			}
 		}*/
-		
-		
+		System.exit(0);
 	}
 }

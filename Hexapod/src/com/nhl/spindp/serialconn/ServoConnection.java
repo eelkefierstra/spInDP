@@ -99,10 +99,10 @@ public class ServoConnection
 	
 	public void sendResetToAll() throws SerialPortException, InterruptedException
 	{
-		int[] baudrates = { Servo.BAUDRATE_1, Servo.BAUDRATE_3, Servo.BAUDRATE_7, Servo.BAUDRATE_9 };
-		for (int rate : baudrates)
+		//int[] baudrates = { Servo.BAUDRATE_1, Servo.BAUDRATE_3, Servo.BAUDRATE_7, Servo.BAUDRATE_9 };
+		//for (int rate : baudrates)
 		{
-			serialPort.setParams(rate, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
+			//serialPort.setParams(rate, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
 			for (int i = 0; i < Servo.BCASTID; i++)
 			{
 				synchronized (reader.lock)
@@ -202,10 +202,11 @@ public class ServoConnection
 					{
 						byte[] buffer = serialPort.readBytes(serialPortEvent.getEventValue());
 						System.out.println("Recieved " + String.valueOf(buffer.length) + "bytes");
-						for (byte b : buffer)
+						System.out.println(String.format("%2x", buffer).toUpperCase());
+						/*for (byte b : buffer)
 						{
 							System.out.println(b);
-						}
+						}*/
 						if (buffer.length > 4)
 						{
 							byte id = buffer[2];
