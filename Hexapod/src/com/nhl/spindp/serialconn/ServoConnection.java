@@ -105,7 +105,7 @@ public class ServoConnection
 			//serialPort.setParams(rate, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
 			for (int i = 0; i < Servo.BCASTID; i++)
 			{
-				synchronized (reader.lock)
+				//synchronized (reader)
 				{
 					signalPin.setState(PinState.HIGH);
 					serialPort.writeBytes(new byte[]
@@ -136,6 +136,8 @@ public class ServoConnection
 					(byte)0xCC });
 		Thread.sleep(25);
 		signalPin.setState(PinState.LOW);
+		Thread.sleep(100);
+		//reader.wait(250);
 		for (byte b : reader.getData())
 		{
 			System.out.println(b);
@@ -172,7 +174,6 @@ public class ServoConnection
 		private boolean recieved = false;
 		private byte error = 0;
 		private byte[] data = new byte[0];
-		private Object lock = new Object();
 		
 		public boolean getRecieved()
 		{
@@ -192,8 +193,8 @@ public class ServoConnection
 		@Override
 		public void serialEvent(SerialPortEvent serialPortEvent)
 		{
-			synchronized (lock)
-			{
+			//synchronized (this)
+			//{
 				System.out.print("Recieved something");
 				if (serialPortEvent.isRXCHAR())
 				{
@@ -211,7 +212,11 @@ public class ServoConnection
 						{
 							byte id = buffer[2];
 							error   = buffer[4];
-							if (error != 0) return;
+							if (error != 0)
+							{
+								//notifyAll();
+								return;
+							}
 						}
 						if (buffer.length > 5)
 						{
@@ -250,7 +255,8 @@ public class ServoConnection
 	                    System.out.println("DSR - OFF");
 	                }
 				}
-			}
+			//}
+			//notifyAll();
 			recieved = true;
 		}
 	}
