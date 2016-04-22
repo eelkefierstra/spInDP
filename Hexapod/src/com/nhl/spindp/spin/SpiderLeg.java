@@ -17,6 +17,7 @@ class SpiderLeg implements Runnable
 	private static final double BETA    = Math.toRadians(Math.acos((Math.pow(B, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
 	private static final double EPSILON = Math.toRadians(Math.atan(E / D));
 	private static final double DELTA   = Math.toRadians(Math.atan(D / E));
+	private static final double STEP    = Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0) * 2);
 	
 	private double coxaAngle  = 0.0;
 	@SuppressWarnings("unused")
@@ -36,13 +37,16 @@ class SpiderLeg implements Runnable
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	@Override
 	public void run()
 	{
 		servos[SpiderJoint.COXA].angle = coxaAngle  = Math.abs(coxaChange - (.5 * A_MAX));
-		double lAccent = LACCENT / Math.cos(Math.toDegrees(coxaAngle));
+		double lAccent = LACCENT / Math.cos(Math.toRadians(coxaAngle));
 		double d = lAccent - F;
-		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E, 2.0));
+		double h = 0;
+		if (false) h = B / Math.pow((STEP / 2), 2.0) + B;
+		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E - h, 2.0));
 		servos[SpiderJoint.FEMUR].angle = femurAngle = Math.toRadians(Math.acos(Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A));
 		servos[SpiderJoint.TIBIA].angle = tibiaAngle = Math.toRadians(Math.acos(Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C));
 	}
@@ -67,5 +71,4 @@ class SpiderLeg implements Runnable
 			this.angle = angle;
 		}
 	}
-
 }

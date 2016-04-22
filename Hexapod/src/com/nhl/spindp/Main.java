@@ -20,23 +20,20 @@ public class Main
 		SpiderBody body = new SpiderBody();
 		body.testCalcs();
 		
-		/*
+		
 		p.conn = new ServoConnection("/dev/ttyAMA0");
 		System.out.print("Sending reset... ");
 		p.conn.sendResetToAll();
 		System.out.println("Reset send.");
-		for (int i = 0; i < 254; i++)
+		System.out.println("Sending instruction to: " + String.format("%2x", 1).toUpperCase());
+		if (!p.conn.sendInstruction((byte)1))
 		{
-			System.out.println("Sending instruction to: " + String.format("%2x", i).toUpperCase());
-			if (!p.conn.sendInstruction((byte)i))
-			{
-				System.err.println("Instruction not recieved: " + String.format("%2x", p.conn.getError()).toUpperCase());
-				//System.exit(1);
-			}
-			else
-			{
-				System.out.println("Sent instruction to: " + String.format("%2x", i).toUpperCase());
-			}
+			System.err.println("Instruction not recieved: " + String.format("%2x", p.conn.getError()).toUpperCase());
+			//System.exit(1);
+		}
+		else
+		{
+			System.out.println("Sent instruction to: " + String.format("%2x", 1).toUpperCase());
 		}
 		/*String[] portNames = SerialPortList.getPortNames();
 		if (portNames.length == 0)
@@ -50,6 +47,6 @@ public class Main
 				System.out.println(s);
 			}
 		}*/
-		//System.exit(0);
+		System.exit(0);
 	}
 }

@@ -18,13 +18,9 @@ public class ServoConnection
 	private final GpioController gpio = GpioFactory.getInstance();
 	
 	/**
-	 * Prefix for every instruction. Can be converted to two bytes with: 
-	 * (byte)(INSTRUCTION_PREFIX & 0xff);
-	 * (byte)((INSTRUCTION_PREFIX >> 8) &0xff);
+	 * Prefix for every instruction.
 	 */
-	private static final short INSTRUCTION_PREFIX    = (short)0xFFFF;
-	//ret[0] = (byte)(x & 0xff);
-	//ret[1] = (byte)((x >> 8) & 0xff);
+	private static final byte INSTRUCTION_PREFIX     = (byte)0xFF;
 	
 	/**
 	 * No action, Used for obtaining a Status Packet.
@@ -99,26 +95,18 @@ public class ServoConnection
 	
 	public void sendResetToAll() throws SerialPortException, InterruptedException
 	{
-		//int[] baudrates = { Servo.BAUDRATE_1, Servo.BAUDRATE_3, Servo.BAUDRATE_7, Servo.BAUDRATE_9 };
-		//for (int rate : baudrates)
+		//for (int i = 1; i < Servo.BCASTID; i++)
 		{
-			//serialPort.setParams(rate, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
-			for (int i = 0; i < Servo.BCASTID; i++)
-			{
-				//synchronized (reader)
-				{
-					signalPin.setState(PinState.HIGH);
-					serialPort.writeBytes(new byte[]
-							{	(byte)(INSTRUCTION_PREFIX & 0xff),
-								(byte)((INSTRUCTION_PREFIX >> 8) & 0xff),
-								(byte)i,
-								(byte)0x02,
-								INSTRUCTION_RESET,
-								(byte)0xF7 });
-					Thread.sleep(25);
-					signalPin.setState(PinState.LOW);
-				}
-			}
+			signalPin.setState(PinState.HIGH);
+			serialPort.writeBytes(new byte[]
+					{	(byte)INSTRUCTION_PREFIX,
+						(byte)INSTRUCTION_PREFIX,
+						(byte)1,
+						(byte)0x02,
+						INSTRUCTION_RESET,
+						(byte)0xF7 });
+			Thread.sleep(25);
+			signalPin.setState(PinState.LOW);
 		}
 	}
 	
@@ -126,8 +114,8 @@ public class ServoConnection
 	{
 		signalPin.setState(PinState.HIGH);
 		serialPort.writeBytes(new byte[]
-				{	(byte)(INSTRUCTION_PREFIX & 0xff),
-					(byte)((INSTRUCTION_PREFIX >> 8) & 0xff),
+				{	(byte)INSTRUCTION_PREFIX,
+					(byte)INSTRUCTION_PREFIX,
 					id,
 					(byte)0x04,
 					INSTRUCTION_READ_DATA,
@@ -156,7 +144,7 @@ public class ServoConnection
 	
 	private byte computeChecksum(byte id, byte length)
 	{
-		return (byte)~(id + length);
+		return (byte)~((id + length) & 0xFF);
 	}
 	
 	private byte computeChecksum(byte id, byte length, byte ... parameters)
@@ -166,7 +154,7 @@ public class ServoConnection
 		{
 			temp += b;
 		}
-		return (byte)~temp;
+		return (byte)(~temp & 0xFF);
 	}
 	
 	private class SerialPortReader implements SerialPortEventListener
