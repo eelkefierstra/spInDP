@@ -20,7 +20,7 @@ public class Main
 		SpiderBody body = new SpiderBody();
 		body.testCalcs();
 		
-		/*
+		
 		p.conn = new ServoConnection("/dev/ttyAMA0");
 		System.out.print("Sending reset... ");
 		p.conn.sendResetToAll();
