@@ -118,10 +118,10 @@ public class ServoConnection
 					(byte)INSTRUCTION_PREFIX,
 					id,
 					(byte)0x04,
-					INSTRUCTION_READ_DATA,
-					(byte)0x2B,
-					(byte)0x01,
-					(byte)0xCC });
+					INSTRUCTION_WRITE_DATA,
+					(byte)0x03,
+					(byte)0x02,
+					computeChecksum((byte)1, (byte)4, INSTRUCTION_WRITE_DATA, (byte)3, (byte)2) });
 		Thread.sleep(25);
 		signalPin.setState(PinState.LOW);
 		Thread.sleep(100);
