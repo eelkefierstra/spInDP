@@ -72,7 +72,7 @@ public class ServoConnection
 		serialPort.openPort();
 		serialPort.setParams(Servo.BAUDRATE_1, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
 		serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-		serialPort.addEventListener(reader, SerialPort.MASK_RXCHAR);
+		serialPort.addEventListener(reader);
 		servos = new Servo[18];
 		signalPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18, "Signal Pin", PinState.LOW);
 	}
@@ -83,7 +83,7 @@ public class ServoConnection
 		serialPort.openPort();
 		serialPort.setParams(Servo.BAUDRATE_1, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
 		serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-		serialPort.addEventListener(reader, SerialPort.MASK_RXCHAR);
+		serialPort.addEventListener(reader);
 		servos = new Servo[18];
 		signalPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18, "Signal Pin", PinState.LOW);
 	}
@@ -113,7 +113,7 @@ public class ServoConnection
 	public boolean sendInstruction(byte id) throws SerialPortException, InterruptedException
 	{
 		signalPin.setState(PinState.HIGH);
-		serialPort.writeBytes(new byte[]
+		if (!serialPort.writeBytes(new byte[]
 				{	(byte)INSTRUCTION_PREFIX,
 					(byte)INSTRUCTION_PREFIX,
 					id,
@@ -121,7 +121,10 @@ public class ServoConnection
 					INSTRUCTION_WRITE_DATA,
 					(byte)0x03,
 					(byte)0x02,
-					computeChecksum((byte)1, (byte)4, INSTRUCTION_WRITE_DATA, (byte)3, (byte)2) });
+					computeChecksum((byte)1, (byte)4, INSTRUCTION_WRITE_DATA, (byte)3, (byte)2) }))
+		{
+			System.out.println("Send instruction failed");
+		}
 		Thread.sleep(25);
 		signalPin.setState(PinState.LOW);
 		Thread.sleep(100);
