@@ -21,7 +21,7 @@ public class Main
 		body.testCalcs();
 		
 		
-		p.conn = new ServoConnection("/dev/ttyAMA0");
+		p.conn = new ServoConnection("/dev/pts/3");
 		System.out.print("Sending reset... ");
 		p.conn.sendResetToAll();
 		System.out.println("Reset send.");
