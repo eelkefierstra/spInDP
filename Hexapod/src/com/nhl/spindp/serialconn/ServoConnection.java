@@ -1,21 +1,16 @@
 package com.nhl.spindp.serialconn;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.RaspiPin;
+import java.io.IOException;
 
 import jssc.*;
 
-@SuppressWarnings("unused")
 public class ServoConnection
 {
 	private SerialPort serialPort;
 	private SerialPortReader reader;
 	private Servo[] servos;
-	private GpioPinDigitalOutput signalPin;
-	private final GpioController gpio = GpioFactory.getInstance();
+	private int signalPin;
+	private Runtime runtime;
 	
 	/**
 	 * Prefix for every instruction.
@@ -61,7 +56,8 @@ public class ServoConnection
 	{
 		reader = new SerialPortReader();
 		servos = new Servo[18];
-		signalPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18, "Signal Pin", PinState.LOW);
+		signalPin = 18;
+		runtime = Runtime.getRuntime();
 	}
 	
 	// /dev/ttyAMA0
@@ -74,7 +70,9 @@ public class ServoConnection
 		serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
 		serialPort.addEventListener(reader);
 		servos = new Servo[18];
-		signalPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18, "Signal Pin", PinState.LOW);
+		signalPin = 18;
+		runtime = Runtime.getRuntime();
+		runtime.addShutdownHook(new ShutdownHook(this));
 	}
 	
 	public void connect(String device) throws SerialPortException
@@ -85,7 +83,9 @@ public class ServoConnection
 		serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
 		serialPort.addEventListener(reader);
 		servos = new Servo[18];
-		signalPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18, "Signal Pin", PinState.LOW);
+		signalPin = 18;
+		runtime = Runtime.getRuntime();
+		runtime.addShutdownHook(new ShutdownHook(this));
 	}
 	
 	public byte getError()
@@ -93,11 +93,11 @@ public class ServoConnection
 		return reader.getError();
 	}
 	
-	public void sendResetToAll() throws SerialPortException, InterruptedException
+	public void sendResetToAll() throws SerialPortException, InterruptedException, IOException
 	{
 		//for (int i = 1; i < Servo.BCASTID; i++)
 		{
-			signalPin.setState(PinState.HIGH);
+			runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
 			serialPort.writeBytes(new byte[]
 					{	(byte)INSTRUCTION_PREFIX,
 						(byte)INSTRUCTION_PREFIX,
@@ -106,13 +106,13 @@ public class ServoConnection
 						INSTRUCTION_RESET,
 						(byte)0xF7 });
 			Thread.sleep(25);
-			signalPin.setState(PinState.LOW);
+			runtime.exec(String.format("pigs w %s 0", signalPin)).waitFor();
 		}
 	}
 	
-	public boolean sendInstruction(byte id) throws SerialPortException, InterruptedException
+	public boolean sendInstruction(byte id) throws SerialPortException, InterruptedException, IOException
 	{
-		signalPin.setState(PinState.HIGH);
+		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
 		if (!serialPort.writeBytes(new byte[]
 				{	(byte)INSTRUCTION_PREFIX,
 					(byte)INSTRUCTION_PREFIX,
@@ -125,8 +125,8 @@ public class ServoConnection
 		{
 			System.out.println("Send instruction failed");
 		}
-		Thread.sleep(25);
-		signalPin.setState(PinState.LOW);
+		Thread.sleep(5000);
+		runtime.exec(String.format("pigs w %s 0", signalPin)).waitFor();
 		Thread.sleep(100);
 		//reader.wait(250);
 		for (byte b : reader.getData())
@@ -136,12 +136,12 @@ public class ServoConnection
 		return reader.getRecieved();
 	}
 	
-	public void sendAsyncInstruction() throws SerialPortException, InterruptedException
+	public void sendAsyncInstruction() throws SerialPortException, InterruptedException, IOException
 	{
-		signalPin.setState(PinState.HIGH);
+		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
 		
 		Thread.sleep(1);
-		signalPin.setState(PinState.LOW);
+		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
 		
 	}
 	
@@ -158,6 +158,34 @@ public class ServoConnection
 			temp += b;
 		}
 		return (byte)(~temp & 0xFF);
+	}
+	
+	public void disconnect()
+	{
+		try
+		{
+			serialPort.closePort();
+		}
+		catch (SerialPortException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private class ShutdownHook extends Thread
+	{
+		ServoConnection conn;
+		
+		public ShutdownHook(ServoConnection conn)
+		{
+			this.conn = conn;
+		}
+		
+		@Override
+		public void run()
+		{
+			conn.disconnect();
+		}
 	}
 	
 	private class SerialPortReader implements SerialPortEventListener

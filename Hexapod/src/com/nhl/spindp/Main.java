@@ -1,5 +1,7 @@
 package com.nhl.spindp;
 
+import java.io.IOException;
+
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
 
@@ -9,7 +11,7 @@ public class Main
 {
 	ServoConnection conn;
 	
-	public static void main(String[] args) throws SerialPortException, InterruptedException
+	public static void main(String[] args) throws SerialPortException, InterruptedException, IOException
 	{
 		Main p = new Main();
 		/*p.sPort = new SerialPort("/dev/ttyAMA0");
@@ -18,10 +20,9 @@ public class Main
 		p.sPort.writeBytes(DatatypeConverter.parseHexBinary("FF FF 01 05 03 1E 32 03 A3"));*/
 		
 		SpiderBody body = new SpiderBody();
-		body.testCalcs();
+		body.testCalcs();		
 		
-		
-		p.conn = new ServoConnection("/dev/pts/3");
+		p.conn = new ServoConnection("/dev/ttyAMA0");
 		System.out.print("Sending reset... ");
 		p.conn.sendResetToAll();
 		System.out.println("Reset send.");
@@ -47,6 +48,7 @@ public class Main
 				System.out.println(s);
 			}
 		}*/
+		
 		System.exit(0);
 	}
 }

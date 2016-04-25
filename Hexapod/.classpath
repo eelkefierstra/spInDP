@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="/home/pi/Downloads/java/jSSC-2.7.0-Release/jssc.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/pi/Downloads/java/pi4j-1.0/lib/pi4j-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/pi/Downloads/java/pi4j-1.0/lib/pi4j-device.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/pi/Downloads/java/pi4j-1.0/lib/pi4j-gpio-extension.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/pi/Downloads/java/pi4j-1.0/lib/pi4j-service.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JSSC"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
