@@ -36,6 +36,10 @@ public class Main
 		{
 			System.out.println("Sent instruction to: " + String.format("%2x", 1).toUpperCase());
 		}
+		for (short i = 0; i < 1024; i++)
+		{
+			p.conn.move((byte) 1, i);
+		}
 		/*String[] portNames = SerialPortList.getPortNames();
 		if (portNames.length == 0)
 		{

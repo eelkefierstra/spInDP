@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import jssc.*;
 
+@SuppressWarnings("unused")
 public class ServoConnection
 {
 	private SerialPort serialPort;
@@ -15,42 +16,54 @@ public class ServoConnection
 	/**
 	 * Prefix for every instruction.
 	 */
-	private static final byte INSTRUCTION_PREFIX     = (byte)0xFF;
+	private static final byte INSTRUCTION_PREFIX      = (byte)0xFF;
 	
 	/**
 	 * No action, Used for obtaining a Status Packet.
 	 */
-	private static final byte INSTRUCTION_PING       = (byte) 0x01;
+	private static final byte INSTRUCTION_PING        = (byte) 0x01;
 	
 	/**
 	 * Reading values in the Control Table.
 	 */
-	private static final byte INSTRUCTION_READ_DATA  = (byte) 0x02;
+	private static final byte INSTRUCTION_READ_DATA   = (byte) 0x02;
 	
 	/**
 	 * Writing values to the Control Table.
 	 */
-	private static final byte INSTRUCTION_WRITE_DATA = (byte) 0x03;
+	private static final byte INSTRUCTION_WRITE_DATA  = (byte) 0x03;
 	
 	/**
 	 * Similar to WRITE_DATA, but stays in standby mode until the ACTION instruction is given.
 	 */
-	private static final byte INSTRUCTION_REG_WRITE  = (byte) 0x04;
+	private static final byte INSTRUCTION_REG_WRITE   = (byte) 0x04;
 	
 	/**
 	 * Triggers the action registered by the REG_WRITE instruction.
 	 */
-	private static final byte INSTRUCTION_ACTION     = (byte) 0x05;
+	private static final byte INSTRUCTION_ACTION      = (byte) 0x05;
 	
 	/**
 	 * Changes the Control Table values of the Dynamixel actuator to the factory default value settings.
 	 */
-	private static final byte INSTRUCTION_RESET      = (byte) 0x06;
+	private static final byte INSTRUCTION_RESET       = (byte) 0x06;
 	
 	/**
 	 * Used for controlling many Dynamixel actuators at the same time.
 	 */
-	private static final byte INSTRUCTION_SYNC_WRITE = (byte) 0x86;
+	private static final byte INSTRUCTION_SYNC_WRITE  = (byte) 0x86;
+	
+	private static final byte ADDRESS_ID              = (byte) 0x03;
+	private static final byte ADDRESS_BAUD_RATE       = (byte) 0x04;
+	private static final byte ADDRESS_RETURN_DELAY    = (byte) 0x05;
+	private static final byte ADDRESS_CW_ANGLE_LIMIT  = (byte) 0x06;
+	private static final byte ADDRESS_CCW_ANGLE_LIMIT = (byte) 0x08;
+	private static final byte ADDRESS_TEMP_LIMIT      = (byte) 0x0B;
+	private static final byte ADDRESS_VOLT_LIMIT_HIGH = (byte) 0x0C;
+	private static final byte ADDRESS_VOLT_LIMIT_LOW  = (byte) 0x0D;
+	
+	private static final byte ADDRESS_GOAL_POSITION   = (byte) 0x1E;
+	private static final byte ADDRESS_MOVING_SPEED    = (byte) 0x20;
 	
 	public ServoConnection()
 	{
@@ -119,9 +132,9 @@ public class ServoConnection
 					id,
 					(byte)0x04,
 					INSTRUCTION_WRITE_DATA,
-					(byte)0x03,
+					ADDRESS_ID,
 					(byte)0x02,
-					computeChecksum((byte)1, (byte)4, INSTRUCTION_WRITE_DATA, (byte)3, (byte)2) }))
+					computeChecksum(id, (byte)4, INSTRUCTION_WRITE_DATA, ADDRESS_ID, (byte)2) }))
 		{
 			System.out.println("Send instruction failed");
 		}
@@ -144,6 +157,50 @@ public class ServoConnection
 		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
 		
 	}
+	
+	public boolean setID(byte id, byte newId) throws SerialPortException, InterruptedException, IOException
+	{
+		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		if (!serialPort.writeBytes(new byte[]
+				{	(byte)INSTRUCTION_PREFIX,
+					(byte)INSTRUCTION_PREFIX,
+					id,
+					(byte)0x04,
+					INSTRUCTION_WRITE_DATA,
+					ADDRESS_ID,
+					newId,
+					computeChecksum(id, (byte)4, INSTRUCTION_WRITE_DATA, ADDRESS_ID, (byte)3, newId) }))
+		{
+			System.out.println("Send instruction failed");
+		}
+		Thread.sleep(1);
+		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		return true;
+	}
+	
+	public boolean move(byte id, short position) throws SerialPortException, InterruptedException, IOException
+	{
+		if (position < 0)     position = 0;
+		if (position >= 1024) position = 1023;
+		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		if (!serialPort.writeBytes(new byte[]
+				{	(byte)INSTRUCTION_PREFIX,
+					(byte)INSTRUCTION_PREFIX,
+					id,
+					(byte)0x04,
+					INSTRUCTION_WRITE_DATA,
+					ADDRESS_GOAL_POSITION,
+					(byte)(position & 0xFF),
+					(byte)((position >> 8) & 0xFF),
+					computeChecksum(id, (byte)0x04, INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position & 0xFF), (byte)((position >> 8) & 0xFF)) }))
+		{
+			System.out.println("Send instruction failed");
+		}
+		Thread.sleep(1);
+		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		return true;
+	}
+	
 	
 	private byte computeChecksum(byte id, byte length)
 	{

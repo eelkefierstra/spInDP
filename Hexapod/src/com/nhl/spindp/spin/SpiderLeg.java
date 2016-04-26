@@ -41,7 +41,7 @@ class SpiderLeg implements Runnable
 	@Override
 	public void run()
 	{
-		servos[SpiderJoint.COXA].angle = coxaAngle  = Math.abs(coxaChange - (.5 * A_MAX));
+		servos[SpiderJoint.COXA ].angle = coxaAngle  = Math.abs(coxaChange - (.5 * A_MAX));
 		double lAccent = LACCENT / Math.cos(Math.toRadians(coxaAngle));
 		double d = lAccent - F;
 		double h = 0;
@@ -53,7 +53,7 @@ class SpiderLeg implements Runnable
 	
 	private class SpiderJoint
 	{
-		private static final int COXA = 0;
+		private static final int COXA  = 0;
 		private static final int FEMUR = 1;
 		private static final int TIBIA = 2;
 		private static final int MAX   = TIBIA;
