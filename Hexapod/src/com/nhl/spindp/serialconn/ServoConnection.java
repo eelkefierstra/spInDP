@@ -1,6 +1,9 @@
 package com.nhl.spindp.serialconn;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import jssc.*;
 
@@ -11,7 +14,7 @@ public class ServoConnection
 	private SerialPortReader reader;
 	private Servo[] servos;
 	private int signalPin;
-	private Runtime runtime;
+	private static final File pigpioFile = new File("/dev/pigpio");
 	
 	/**
 	 * Prefix for every instruction.
@@ -70,7 +73,6 @@ public class ServoConnection
 		reader = new SerialPortReader();
 		servos = new Servo[18];
 		signalPin = 18;
-		runtime = Runtime.getRuntime();
 	}
 	
 	// /dev/ttyAMA0
@@ -84,8 +86,6 @@ public class ServoConnection
 		serialPort.addEventListener(reader);
 		servos = new Servo[18];
 		signalPin = 18;
-		runtime = Runtime.getRuntime();
-		runtime.addShutdownHook(new ShutdownHook(this));
 	}
 	
 	public void connect(String device) throws SerialPortException
@@ -97,8 +97,6 @@ public class ServoConnection
 		serialPort.addEventListener(reader);
 		servos = new Servo[18];
 		signalPin = 18;
-		runtime = Runtime.getRuntime();
-		runtime.addShutdownHook(new ShutdownHook(this));
 	}
 	
 	public byte getError()
@@ -110,7 +108,7 @@ public class ServoConnection
 	{
 		//for (int i = 1; i < Servo.BCASTID; i++)
 		{
-			runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+			setSignalPin(true);
 			serialPort.writeBytes(new byte[]
 					{	(byte)INSTRUCTION_PREFIX,
 						(byte)INSTRUCTION_PREFIX,
@@ -118,14 +116,14 @@ public class ServoConnection
 						(byte)0x02,
 						INSTRUCTION_RESET,
 						(byte)0xF7 });
-			Thread.sleep(25);
-			runtime.exec(String.format("pigs w %s 0", signalPin)).waitFor();
+			Thread.sleep(1);
+			setSignalPin(false);
 		}
 	}
 	
 	public boolean sendInstruction(byte id) throws SerialPortException, InterruptedException, IOException
 	{
-		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		setSignalPin(true);
 		if (!serialPort.writeBytes(new byte[]
 				{	(byte)INSTRUCTION_PREFIX,
 					(byte)INSTRUCTION_PREFIX,
@@ -138,8 +136,8 @@ public class ServoConnection
 		{
 			System.out.println("Send instruction failed");
 		}
-		Thread.sleep(5000);
-		runtime.exec(String.format("pigs w %s 0", signalPin)).waitFor();
+		Thread.sleep(1);
+		setSignalPin(false);
 		Thread.sleep(100);
 		//reader.wait(250);
 		for (byte b : reader.getData())
@@ -151,16 +149,16 @@ public class ServoConnection
 	
 	public void sendAsyncInstruction() throws SerialPortException, InterruptedException, IOException
 	{
-		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		setSignalPin(true);
 		
 		Thread.sleep(1);
-		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		setSignalPin(false);
 		
 	}
 	
 	public boolean setID(byte id, byte newId) throws SerialPortException, InterruptedException, IOException
 	{
-		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		setSignalPin(true);
 		if (!serialPort.writeBytes(new byte[]
 				{	(byte)INSTRUCTION_PREFIX,
 					(byte)INSTRUCTION_PREFIX,
@@ -174,7 +172,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		Thread.sleep(1);
-		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		setSignalPin(false);
 		return true;
 	}
 	
@@ -182,7 +180,7 @@ public class ServoConnection
 	{
 		if (position < 0)     position = 0;
 		if (position >= 1024) position = 1023;
-		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		setSignalPin(true);
 		if (!serialPort.writeBytes(new byte[]
 				{	(byte)INSTRUCTION_PREFIX,
 					(byte)INSTRUCTION_PREFIX,
@@ -197,7 +195,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		Thread.sleep(1);
-		runtime.exec(String.format("pigs w %s 1", signalPin)).waitFor();
+		setSignalPin(false);
 		return true;
 	}
 	
@@ -227,6 +225,14 @@ public class ServoConnection
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private void setSignalPin(boolean val) throws IOException
+	{
+		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
+		writer.write(String.format("w %s %s", signalPin, val ? 1 : 0));
+		writer.flush();
+		writer.close();
 	}
 	
 	private class ShutdownHook extends Thread
