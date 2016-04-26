@@ -12,18 +12,15 @@ class SpiderLeg implements Runnable
 	private static final double LACCENT = Math.cos(A_RAD) * L;
 	private static final double D       = F - LACCENT;
 	private static final double B       = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
-	private static final double ALPHA   = Math.toRadians(Math.acos((Math.pow(A, 2) - Math.pow(C, 2) - Math.pow(B, 2)) / (-2 * C * B)));
-	private static final double GAMMA   = Math.toRadians(Math.acos((Math.pow(C, 2.0) - Math.pow(B, 2.0) - Math.pow(A, 2.0)) / (-2 * B * A)));
-	private static final double BETA    = Math.toRadians(Math.acos((Math.pow(B, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
-	private static final double EPSILON = Math.toRadians(Math.atan(E / D));
-	private static final double DELTA   = Math.toRadians(Math.atan(D / E));
-	private static final double STEP    = Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0) * 2);
+	
+	private double ALPHA   = Math.toRadians(Math.acos((Math.pow(A, 2) - Math.pow(C, 2) - Math.pow(B, 2)) / (-2 * C * B)));
+	private double gamma   = Math.toRadians(Math.acos((Math.pow(C, 2.0) - Math.pow(B, 2.0) - Math.pow(A, 2.0)) / (-2 * B * A)));
+	private double beta    = Math.toRadians(Math.acos((Math.pow(B, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
+	private double EPSILON = Math.toRadians(Math.atan(E / D));
+	private double DELTA   = Math.toRadians(Math.atan(D / E));
+	private double STEP    = Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0) * 2);
 	
 	private double coxaAngle  = 0.0;
-	@SuppressWarnings("unused")
-	private double femurAngle = 0.0;
-	@SuppressWarnings("unused")
-	private double tibiaAngle = 0.0;
 	
 	public double coxaChange = 0.0;
 	
@@ -47,8 +44,8 @@ class SpiderLeg implements Runnable
 		double h = 0;
 		if (false) h = B / Math.pow((STEP / 2), 2.0) + B;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E - h, 2.0));
-		servos[SpiderJoint.FEMUR].angle = femurAngle = Math.toRadians(Math.acos(Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A));
-		servos[SpiderJoint.TIBIA].angle = tibiaAngle = Math.toRadians(Math.acos(Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C));
+		servos[SpiderJoint.FEMUR].angle = gamma = Math.toRadians(Math.acos(Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A));
+		servos[SpiderJoint.TIBIA].angle = beta  = Math.toRadians(Math.acos(Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C));
 	}
 	
 	private class SpiderJoint
