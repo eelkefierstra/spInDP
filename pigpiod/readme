@@ -1,0 +1,3 @@
+copieer pigpio.service naar /etc/systemd/system/
+voer dit commando uit "sudo systemctl enable pigpiod.service"
+en pigpiod zal bij het opstarten van de pi, opgestart worden
