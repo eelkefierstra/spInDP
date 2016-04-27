@@ -26,42 +26,21 @@ class SpiderLeg implements Runnable
 	
 	public SpiderLeg()
 	{
-		servos[0] = new SpiderJoint(alpha);
-		servos[1] = new SpiderJoint(gamma);
-		servos[2] = new SpiderJoint(beta);
+		servos[SpiderJoint.COXA ] = new SpiderJoint(alpha);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(gamma);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(beta);
 	}
 	
-	@SuppressWarnings("unused")
 	@Override
 	public void run()
 	{
-		servos[SpiderJoint.COXA ].angle = alpha  = Math.abs(coxaChange - (.5 * A_MAX));
+		servos[SpiderJoint.COXA ].setAngle(alpha  = Math.abs(coxaChange - (.5 * A_MAX)));
 		double lAccent = LACCENT / Math.cos(Math.toRadians(alpha));
 		double d = lAccent - F;
 		double h = 0;
-		if (false) h = B / Math.pow((STEP / 2), 2.0) + B;
+		if (true) h = B / Math.pow((STEP / 2), 2.0) + B;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E - h, 2.0));
-		servos[SpiderJoint.FEMUR].angle = gamma = Math.toRadians(Math.acos(Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A));
-		servos[SpiderJoint.TIBIA].angle = beta  = Math.toRadians(Math.acos(Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C));
-	}
-	
-	private class SpiderJoint
-	{
-		private static final int COXA  = 0;
-		private static final int FEMUR = 1;
-		private static final int TIBIA = 2;
-		
-		@SuppressWarnings("unused")
-		private double angle;
-		
-		private SpiderJoint()
-		{
-			angle = 0.0;
-		}
-		
-		private SpiderJoint(double angle)
-		{
-			this.angle = angle;
-		}
+		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(Math.acos(Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
+		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.toRadians(Math.acos(Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
 	}
 }

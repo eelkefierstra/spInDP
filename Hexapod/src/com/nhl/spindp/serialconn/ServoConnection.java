@@ -9,6 +9,11 @@ import java.util.Arrays;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import jssc.*;
 
+/**
+ * A class to facilitate the connection with the servo via a serial port
+ * @author Dudecake
+ *
+ */
 @SuppressWarnings("unused")
 public class ServoConnection
 {
@@ -19,82 +24,8 @@ public class ServoConnection
 	private static final File pigpioFile = new File("/dev/pigpio");
 	
 	/**
-	 * Prefix for every instruction.
+	 * Creates a ServoConnection object
 	 */
-	private static final byte INSTRUCTION_PREFIX      = (byte)0xFF;
-	
-	/**
-	 * No action, Used for obtaining a Status Packet.
-	 */
-	public  static final byte INSTRUCTION_PING        = (byte) 0x01;
-	
-	/**
-	 * Reading values in the Control Table.
-	 */
-	public  static final byte INSTRUCTION_READ_DATA   = (byte) 0x02;
-	
-	/**
-	 * Writing values to the Control Table.
-	 */
-	public  static final byte INSTRUCTION_WRITE_DATA  = (byte) 0x03;
-	
-	/**
-	 * Similar to WRITE_DATA, but stays in standby mode until the ACTION instruction is given.
-	 */
-	public  static final byte INSTRUCTION_REG_WRITE   = (byte) 0x04;
-	
-	/**
-	 * Triggers the action registered by the REG_WRITE instruction.
-	 */
-	public  static final byte INSTRUCTION_ACTION      = (byte) 0x05;
-	
-	/**
-	 * Changes the Control Table values of the Dynamixel actuator to the factory default value settings.
-	 */
-	public  static final byte INSTRUCTION_RESET       = (byte) 0x06;
-	
-	/**
-	 * Used for controlling many Dynamixel actuators at the same time.
-	 */
-	public  static final byte INSTRUCTION_SYNC_WRITE  = (byte) 0x86;
-	
-	//EEPROM
-	private static final byte ADDRESS_ID              = (byte) 0x03;
-	private static final byte ADDRESS_BAUD_RATE       = (byte) 0x04;
-	private static final byte ADDRESS_RETURN_DELAY    = (byte) 0x05;
-	private static final byte ADDRESS_CW_ANGLE_LIMIT  = (byte) 0x06;
-	private static final byte ADDRESS_CCW_ANGLE_LIMIT = (byte) 0x08;
-	private static final byte ADDRESS_TEMP_LIMIT      = (byte) 0x0B;
-	private static final byte ADDRESS_VOLT_LIMIT_HIGH = (byte) 0x0C;
-	private static final byte ADDRESS_VOLT_LIMIT_LOW  = (byte) 0x0D;
-	private static final byte ADDRESS_MAX_TORQUE      = (byte) 0x0E;
-	private static final byte ADDRESS_STATUS_RETURN   = (byte) 0x10;
-	private static final byte ADDRESS_ALARM_LED       = (byte) 0x11;
-	private static final byte ADDRESS_ALARM_SHUTDOWN  = (byte) 0x12;
-	private static final byte ADDRESS_DOWN_CALIB      = (byte) 0x14;
-	private static final byte ADDRESS_UP_CALIB        = (byte) 0x16;
-	
-	//RAM
-	private static final byte ADDRESS_TORQUE_ENABLE   = (byte) 0x18;
-	private static final byte ADDRESS_LED             = (byte) 0x19;
-	private static final byte ADDRESS_CW_COMP_MARGIN  = (byte) 0x1A;
-	private static final byte ADDRESS_CCW_COMP_MARGIN = (byte) 0x1B;
-	private static final byte ADDRESS_CW_COMP_SLOPE   = (byte) 0x1C;
-	private static final byte ADDRESS_CCW_COMP_SLOPE  = (byte) 0x1D;
-	private static final byte ADDRESS_GOAL_POSITION   = (byte) 0x1E;
-	private static final byte ADDRESS_MOVING_SPEED    = (byte) 0x20;
-	private static final byte ADDRESS_TORQUE_LIMIT    = (byte) 0x22;
-	private static final byte ADDRESS_PRESENT_POS     = (byte) 0x24;
-	private static final byte ADDRESS_PRESENT_SPEED   = (byte) 0x26;
-	private static final byte ADDRESS_PRESENT_LOAD    = (byte) 0x28;
-	private static final byte ADDRESS_PRESENT_VOLTAGE = (byte) 0x2A;
-	private static final byte ADDRESS_PRESENT_TEMP    = (byte) 0x2B;
-	private static final byte ADDRESS_REGISTERED_INST = (byte) 0x2C;
-	private static final byte ADDRESS_MOVING          = (byte) 0x2E;
-	private static final byte ADDRESS_LOCK            = (byte) 0x2F;
-	private static final byte ADDRESS_PUNCH           = (byte) 0x30;
-	
-	
 	public ServoConnection()
 	{
 		servos = new Servo[18];
@@ -102,6 +33,11 @@ public class ServoConnection
 	}
 	
 	// /dev/ttyAMA0
+	/**
+	 * Creates a ServoConnection object and connects to the given serial port
+	 * @param device The name of the serial port to connect to
+	 * @throws SerialPortException
+	 */
 	public ServoConnection(String device) throws SerialPortException
 	{
 		serialPort = new SerialPort(device);
@@ -128,6 +64,11 @@ public class ServoConnection
 		});
 	}
 	
+	/**
+	 * Connects to the given serial port
+	 * @param device The name of the serial port to connect to
+	 * @throws SerialPortException
+	 */
 	public void connect(String device) throws SerialPortException
 	{
 		serialPort = new SerialPort(device);
@@ -152,49 +93,44 @@ public class ServoConnection
 			}
 		});
 	}
-		
+	
+	/**
+	 * Sends a reset instruction to all possible servos
+	 * @throws SerialPortException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public void sendResetToAll() throws SerialPortException, InterruptedException, IOException
 	{
 		for (int i = 0; i < Servo.BCASTID; i++)
 		{
-			byte[] buffer = 
-				{
-					INSTRUCTION_PREFIX,
-					INSTRUCTION_PREFIX,
-					(byte)i,
-					0,
-					INSTRUCTION_RESET,
-					0
-				};
-			buffer[4] = (byte)(buffer.length - 4);
-			buffer[buffer.length - 1] = computeChecksum((byte)i, buffer[4], INSTRUCTION_RESET);
-			setSignalPin(true);
+			byte[] buffer = Servo.createResetInstruction((byte)i);
+			setDirectionPin(true);
 			serialPort.writeBytes(buffer);
-			setSignalPin(false);
+			setDirectionPin(false);
 		}
 	}
 	
-	public boolean sendInstruction(byte id, byte instruction) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	/**
+	 * Write arbitrary data to the servo
+	 * @param id The id of the receiving servo
+	 * @param address The address to be written
+	 * @param data The data to be written
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	public boolean writeData(byte id, byte address, byte data) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer =
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_WRITE_DATA,
-				ADDRESS_ID,
-				instruction,
-				0
-			};
-		buffer[4] = (byte)(buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_ID, instruction);
-		setSignalPin(true);
+		byte[] buffer = Servo.createWriteDataInstruction(id, address, data);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -203,33 +139,32 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
-	public void sendAsyncInstruction() throws SerialPortException, InterruptedException, IOException
+	public void sendAsyncInstruction() throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		setSignalPin(true);
+		setDirectionPin(true);
 		
-		setSignalPin(false);
-		
+		setDirectionPin(false);
+		throw new NotImplementedException();
 	}
 	
+	/**
+	 * Pings a servo
+	 * @param id The id to be pinged
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public boolean pingServo(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer =
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_PING,
-				0
-			};
-		buffer[4] = (byte)(buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_PING);
-		setSignalPin(true);
+		byte[] buffer = Servo.createPingInstruction(id);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -238,22 +173,21 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	/**
+	 * Sends a reset instruction to a servo
+	 * @param id The id of the servo to be reset
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public boolean resetServo(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_RESET,
-				0
-			};
-		buffer[4] = (byte)(buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_RESET);
-		setSignalPin(true);
+		byte[] buffer = Servo.createResetInstruction(id);
+		setDirectionPin(true);
 		serialPort.writeBytes(buffer);
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -262,27 +196,25 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
-	public boolean setServoID(byte id, byte newId) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	/**
+	 * Sets the id of a servo
+	 * @param id The current id of the servo
+	 * @param newId The desired new id of the servo
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	public boolean setServoId(byte id, byte newId) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_WRITE_DATA,
-				ADDRESS_ID,
-				newId,
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_ID, newId);
-		setSignalPin(true);
+		byte[] buffer = Servo.createWriteDataInstruction(id, Servo.ADDRESS_ID, newId);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -291,30 +223,25 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	/**
+	 * Moves a servo to the given position
+	 * @param id The id of the servo to be moved 
+	 * @param position The desired position
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public boolean moveServo(byte id, short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		if (position < 0)     position = 0;
-		if (position >= 1024) position = 1023;
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_WRITE_DATA,
-				ADDRESS_GOAL_POSITION,
-				(byte)(position &0xFF),
-				(byte)((position >> 8) &0xFF),
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF)); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createMoveServoInstruction(id, position);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -323,64 +250,26 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
-	public boolean moveServo(byte id, int position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
-	{
-		if (position < 0)     position = 0;
-		if (position >= 1024) position = 1023;
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_WRITE_DATA,
-				ADDRESS_GOAL_POSITION,
-				(byte)(position &0xFF),
-				(byte)((position >> 8) &0xFF),
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF)); 
-		setSignalPin(true);
-		if (!serialPort.writeBytes(buffer))
-		{
-			System.out.println("Send instruction failed");
-		}
-		setSignalPin(false);
-		byte[] res = readData();
-		for (byte b : res)
-		{
-			System.out.println(b);
-		}
-		return res.length != 0;
-	}
-	
+	/**
+	 * Moves a servo to the given location with the given speed
+	 * @param id The id of the servo to be moved
+	 * @param position The desired position
+	 * @param speed The desired speed
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public boolean moveServo(byte id, short position, short speed) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		if (position < 0)     position = 0;
-		if (position >= 1024) position = 1023;
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_WRITE_DATA,
-				ADDRESS_GOAL_POSITION,
-				(byte)(position &0xFF),
-				(byte)((position >> 8) &0xFF),
-				(byte)(speed &0xFF),
-				(byte)((speed >> 8) &0xFF),
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF), (byte)(speed &0xFF), (byte)((speed >> 8) &0xFF)); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createMoveServoInstruction(id, position, speed);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -389,30 +278,25 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	/**
+	 * Writes a move instruction to the servo to be executed on a sendAction() call
+	 * @param id The id of the servo to be written
+	 * @param position the desired position
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public boolean writeMoveServo(byte id, short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		if (position < 0)     position = 0;
-		if (position >= 1024) position = 1023;
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_REG_WRITE,
-				ADDRESS_GOAL_POSITION,
-				(byte)(position &0xFF),
-				(byte)((position >> 8) &0xFF),
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF)); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createWriteMoveServoInstruction(id, position);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -421,32 +305,26 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	/**
+	 * Writes a move instruction to the servo to be executed on a sendAction() call
+	 * @param id The id of the servo to be written
+	 * @param position the desired position
+	 * @param speed The desired speed
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public boolean writeMoveServo(byte id, short position, short speed) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		if (position < 0)     position = 0;
-		if (position >= 1024) position = 1023;
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_REG_WRITE,
-				ADDRESS_GOAL_POSITION,
-				(byte)(position &0xFF),
-				(byte)((position >> 8) &0xFF),
-				(byte)(speed &0xFF),
-				(byte)((speed >> 8) &0xFF),
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF), (byte)(speed &0xFF), (byte)((speed >> 8) &0xFF)); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createWriteMoveServoInstruction(id, position, speed);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -455,29 +333,25 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
-	public boolean sendAction() throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	/**
+	 * Sends an instruction to execute the written instruction
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	public void sendAction() throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				Servo.BCASTID,
-				0,
-				INSTRUCTION_ACTION,
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(Servo.BCASTID, buffer[4], INSTRUCTION_ACTION); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createActionInstruction();
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
-		return true;
+		setDirectionPin(false);
 	}
 	
-	public boolean moveMultiple(short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public void moveMultiple(short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
 		throw new NotImplementedException();
 		// TODO: Figure out if, and how we want to implement this.
@@ -485,18 +359,18 @@ public class ServoConnection
 		if (position >= 1024) position = 1023;
 		byte[] buffer = 
 			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
+				Servo.INSTRUCTION_PREFIX,
+				Servo.INSTRUCTION_PREFIX,
 				Servo.BCASTID,
 				0,
-				INSTRUCTION_WRITE_DATA,
-				ADDRESS_GOAL_POSITION,
+				Servo.INSTRUCTION_WRITE_DATA,
+				Servo.ADDRESS_GOAL_POSITION,
 				(byte)(position &0xFF),
 				(byte)((position >> 8) &0xFF),
 				0
 			};
 		buffer[4] = (byte) (buffer.length - 4);
-		//buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF)); 
+		//buffer[buffer.length - 1] = computeChecksum(id, buffer[4], Servo.INSTRUCTION_WRITE_DATA, Servo.ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF)); 
 		setSignalPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
@@ -506,30 +380,26 @@ public class ServoConnection
 		return true;*/
 	}
 	
+	/**
+	 * Set the angle limit of the given servo
+	 * @param id The id of the servo to be limited
+	 * @param cwLimit The clockwise limit
+	 * @param ccwLimit The counterclockwise limit
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public boolean setAngleLimit(byte id, short cwLimit, short ccwLimit) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_WRITE_DATA,
-				ADDRESS_CW_ANGLE_LIMIT,
-				(byte)(cwLimit &0xFF),
-				(byte)((cwLimit >> 8) &0xFF),
-				(byte)(ccwLimit &0xFF),
-				(byte)((ccwLimit >> 8) &0xFF),
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_CW_ANGLE_LIMIT, (byte)(cwLimit &0xFF), (byte)((cwLimit >> 8) &0xFF), (byte)(ccwLimit &0xFF), (byte)((ccwLimit >> 8) &0xFF)); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createSetAngleLimitInstruction(id, cwLimit, ccwLimit);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -538,28 +408,25 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	/**
+	 * Sets the torque limit of the given servo
+	 * @param id The id of the servo to be limited
+	 * @param limit the desired limit
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public boolean setTorqueLimit(byte id, short limit) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_WRITE_DATA,
-				ADDRESS_MAX_TORQUE,
-				(byte)(limit &0xFF),
-				(byte)((limit >> 8) &0xFF),
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_MAX_TORQUE, (byte)(limit &0xFF), (byte)((limit >> 8) &0xFF)); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createSetTorqueLimitInstruction(id, limit);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -568,28 +435,25 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	/**
+	 * Sets the punch limit of the given servo
+	 * @param id The id of the servo to be limited
+	 * @param limit The desired limit
+	 * @return Whether the servo returns a status packet
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public boolean setPunchLimit(byte id, short limit) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_WRITE_DATA,
-				ADDRESS_PUNCH,
-				(byte)(limit &0xFF),
-				(byte)((limit >> 8) &0xFF),
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_PUNCH, (byte)(limit &0xFF), (byte)((limit >> 8) &0xFF)); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createSetPunchLimit(id, limit);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -600,28 +464,13 @@ public class ServoConnection
 	
 	public boolean setCompliance(byte id, byte cwMargin, byte ccwMargin, byte cwSlope, byte ccwSlope) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_REG_WRITE,
-				ADDRESS_CW_COMP_MARGIN,
-				cwMargin,
-				ccwMargin,
-				cwSlope,
-				ccwSlope,
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, cwMargin, ccwMargin, cwSlope, ccwSlope); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createSetComplianceInstruction(id, cwMargin, ccwMargin, cwSlope, ccwSlope);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -630,26 +479,24 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	/**
+	 * Reads the temperature of the given servo
+	 * @param id The id of the servo to be read
+	 * @return the (approximate) temperature
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public int readTemperature(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_READ_DATA,
-				ADDRESS_PRESENT_TEMP,
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_TEMP); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_TEMP);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -658,26 +505,24 @@ public class ServoConnection
 		return Byte.toUnsignedInt(res[0]);
 	}
 	
+	/**
+	 * Reads the current location of the given servo
+	 * @param id The id of the servo to be read
+	 * @return the current location of the servo
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public int readPresentLocation(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_READ_DATA,
-				ADDRESS_PRESENT_POS,
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_POS); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_POS);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -686,26 +531,24 @@ public class ServoConnection
 		return (res[0] << 8) | res[1];
 	}
 	
+	/**
+	 * Reads the voltage of the given servo
+	 * @param id The id of the servo to be read
+	 * @return The current voltage of the servo
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public int readVoltage(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_READ_DATA,
-				ADDRESS_PRESENT_VOLTAGE,
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_VOLTAGE); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_VOLTAGE); 
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -714,26 +557,24 @@ public class ServoConnection
 		return Byte.toUnsignedInt(res[0]);
 	}
 	
+	/**
+	 * Reads the speed of the given servo
+	 * @param id The id of the servo to be read
+	 * @return The current speed of the servo
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public int readSpeed(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_READ_DATA,
-				ADDRESS_PRESENT_SPEED,
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_SPEED); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_SPEED); 
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -742,60 +583,35 @@ public class ServoConnection
 		return (res[0] << 8) | res[1];
 	}
 	
+	/**
+	 * Reads the load on the given servo
+	 * @param id The id of the servo to be read
+	 * @return The load on the servo
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public int readLoad(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		byte[] buffer = 
-			{
-				INSTRUCTION_PREFIX,
-				INSTRUCTION_PREFIX,
-				id,
-				0,
-				INSTRUCTION_READ_DATA,
-				ADDRESS_PRESENT_LOAD,
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_LOAD); 
-		setSignalPin(true);
+		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_LOAD);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
+		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
 		}
-		byte i = ADDRESS_MOVING;
 		return (res[0] << 8) | res[1];
 	}
 	
-	private byte computeChecksum(byte id, byte length)
-	{
-		return (byte)~((id + length) &0xFF);
-	}
-	
-	private byte computeChecksum(byte id, byte length, byte ... parameters)
-	{
-		int res = id + length;
-		for (byte b : parameters)
-		{
-			res += b;
-		}
-		return (byte)~(res &0xFF);
-	}
-	
-	private boolean compareChecksum(byte[] buffer, byte[] data, byte checksum)
-	{
-		int res = buffer[2] + buffer[3] + buffer[4];
-		for (int i = 0; i < data.length - 1; i++)
-		{
-			res += data[i];
-		}
-		return ((byte)~(res &0xFF) == checksum);
-	}
-	
+	/**
+	 * Closes the connection with the serial port
+	 */
 	public void disconnect()
 	{
 		try
@@ -808,6 +624,12 @@ public class ServoConnection
 		}
 	}
 	
+	/**
+	 * Reads the data from the serial port
+	 * @return The read data
+	 * @throws SerialPortException
+	 * @throws SerialPortTimeoutException
+	 */
 	private byte[] readData() throws SerialPortException, SerialPortTimeoutException
 	{
 		byte[] buffer = serialPort.readBytes(5, 10);
@@ -817,7 +639,7 @@ public class ServoConnection
 		if (buffer[3] != 0)
 		{
 			data = serialPort.readBytes(buffer[3] - 1, 10);
-			boolean checksum = compareChecksum(buffer, data, data[data.length - 1]);
+			boolean checksum = Servo.compareChecksum(concat(buffer, data), data[data.length - 1]);
 			System.out.println("Recieved " + String.valueOf(buffer.length) + " bytes");
 			for (byte b : data)
 			{
@@ -828,15 +650,20 @@ public class ServoConnection
 		return data;
 	}
 	
-	private void setSignalPin(boolean val) throws IOException
+	/**
+	 * Sets the direction pin with the specified value
+	 * @param val The value to set the pin to
+	 * @throws IOException
+	 */
+	private void setDirectionPin(boolean val) throws IOException
 	{
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
 		writer.write(String.format("w %s %s\n", signalPin, val ? 1 : 0));
 		writer.flush();
 		writer.close();
 	}
-	/*
-	public static byte[] concatAll(byte[] first, byte[]... rest)
+	
+	public static byte[] concat(byte[] first, byte[]... rest)
 	{
 		int totalLength = first.length;
 		for (byte[] array : rest)
@@ -851,7 +678,7 @@ public class ServoConnection
 			offset += array.length;
 		}
 		return result;
-	}*/
+	}
 	
 	private class ShutdownHook extends Thread
 	{
@@ -866,26 +693,6 @@ public class ServoConnection
 		public void run()
 		{
 			conn.disconnect();
-		}
-	}
-		
-	private class Servo
-	{
-		public static final int BAUDRATE_1 = 1000000;
-		public static final int BAUDRATE_3 =  500000;
-		public static final int BAUDRATE_4 =  400000;
-		public static final int BAUDRATE_7 =  250000;
-		public static final int BAUDRATE_9 =  200000;
-		public static final byte DATABITS  = 8;
-		public static final byte STOPBITS  = 1;
-		public static final byte PARITY    = 0;
-		public static final byte BCASTID   = (byte)0xFE;
-		
-		public final byte id;
-		
-		public Servo(byte id)
-		{
-			this.id = id;
 		}
 	}
 }
