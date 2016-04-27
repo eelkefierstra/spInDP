@@ -195,8 +195,6 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setSignalPin(false);
-		Thread.sleep(100);
-		//reader.wait(250);
 		for (byte b : readData())
 		{
 			System.out.println(b);
@@ -208,7 +206,6 @@ public class ServoConnection
 	{
 		setSignalPin(true);
 		
-		Thread.sleep(1);
 		setSignalPin(false);
 		
 	}
@@ -344,7 +341,7 @@ public class ServoConnection
 		{
 			res += b;
 		}
-		return (byte)(~res &0xFF);
+		return (byte)~(res &0xFF);
 	}
 	
 	private boolean compareChecksum(byte[] buffer, byte[] data, byte checksum)
@@ -354,7 +351,7 @@ public class ServoConnection
 		{
 			res += data[i];
 		}
-		return ((byte)(~res &0xFF) == checksum);
+		return ((byte)~(res &0xFF) == checksum);
 	}
 	
 	public void disconnect()
@@ -372,6 +369,7 @@ public class ServoConnection
 	private byte[] readData() throws SerialPortException, SerialPortTimeoutException
 	{
 		byte[] buffer = serialPort.readBytes(4, 10);
+		assert (buffer[0] == 0xFF) && (buffer[1] == 0xFF);
 		byte[] data = new byte[0];
 		if (buffer[3] != 0)
 		{
