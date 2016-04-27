@@ -195,11 +195,12 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setSignalPin(false);
-		for (byte b : readData())
+		byte[] res = readData();
+		for (byte b : res)
 		{
 			System.out.println(b);
 		}
-		return true;
+		return res.length != 0;
 	}
 	
 	public void sendAsyncInstruction() throws SerialPortException, InterruptedException, IOException
@@ -210,7 +211,58 @@ public class ServoConnection
 		
 	}
 	
-	public boolean setID(byte id, byte newId) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean pingServo(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer =
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_PING,
+				0
+			};
+		buffer[4] = (byte)(buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_PING);
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return res.length != 0;
+	}
+	
+	public boolean resetServo(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_RESET,
+				0
+			};
+		buffer[4] = (byte)(buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_RESET);
+		setSignalPin(true);
+		serialPort.writeBytes(buffer);
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return res.length != 0;
+	}
+	
+	public boolean setServoID(byte id, byte newId) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
 		byte[] buffer = 
 			{
@@ -231,14 +283,15 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setSignalPin(false);
-		for (byte b : readData())
+		byte[] res = readData();
+		for (byte b : res)
 		{
 			System.out.println(b);
 		}
-		return true;
+		return res.length != 0;
 	}
 	
-	public boolean move(byte id, short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean moveServo(byte id, short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
 		if (position < 0)     position = 0;
 		if (position >= 1024) position = 1023;
@@ -262,14 +315,15 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setSignalPin(false);
-		for (byte b : readData())
+		byte[] res = readData();
+		for (byte b : res)
 		{
 			System.out.println(b);
 		}
-		return true;
+		return res.length != 0;
 	}
 	
-	public boolean move(byte id, int position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean moveServo(byte id, int position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
 		if (position < 0)     position = 0;
 		if (position >= 1024) position = 1023;
@@ -293,10 +347,133 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setSignalPin(false);
-		for (byte b : readData())
+		byte[] res = readData();
+		for (byte b : res)
 		{
 			System.out.println(b);
 		}
+		return res.length != 0;
+	}
+	
+	public boolean moveServo(byte id, short position, short speed) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		if (position < 0)     position = 0;
+		if (position >= 1024) position = 1023;
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_WRITE_DATA,
+				ADDRESS_GOAL_POSITION,
+				(byte)(position &0xFF),
+				(byte)((position >> 8) &0xFF),
+				(byte)(speed &0xFF),
+				(byte)((speed >> 8) &0xFF),
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF), (byte)(speed &0xFF), (byte)((speed >> 8) &0xFF)); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return res.length != 0;
+	}
+	
+	public boolean writeMoveServo(byte id, short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		if (position < 0)     position = 0;
+		if (position >= 1024) position = 1023;
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_REG_WRITE,
+				ADDRESS_GOAL_POSITION,
+				(byte)(position &0xFF),
+				(byte)((position >> 8) &0xFF),
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF)); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return res.length != 0;
+	}
+	
+	public boolean writeMoveServo(byte id, short position, short speed) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		if (position < 0)     position = 0;
+		if (position >= 1024) position = 1023;
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_REG_WRITE,
+				ADDRESS_GOAL_POSITION,
+				(byte)(position &0xFF),
+				(byte)((position >> 8) &0xFF),
+				(byte)(speed &0xFF),
+				(byte)((speed >> 8) &0xFF),
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF), (byte)(speed &0xFF), (byte)((speed >> 8) &0xFF)); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return res.length != 0;
+	}
+	
+	public boolean sendAction() throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				Servo.BCASTID,
+				0,
+				INSTRUCTION_ACTION,
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(Servo.BCASTID, buffer[4], INSTRUCTION_ACTION); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
 		return true;
 	}
 	
@@ -329,6 +506,271 @@ public class ServoConnection
 		return true;*/
 	}
 	
+	public boolean setAngleLimit(byte id, short cwLimit, short ccwLimit) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_WRITE_DATA,
+				ADDRESS_CW_ANGLE_LIMIT,
+				(byte)(cwLimit &0xFF),
+				(byte)((cwLimit >> 8) &0xFF),
+				(byte)(ccwLimit &0xFF),
+				(byte)((ccwLimit >> 8) &0xFF),
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_CW_ANGLE_LIMIT, (byte)(cwLimit &0xFF), (byte)((cwLimit >> 8) &0xFF), (byte)(ccwLimit &0xFF), (byte)((ccwLimit >> 8) &0xFF)); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return res.length != 0;
+	}
+	
+	public boolean setTorqueLimit(byte id, short limit) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_WRITE_DATA,
+				ADDRESS_MAX_TORQUE,
+				(byte)(limit &0xFF),
+				(byte)((limit >> 8) &0xFF),
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_MAX_TORQUE, (byte)(limit &0xFF), (byte)((limit >> 8) &0xFF)); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return res.length != 0;
+	}
+	
+	public boolean setPunchLimit(byte id, short limit) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_WRITE_DATA,
+				ADDRESS_PUNCH,
+				(byte)(limit &0xFF),
+				(byte)((limit >> 8) &0xFF),
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_PUNCH, (byte)(limit &0xFF), (byte)((limit >> 8) &0xFF)); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return res.length != 0;
+	}
+	
+	public boolean setCompliance(byte id, byte cwMargin, byte ccwMargin, byte cwSlope, byte ccwSlope) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_REG_WRITE,
+				ADDRESS_CW_COMP_MARGIN,
+				cwMargin,
+				ccwMargin,
+				cwSlope,
+				ccwSlope,
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, cwMargin, ccwMargin, cwSlope, ccwSlope); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return res.length != 0;
+	}
+	
+	public int readTemperature(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_READ_DATA,
+				ADDRESS_PRESENT_TEMP,
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_TEMP); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return Byte.toUnsignedInt(res[0]);
+	}
+	
+	public int readPresentLocation(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_READ_DATA,
+				ADDRESS_PRESENT_POS,
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_POS); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return (res[0] << 8) | res[1];
+	}
+	
+	public int readVoltage(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_READ_DATA,
+				ADDRESS_PRESENT_VOLTAGE,
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_VOLTAGE); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return Byte.toUnsignedInt(res[0]);
+	}
+	
+	public int readSpeed(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_READ_DATA,
+				ADDRESS_PRESENT_SPEED,
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_SPEED); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		return (res[0] << 8) | res[1];
+	}
+	
+	public int readLoad(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	{
+		byte[] buffer = 
+			{
+				INSTRUCTION_PREFIX,
+				INSTRUCTION_PREFIX,
+				id,
+				0,
+				INSTRUCTION_READ_DATA,
+				ADDRESS_PRESENT_LOAD,
+				0
+			};
+		buffer[4] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, ADDRESS_PRESENT_LOAD); 
+		setSignalPin(true);
+		if (!serialPort.writeBytes(buffer))
+		{
+			System.out.println("Send instruction failed");
+		}
+		setSignalPin(false);
+		byte[] res = readData();
+		for (byte b : res)
+		{
+			System.out.println(b);
+		}
+		byte i = ADDRESS_MOVING;
+		return (res[0] << 8) | res[1];
+	}
+	
 	private byte computeChecksum(byte id, byte length)
 	{
 		return (byte)~((id + length) &0xFF);
@@ -346,7 +788,7 @@ public class ServoConnection
 	
 	private boolean compareChecksum(byte[] buffer, byte[] data, byte checksum)
 	{
-		int res = buffer[2] + buffer[3];
+		int res = buffer[2] + buffer[3] + buffer[4];
 		for (int i = 0; i < data.length - 1; i++)
 		{
 			res += data[i];
@@ -368,13 +810,13 @@ public class ServoConnection
 	
 	private byte[] readData() throws SerialPortException, SerialPortTimeoutException
 	{
-		byte[] buffer = serialPort.readBytes(4, 10);
-		assert (buffer[0] == 0xFF) && (buffer[1] == 0xFF);
+		byte[] buffer = serialPort.readBytes(5, 10);
 		byte[] data = new byte[0];
+		if((buffer[0] != 0xFF) || (buffer[1] != 0xFF)) return data;
+		error = buffer[4];
 		if (buffer[3] != 0)
 		{
-			data = serialPort.readBytes(buffer[3], 10);
-			error = data[0];
+			data = serialPort.readBytes(buffer[3] - 1, 10);
 			boolean checksum = compareChecksum(buffer, data, data[data.length - 1]);
 			System.out.println("Recieved " + String.valueOf(buffer.length) + " bytes");
 			for (byte b : data)

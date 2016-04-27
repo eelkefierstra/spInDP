@@ -47,7 +47,7 @@ public class Main
 		{
 			for (short j = 0; j < 256; j++)
 			{
-				p.conn.move(i, (short)(j * 4));
+				p.conn.moveServo(i, (short)(j * 4));
 			}
 		}
 		
