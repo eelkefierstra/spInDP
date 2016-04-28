@@ -51,6 +51,7 @@ class SpiderLeg implements Runnable
 		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(Math.acos(Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.toRadians(Math.acos(Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
 		if (coxaChange >= 90) set = false;
+		if (coxaChange <= 0) set = true;
 	}
 	
 	int[] getIds()
