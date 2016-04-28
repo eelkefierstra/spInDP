@@ -100,6 +100,11 @@ public class Servo
 		this.id = id;
 	}
 	
+	byte getId()
+	{
+		return id;
+	}
+	
 	public static byte[] createWriteDataInstruction(byte id, byte address, byte data)
 	{
 		byte[] buffer =
@@ -136,6 +141,7 @@ public class Servo
 		buffer[0] = buffer[1] = INSTRUCTION_PREFIX;
 		buffer[2] = BCASTID;
 		buffer[3] = INSTRUCTION_SYNC_WRITE;
+		buffer[4] = (byte)(buffer.length - 4);
 		buffer[5] = address;
 		int i = 6;
 		for (byte[] data : parameters)
@@ -146,7 +152,6 @@ public class Servo
 				i++;
 			}
 		}
-		buffer[4] = (byte)(buffer.length - 4);
 		buffer[buffer.length - 1] = computeChecksum(BCASTID, buffer[4], INSTRUCTION_SYNC_WRITE, address, Arrays.copyOfRange(buffer, 6, buffer.length));
 		return buffer;
 	}

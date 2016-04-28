@@ -6,16 +6,36 @@ public class SpiderJoint
 	public static final int FEMUR = 1;
 	public static final int TIBIA = 2;
 	
+	private int servoId;
 	private double angle;
 	
-	public SpiderJoint()
+	SpiderJoint()
 	{
-		angle = 0.0;
+		this.servoId = 0;
+		this.angle   = 0.0;
 	}
 	
-	public SpiderJoint(double angle)
+	SpiderJoint(int servoId)
 	{
-		this.angle = angle;
+		this.servoId = servoId;
+		this.angle   = 0.0;
+	}
+	
+	SpiderJoint(double angle)
+	{
+		this.servoId = 0;
+		this.angle   = angle;
+	}
+	
+	SpiderJoint(int servoId, double angle)
+	{
+		this.servoId = servoId;
+		this.angle   = angle;
+	}
+	
+	public int getId()
+	{
+		return servoId;
 	}
 	
 	public double getAngle()
@@ -23,7 +43,7 @@ public class SpiderJoint
 		return angle;
 	}
 	
-	public void setAngle(double angle)
+	void setAngle(double angle)
 	{
 		this.angle = angle;
 	}
