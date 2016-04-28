@@ -7,14 +7,20 @@ import com.nhl.spindp.spin.SpiderBody;
 
 public class Main
 {
-	ServoConnection conn;
+	private static Main instance;
+	private static ServoConnection conn;
+	
+	public static Main getInstance()
+	{
+		return instance;
+	}
 	
 	public static void main(String[] args) throws Exception
 	{
-		Main p = new Main();
+		instance = new Main();
 		
-		SpiderBody body = new SpiderBody();
-		body.testCalcs();		
+		SpiderBody body = new SpiderBody(1);
+		body.testCalcs();
 		
 		String[] portNames = SerialPortList.getPortNames();
 		if (portNames.length == 0)
@@ -29,12 +35,12 @@ public class Main
 			}
 		}
 		
-		p.conn = new ServoConnection("/dev/ttyAMA0");
+		conn = new ServoConnection("/dev/serial0");
 		/*System.out.print("Sending reset... ");
-		p.conn.sendResetToAll();
+		conn.sendResetToAll();
 		System.out.println("Reset send.");
 		System.out.println("Sending instruction to: " + String.format("%2x", 1).toUpperCase());
-		if (!p.conn.sendInstruction((byte)1, ServoConnection.INSTRUCTION_WRITE_DATA))
+		if (!instance.conn.sendInstruction((byte)1, ServoConnection.INSTRUCTION_WRITE_DATA))
 		{
 			//System.err.println("Instruction not recieved: " + String.format("%2x", p.conn.getError()).toUpperCase());
 			//System.exit(1);
@@ -47,10 +53,26 @@ public class Main
 		{
 			for (short j = 0; j < 256; j++)
 			{
-				p.conn.moveServo(i, (short)(j * 4));
+				conn.moveServo(i, (short)(j * 4));
 			}
 		}
 		
 		System.exit(0);
+	}
+	
+	public void driveServo(int[] ids, int[] angles)
+	{
+		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");
+		try
+		{
+			for (int i = 0; i < ids.length; i++)
+			{
+				conn.moveServo((byte)ids[i], (short)angles[i]);
+			}
+		}
+		catch (Exception ex)
+		{
+			
+		}
 	}
 }

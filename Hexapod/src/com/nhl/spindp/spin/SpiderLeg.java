@@ -19,16 +19,24 @@ class SpiderLeg implements Runnable
 	private double EPSILON = Math.toRadians(Math.atan(E / D));
 	private double DELTA   = Math.toRadians(Math.atan(D / E));
 	private double STEP    = Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0) * 2);
+	private boolean set    = false;
 	
 	public double coxaChange = 0.0;
 	
 	SpiderJoint[] servos = new SpiderJoint[3];
 	
-	public SpiderLeg()
+	SpiderLeg()
 	{
 		servos[SpiderJoint.COXA ] = new SpiderJoint(alpha);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(gamma);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(beta);
+	}
+	
+	SpiderLeg(int startServoId)
+	{
+		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId    , alpha);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId + 1, gamma);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId + 2, beta);
 	}
 	
 	@Override
@@ -38,9 +46,25 @@ class SpiderLeg implements Runnable
 		double lAccent = LACCENT / Math.cos(Math.toRadians(alpha));
 		double d = lAccent - F;
 		double h = 0;
-		if (true) h = B / Math.pow((STEP / 2), 2.0) + B;
+		if (set) h = B / Math.pow((STEP / 2), 2.0) + B;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E - h, 2.0));
 		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(Math.acos(Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.toRadians(Math.acos(Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
+		if (coxaChange >= 90) set = false;
+	}
+	
+	int[] getIds()
+	{
+		return new int[] { servos[0].getId(), servos[1].getId(), servos[1].getId() };
+	}
+	
+	int[] getAngles()
+	{
+		return new int[] { (int)servos[0].getAngle(), (int)servos[1].getAngle(), (int)servos[1].getAngle() };
+	}
+	
+	public double getAngle(int servo)
+	{
+		return servos[servo].getAngle();
 	}
 }
