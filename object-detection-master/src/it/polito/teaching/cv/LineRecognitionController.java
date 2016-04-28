@@ -1,11 +1,15 @@
 package it.polito.teaching.cv;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.imageio.ImageIO;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -38,7 +42,7 @@ import javafx.scene.image.ImageView;
  * @since 1.0 (2015-01-13)
  * 
  */
-public class ObjRecognitionController
+public class LineRecognitionController
 {
 	// FXML camera button
 	@FXML
@@ -78,6 +82,12 @@ public class ObjRecognitionController
 	
 	// property for object binding
 	private ObjectProperty<String> hsvValuesProp;
+	
+	// x coords
+	private int x = 0;
+	
+	// richting
+	private String direction;
 		
 	/**
 	 * The action triggered by pushing the button on the GUI
@@ -160,7 +170,9 @@ public class ObjRecognitionController
 	private Image grabFrame()
 	{
 		// init everything
+		
 		Image imageToShow = null;
+				
 		Mat frame = new Mat();
 		
 		// check if the capture is open
@@ -188,13 +200,17 @@ public class ObjRecognitionController
 					
 					// get thresholding values from the UI
 					// remember: H ranges 0-180, S and V range 0-255
-					Scalar minValues = new Scalar(this.hueStart.getValue(), this.saturationStart.getValue(),
-							this.valueStart.getValue());
-					Scalar maxValues = new Scalar(this.hueStop.getValue(), this.saturationStop.getValue(),
-							this.valueStop.getValue());
+					double hMin = 0;
+					double hMax = 180;
+					double sMin = 0;
+					double sMax = 20;
+					double vMin = 250;
+					double vMax = 255;
+					Scalar minValues = new Scalar(hMin, sMin, vMin);
+					Scalar maxValues = new Scalar(hMax, sMax ,vMax);
 					
 					// show the current selected HSV range
-					String valuesToPrint = "Hue range: " + minValues.val[0] + "-" + maxValues.val[0]
+					String valuesToPrint = "x="+x+"->"+direction+" Hue range: " + minValues.val[0] + "-" + maxValues.val[0]
 							+ "\tSaturation range: " + minValues.val[1] + "-" + maxValues.val[1] + "\tValue range: "
 							+ minValues.val[2] + "-" + maxValues.val[2];
 					this.onFXThread(this.hsvValuesProp, valuesToPrint);
@@ -209,11 +225,13 @@ public class ObjRecognitionController
 					Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(24, 24));
 					Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(12, 12));
 					
+					
 					Imgproc.erode(mask, morphOutput, erodeElement);
 					Imgproc.erode(mask, morphOutput, erodeElement);
 					
 					Imgproc.dilate(mask, morphOutput, dilateElement);
-					Imgproc.dilate(mask, morphOutput, dilateElement);
+					Imgproc.dilate(mask, morphOutput, dilateElement);					
+					
 					
 					// show the partial output
 					this.onFXThread(this.morphImage.imageProperty(), this.mat2Image(morphOutput));
@@ -251,8 +269,11 @@ public class ObjRecognitionController
 	private Mat findAndDrawBalls(Mat maskedImage, Mat frame)
 	{
 		// init
-		List<MatOfPoint> contours = new ArrayList<>();
+		List<MatOfPoint> contours = new ArrayList<>();		
 		Mat hierarchy = new Mat();
+		
+		//find rectangles
+		//Imgproc.re
 		
 		// find contours
 		Imgproc.findContours(maskedImage, contours, hierarchy, Imgproc.RETR_CCOMP, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -260,10 +281,25 @@ public class ObjRecognitionController
 		// if any contour exist...
 		if (hierarchy.size().height > 0 && hierarchy.size().width > 0)
 		{
+			
 			// for each contour, display it in blue
 			for (int idx = 0; idx >= 0; idx = (int) hierarchy.get(0, idx)[0])
 			{
-				Imgproc.drawContours(frame, contours, idx, new Scalar(250, 0, 0));
+				
+				if(Imgproc.contourArea(contours.get(idx))> 500){
+					
+					x = Imgproc.boundingRect(contours.get(idx)).x + Imgproc.boundingRect(contours.get(idx)).width/2;
+					Imgproc.drawContours(frame, contours, idx, new Scalar(250, 0, 0));
+					
+					if(x > 350)
+						direction = "Rechts";
+					else if (x < 300)
+						direction = "Links";
+					else
+						direction = "midden";
+				
+				}
+				
 			}
 		}
 		
