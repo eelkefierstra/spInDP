@@ -351,33 +351,27 @@ public class ServoConnection
 		setDirectionPin(false);
 	}
 	
-	public void moveMultiple(short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public void moveMultiple(byte[] ids, short[] positions) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
-		throw new NotImplementedException();
-		// TODO: Figure out if, and how we want to implement this.
-		/*if (position < 0)     position = 0;
-		if (position >= 1024) position = 1023;
-		byte[] buffer = 
-			{
-				Servo.INSTRUCTION_PREFIX,
-				Servo.INSTRUCTION_PREFIX,
-				Servo.BCASTID,
-				0,
-				Servo.INSTRUCTION_WRITE_DATA,
-				Servo.ADDRESS_GOAL_POSITION,
-				(byte)(position &0xFF),
-				(byte)((position >> 8) &0xFF),
-				0
-			};
-		buffer[4] = (byte) (buffer.length - 4);
-		//buffer[buffer.length - 1] = computeChecksum(id, buffer[4], Servo.INSTRUCTION_WRITE_DATA, Servo.ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF)); 
-		setSignalPin(true);
+		// TODO: Figure out if this is a good implementation.
+		if (ids.length != positions.length) throw new IllegalArgumentException("Arrays must be same length");
+		byte[] parameters = new byte[3];
+		for (int i = 0; i < ids.length * 3; i+=3)
+		{
+			parameters[i  ] = ids[i/3];
+			if (positions[i/3] < 0)     positions[i/3] = 0;
+			if (positions[i/3] >= 1024) positions[i/3] = 1023;
+			parameters[i+1] = (byte)(positions[i/3] &0xFF);
+			parameters[i+2] = (byte)((positions[i/3] >> 8) &0xFF);
+		}
+		byte[] buffer = Servo.createSyncWriteDataInstruction(Servo.ADDRESS_GOAL_POSITION, parameters);
+		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setSignalPin(false);
-		return true;*/
+		setDirectionPin(false);
+		//return true;
 	}
 	
 	/**

@@ -1,5 +1,7 @@
 package com.nhl.spindp.serialconn;
 
+import java.util.Arrays;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Servo
@@ -113,6 +115,39 @@ public class Servo
 			};
 		buffer[4] = (byte)(buffer.length - 4);
 		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_ID, data);
+		return buffer;
+	}
+	
+	public static byte[] createSyncWriteDataInstruction(byte address, byte[] ... parameters)
+	{
+		// TODO: Figure out if this is a good implementation.
+		int len = 0;
+		int parameterlen = parameters[0].length;
+		for (byte[] data : parameters)
+		{
+			if (data.length != parameterlen)
+			{
+				throw new IllegalArgumentException("Arguments must have same length, length is " + String.valueOf(data.length) + " must be: " + String.valueOf(parameterlen));
+			}
+			len += data.length;
+		}
+		
+		byte[] buffer = new byte[len + 4];
+		buffer[0] = buffer[1] = INSTRUCTION_PREFIX;
+		buffer[2] = BCASTID;
+		buffer[3] = INSTRUCTION_SYNC_WRITE;
+		buffer[5] = address;
+		int i = 6;
+		for (byte[] data : parameters)
+		{
+			for (byte b : data)
+			{
+				buffer[i] = b;
+				i++;
+			}
+		}
+		buffer[4] = (byte)(buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(BCASTID, buffer[4], INSTRUCTION_SYNC_WRITE, address, Arrays.copyOfRange(buffer, 6, buffer.length));
 		return buffer;
 	}
 	
@@ -409,6 +444,16 @@ public class Servo
 	private static byte computeChecksum(byte id, byte length, byte instruction, byte ... parameters)
 	{
 		int res = id + length + instruction;
+		for (byte b : parameters)
+		{
+			res += b;
+		}
+		return (byte)~(res &0xFF);
+	}
+	
+	private static byte computeChecksum(byte id, byte length, byte instruction, byte address, byte[] parameters)
+	{
+		int res = id + length + instruction + address;
 		for (byte b : parameters)
 		{
 			res += b;
