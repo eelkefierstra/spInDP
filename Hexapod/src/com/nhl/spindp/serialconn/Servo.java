@@ -118,8 +118,8 @@ public class Servo
 				data,
 				0
 			};
-		buffer[4] = (byte)(buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_ID, data);
+		buffer[3] = (byte)(buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_WRITE_DATA, ADDRESS_ID, data);
 		return buffer;
 	}
 	
@@ -168,8 +168,8 @@ public class Servo
 				address,
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_READ_DATA, address);
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_READ_DATA, address);
 		return buffer;
 	}
 	
@@ -184,8 +184,8 @@ public class Servo
 				INSTRUCTION_RESET,
 				0
 			};
-		buffer[4] = (byte)(buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(BCASTID, buffer[4], INSTRUCTION_RESET);
+		buffer[3] = (byte)(buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(BCASTID, buffer[3], INSTRUCTION_RESET);
 		return buffer;
 	}
 	
@@ -200,8 +200,8 @@ public class Servo
 				INSTRUCTION_RESET,
 				0
 			};
-		buffer[4] = (byte)(buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_RESET);
+		buffer[3] = (byte)(buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_RESET);
 		return buffer;
 	}
 	
@@ -216,8 +216,8 @@ public class Servo
 				INSTRUCTION_PING,
 				0
 			};
-		buffer[4] = (byte)(buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_PING);
+		buffer[3] = (byte)(buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_PING);
 		return buffer;
 	}
 	
@@ -234,8 +234,8 @@ public class Servo
 				newId,
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_ID, newId);
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_WRITE_DATA, ADDRESS_ID, newId);
 		return buffer;
 	}
 	
@@ -255,8 +255,8 @@ public class Servo
 				(byte)((position >> 8) &0xFF),
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF));
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF));
 		return buffer;
 	}
 	
@@ -278,8 +278,8 @@ public class Servo
 				(byte)((speed >> 8) &0xFF),
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF), (byte)(speed &0xFF), (byte)((speed >> 8) &0xFF));
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_WRITE_DATA, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF), (byte)(speed &0xFF), (byte)((speed >> 8) &0xFF));
 		return buffer;
 	}
 	
@@ -299,8 +299,8 @@ public class Servo
 				(byte)((position >> 8) &0xFF),
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF));
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF));
 		return buffer;
 	}
 	
@@ -322,8 +322,8 @@ public class Servo
 				(byte)((speed >> 8) &0xFF),
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF), (byte)(speed &0xFF), (byte)((speed >> 8) &0xFF));
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, (byte)(position &0xFF), (byte)((position >> 8) &0xFF), (byte)(speed &0xFF), (byte)((speed >> 8) &0xFF));
 		return buffer;
 	}
 	
@@ -338,8 +338,8 @@ public class Servo
 				INSTRUCTION_ACTION,
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(BCASTID, buffer[4], INSTRUCTION_ACTION);
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(BCASTID, buffer[3], INSTRUCTION_ACTION);
 		return buffer;
 	}
 	
@@ -364,8 +364,8 @@ public class Servo
 				(byte)((ccwLimit >> 8) &0xFF),
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_CW_ANGLE_LIMIT, (byte)(cwLimit &0xFF), (byte)((cwLimit >> 8) &0xFF), (byte)(ccwLimit &0xFF), (byte)((ccwLimit >> 8) &0xFF));
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_WRITE_DATA, ADDRESS_CW_ANGLE_LIMIT, (byte)(cwLimit &0xFF), (byte)((cwLimit >> 8) &0xFF), (byte)(ccwLimit &0xFF), (byte)((ccwLimit >> 8) &0xFF));
 		return buffer;
 	}
 	
@@ -383,8 +383,8 @@ public class Servo
 				(byte)((limit >> 8) &0xFF),
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_MAX_TORQUE, (byte)(limit &0xFF), (byte)((limit >> 8) &0xFF));
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_WRITE_DATA, ADDRESS_MAX_TORQUE, (byte)(limit &0xFF), (byte)((limit >> 8) &0xFF));
 		return buffer;
 	}
 	
@@ -402,8 +402,8 @@ public class Servo
 				(byte)((limit >> 8) &0xFF),
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_WRITE_DATA, ADDRESS_PUNCH, (byte)(limit &0xFF), (byte)((limit >> 8) &0xFF));
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_WRITE_DATA, ADDRESS_PUNCH, (byte)(limit &0xFF), (byte)((limit >> 8) &0xFF));
 		return buffer;
 	}
 	
@@ -423,8 +423,8 @@ public class Servo
 				ccwSlope,
 				0
 			};
-		buffer[4] = (byte) (buffer.length - 4);
-		buffer[buffer.length - 1] = computeChecksum(id, buffer[4], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, cwMargin, ccwMargin, cwSlope, ccwSlope);
+		buffer[3] = (byte) (buffer.length - 4);
+		buffer[buffer.length - 1] = computeChecksum(id, buffer[3], INSTRUCTION_REG_WRITE, ADDRESS_GOAL_POSITION, cwMargin, ccwMargin, cwSlope, ccwSlope);
 		return buffer;
 	}
 	
