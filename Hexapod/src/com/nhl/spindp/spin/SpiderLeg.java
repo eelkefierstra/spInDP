@@ -34,9 +34,9 @@ class SpiderLeg implements Runnable
 	
 	SpiderLeg(int startServoId)
 	{
-		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId    , alpha);
-		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId + 1, gamma);
-		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId + 2, beta);
+		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
 	}
 	
 	@Override
@@ -56,16 +56,16 @@ class SpiderLeg implements Runnable
 	
 	int[] getIds()
 	{
-		return new int[] { servos[0].getId(), servos[1].getId(), servos[1].getId() };
+		return new int[] { servos[0].getId(), servos[1].getId(), servos[2].getId() };
 	}
 	
 	int[] getAngles()
 	{
-		return new int[] { (int)servos[0].getAngle(), (int)servos[1].getAngle(), (int)servos[1].getAngle() };
+		return new int[] { servos[0].getServoAngle(), servos[1].getServoAngle(), servos[2].getServoAngle() };
 	}
 	
 	public double getAngle(int servo)
 	{
-		return servos[servo].getAngle();
+		return servos[servo].getServoAngle();
 	}
 }
