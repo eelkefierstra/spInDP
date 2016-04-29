@@ -56,8 +56,6 @@ public class Main
 				conn.moveServo(i, (short)(j * 4));
 			}
 		}
-		
-		System.exit(0);
 	}
 	
 	public void driveServo(int[] ids, int[] angles)
