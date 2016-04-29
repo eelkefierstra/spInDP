@@ -3,6 +3,8 @@ package com.nhl.spindp.spin;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.nhl.spindp.Main;
+
 public class SpiderBody
 {
 	ExecutorService executor;
@@ -11,10 +13,20 @@ public class SpiderBody
 	public SpiderBody()
 	{
 		executor = Executors.newFixedThreadPool(3);
-		legs = new SpiderLeg[6];
+		legs     = new SpiderLeg[6];
 		for (int i = 0; i < legs.length; i++)
 		{
 			legs[i] = new SpiderLeg();
+		}
+	}
+	
+	public SpiderBody(int startId)
+	{
+		executor = Executors.newFixedThreadPool(3);
+		legs     = new SpiderLeg[6];
+		for (int i = 0; i < legs.length; i++)
+		{
+			legs[i] = new SpiderLeg(startId++);
 		}
 	}
 	
@@ -27,5 +39,22 @@ public class SpiderBody
 			leg.run();
 		}
 		System.out.println("Calculated in: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
+	}
+	
+	public void testLegMovements()
+	{
+		boolean flip = false;
+		while (true)
+		{
+			for (SpiderLeg leg : legs)
+			{
+				if ( flip) leg.coxaChange += 1;
+				if (!flip) leg.coxaChange -= 1;
+				if (leg.coxaChange > 90) flip = true;
+				if (leg.coxaChange <= 0) flip = true;
+				leg.run();
+				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			}
+		}
 	}
 }
