@@ -4,4 +4,5 @@ import sys
 servo=Ax12()
 id=sys.argv[1]
 
+servo.factoryReset(254, True)
 servo.setID(1,int(id))

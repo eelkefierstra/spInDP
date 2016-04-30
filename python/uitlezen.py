@@ -5,4 +5,3 @@ self = Ax12();
 print(self.readPosition(1))
 print(self.readVoltage(1))
 print(self.readTemperature(1));
-self.learnServos
