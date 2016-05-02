@@ -3,17 +3,20 @@ using System.Collections;
 
 public class SpiderBody : MonoBehaviour
 {
+	Rigidbody body;
 	SpiderLeg[] legs;
 	bool flip = false;
 
 	// Use this for initialization
 	void Start ()
 	{
+		body = GetComponent<Rigidbody>();
 		legs = new SpiderLeg[6];
 		for (int i = 0; i < legs.Length; i++)
 		{
 			legs[i] = new SpiderLeg(i+1);
 		}
+		body.transform.childCount
 	}
 	
 	// Update is called once per frame

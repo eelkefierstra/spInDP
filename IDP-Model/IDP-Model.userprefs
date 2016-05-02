@@ -1,14 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../Hexapod/src/com/nhl/spindp/spin/SpiderLeg.java">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/script/Spin/SpiderBody.cs">
     <Files>
       <File FileName="Assets/script/Extentions.cs" Line="1" Column="1" />
-      <File FileName="Assets/script/Spin/SpiderBody.cs" Line="21" Column="3" />
+      <File FileName="Assets/script/Spin/SpiderBody.cs" Line="13" Column="36" />
       <File FileName="Assets/script/Spin/SpiderLeg.cs" Line="1" Column="1" />
       <File FileName="Assets/script/Spin/SpiderJoint.cs" Line="1" Column="1" />
-      <File FileName="../Hexapod/src/com/nhl/spindp/spin/SpiderLeg.java" Line="1" Column="1" NotebookId="1" />
-      <File FileName="../Hexapod/src/com/nhl/spindp/spin/SpiderBody.java" Line="1" Column="1" NotebookId="1" />
-      <File FileName="../Hexapod/src/com/nhl/spindp/spin/SpiderJoint.java" Line="1" Column="1" NotebookId="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

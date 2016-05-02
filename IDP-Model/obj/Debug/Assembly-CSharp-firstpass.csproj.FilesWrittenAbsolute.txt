@@ -1,0 +1,17 @@
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
+/home/dudecake/git/spInDP/IDP-Model/obj/Debug/Assembly-CSharp-firstpass.dll
+/home/dudecake/git/spInDP/IDP-Model/obj/Debug/Assembly-CSharp-firstpass.dll.mdb
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/UnityEngine.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/UnityEditor.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/UnityEngine.UI.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/UnityEngine.Networking.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Unity.DataContract.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Mono.Cecil.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Unity.SerializationLogic.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Unity.UNetWeaver.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Unity.CecilTools.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/home/dudecake/git/spInDP/IDP-Model/Temp/bin/Debug/Mono.Cecil.Mdb.dll
