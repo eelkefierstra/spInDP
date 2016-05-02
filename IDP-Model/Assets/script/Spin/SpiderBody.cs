@@ -16,7 +16,7 @@ public class SpiderBody : MonoBehaviour
 		{
 			legs[i] = new SpiderLeg(i+1);
 		}
-		body.transform.childCount
+		//body.transform.childCount
 	}
 	
 	// Update is called once per frame
