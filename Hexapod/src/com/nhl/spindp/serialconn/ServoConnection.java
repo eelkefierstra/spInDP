@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
+import javax.xml.bind.DatatypeConverter;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import jssc.*;
 
@@ -235,6 +237,8 @@ public class ServoConnection
 	public boolean moveServo(byte id, short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
 	{
 		byte[] buffer = Servo.createMoveServoInstruction(id, position);
+		System.out.print(DatatypeConverter.printHexBinary(buffer));
+		System.out.println();
 		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
@@ -625,7 +629,7 @@ public class ServoConnection
 	 */
 	private byte[] readData() throws SerialPortException, SerialPortTimeoutException
 	{
-		byte[] buffer = serialPort.readBytes(5, 10);
+		byte[] buffer = serialPort.readBytes(5, 100);
 		byte[] data = new byte[0];
 		//if prefix incorrect
 		if((buffer[0] != 0xFF) || (buffer[1] != 0xFF)) return data;

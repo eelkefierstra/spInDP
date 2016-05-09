@@ -82,6 +82,9 @@ public class SpiderJoint
 	void setAngle(double angle)
 	{
 		double val = Math.toDegrees(angle);
+		if (val >= 0 || val <= 0) 
+		System.out.println(String.valueOf(servoId) + ':' + String.valueOf(val));
+		else System.err.println("we have isues");
 		if (val > range ) val = range;
 		if (val < offset) val = offset;
 		this.angle = val;

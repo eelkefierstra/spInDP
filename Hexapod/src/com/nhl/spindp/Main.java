@@ -49,13 +49,15 @@ public class Main
 		{
 			System.out.println("Sent instruction to: " + String.format("%2x", 1).toUpperCase());
 		}*/
+		/*
 		for (byte i = 1; i <= 18; i++)
 		{
 			for (short j = 0; j < 256; j++)
 			{
 				conn.moveServo(i, (short)(j * 4));
 			}
-		}
+		}*/
+		body.testLegMovements();
 	}
 	
 	public void driveServo(int[] ids, int[] angles)
@@ -70,7 +72,7 @@ public class Main
 		}
 		catch (Exception ex)
 		{
-			
+			ex.printStackTrace();
 		}
 	}
 }

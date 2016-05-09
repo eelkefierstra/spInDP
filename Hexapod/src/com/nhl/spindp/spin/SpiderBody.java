@@ -24,7 +24,7 @@ public class SpiderBody
 	{
 		executor = Executors.newFixedThreadPool(3);
 		legs     = new SpiderLeg[6];
-		for (int i = 0; i < legs.length; i++)
+		for (int i = legs.length-1; i >= 0; i--)
 		{
 			legs[i] = new SpiderLeg(startId++);
 		}
@@ -49,10 +49,10 @@ public class SpiderBody
 			SpiderLeg leg = legs[0];
 			//for (SpiderLeg leg : legs)
 			{
-				if ( flip) leg.coxaChange += 1;
-				if (!flip) leg.coxaChange -= 1;
+				if (!flip) leg.coxaChange += 1;
+				if ( flip) leg.coxaChange -= 1;
 				if (leg.coxaChange > 90) flip = true;
-				if (leg.coxaChange <= 0) flip = true;
+				if (leg.coxaChange <= 0) flip = false;
 				leg.run();
 				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 			}
