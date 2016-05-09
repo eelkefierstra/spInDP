@@ -46,7 +46,8 @@ public class SpiderBody
 		boolean flip = false;
 		while (true)
 		{
-			for (SpiderLeg leg : legs)
+			SpiderLeg leg = legs[0];
+			//for (SpiderLeg leg : legs)
 			{
 				if ( flip) leg.coxaChange += 1;
 				if (!flip) leg.coxaChange -= 1;

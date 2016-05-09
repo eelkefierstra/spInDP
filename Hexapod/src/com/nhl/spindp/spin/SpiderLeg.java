@@ -42,8 +42,8 @@ class SpiderLeg implements Runnable
 	@Override
 	public void run()
 	{
-		servos[SpiderJoint.COXA ].setAngle(alpha  = Math.abs(coxaChange - (.5 * A_MAX)));
-		double lAccent = LACCENT / Math.cos(Math.toRadians(alpha));
+		servos[SpiderJoint.COXA ].setAngle(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
+		double lAccent = LACCENT / Math.cos(alpha);
 		double d = lAccent - F;
 		double h = 0;
 		if (set) h = B / Math.pow((STEP / 2), 2.0) + B;

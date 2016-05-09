@@ -2,6 +2,11 @@ package com.nhl.spindp.spin;
 
 public class SpiderJoint
 {
+	private static final double MIN_ANGLE       =    0.0;
+	private static final double MAX_ANGLE       =  300.0;
+	private static final double MIN_SERVO_ANGLE =    0.0;
+	private static final double MAX_SERVO_ANGLE = 1023.0;
+	
 	public static final int COXA  = 0;
 	public static final int FEMUR = 1;
 	public static final int TIBIA = 2;
@@ -66,7 +71,7 @@ public class SpiderJoint
 	
 	public int getServoAngle()
 	{
-		return (int)(angle + offset);
+		return mapPosition(angle, MIN_ANGLE, MAX_ANGLE, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE);
 	}
 	
 	public double getAngle()
@@ -76,6 +81,15 @@ public class SpiderJoint
 	
 	void setAngle(double angle)
 	{
-		this.angle = angle;
+		double val = Math.toDegrees(angle);
+		if (val > range ) val = range;
+		if (val < offset) val = offset;
+		this.angle = val;
 	}
+	
+	private int mapPosition(double x, double in_min, double in_max, double out_min, double out_max)
+	{
+		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");
+		return (int)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+}
 }
