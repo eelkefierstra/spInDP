@@ -41,12 +41,11 @@ public class ServoConnection
 	 */
 	public ServoConnection(String device) throws SerialPortException
 	{
+		this();
 		serialPort = new SerialPort(device);
 		serialPort.openPort();
 		serialPort.setParams(Servo.BAUDRATE_1, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
 		serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-		servos = new Servo[18];
-		signalPin = 18;
 		Runtime.getRuntime().addShutdownHook(new Thread()
 		{
 			@Override
