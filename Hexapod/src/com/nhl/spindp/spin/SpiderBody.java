@@ -10,16 +10,6 @@ public class SpiderBody
 	ExecutorService executor;
 	SpiderLeg[] legs;
 	
-	public SpiderBody()
-	{
-		executor = Executors.newFixedThreadPool(3);
-		legs     = new SpiderLeg[6];
-		for (int i = 0; i < legs.length; i++)
-		{
-			legs[i] = new SpiderLeg();
-		}
-	}
-	
 	public SpiderBody(int startId)
 	{
 		executor = Executors.newFixedThreadPool(3);

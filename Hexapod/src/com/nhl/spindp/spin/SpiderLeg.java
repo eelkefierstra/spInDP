@@ -26,14 +26,7 @@ class SpiderLeg implements Runnable
 	public double coxaChange = 0.0;
 	
 	SpiderJoint[] servos = new SpiderJoint[3];
-	
-	SpiderLeg()
-	{
-		servos[SpiderJoint.COXA ] = new SpiderJoint(alpha);
-		servos[SpiderJoint.FEMUR] = new SpiderJoint(gamma);
-		servos[SpiderJoint.TIBIA] = new SpiderJoint(beta);
-	}
-	
+		
 	SpiderLeg(int startServoId)
 	{
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha);

@@ -14,15 +14,13 @@ public class SpiderLeg
 	private static readonly double LACCENT = Math.Cos(A_RAD) * L;
 	private static readonly double D       = F - LACCENT;
 	private static readonly double B       = Math.Sqrt(Math.Pow(D, 2.0) + Math.Pow(E, 2));
-    private static volatile double PAR_X   = 25;
-    private static volatile double PAR_Y   = PAR_X / Math.pow(Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0)) * 2, 2.0);
 
-    private double alpha   = Math.Acos((Math.Pow(A, 2) - Math.Pow(C, 2) - Math.Pow(B, 2)) / (-2 * C * B)).ToRadians();
+	private double alpha   = Math.Acos((Math.Pow(A, 2) - Math.Pow(C, 2) - Math.Pow(B, 2)) / (-2 * C * B)).ToRadians();
 	private double gamma   = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(B, 2.0) - Math.Pow(A, 2.0)) / (-2 * B * A)).ToRadians();
 	private double beta    = Math.Acos((Math.Pow(B, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)).ToRadians();
 	private double EPSILON = Math.Atan(E / D).ToRadians();
 	private double DELTA   = Math.Atan(D / E).ToRadians();
-	private double step    = Math.Sqrt(Math.Pow(L, 2.0) - Math.Pow(LACCENT, 2.0) * 2);
+	private double STEP    = Math.Sqrt(Math.Pow(L, 2.0) - Math.Pow(LACCENT, 2.0) * 2);
 	private bool set       = false;
 
 	public double coxaChange = 0.0;
@@ -45,14 +43,14 @@ public class SpiderLeg
 
 	public void run()
 	{
-		servos[SpiderJoint.COXA ].setAngle(alpha  = (Math.PI / 180) * Math.Abs(coxaChange - (.5 * A_MAX)));
-		double lAccent = LACCENT / Math.Cos(alpha);
+		servos[SpiderJoint.COXA ].setAngle(alpha  = Math.Abs(coxaChange - (.5 * A_MAX)));
+		double lAccent = LACCENT / Math.Cos(alpha.ToRadians());
 		double d = lAccent - F;
 		double h = 0;
-		if (set) h = (PAR_Y * -1) / Math.Pow(step, 2.0) + PAR_X;
+		if (set) h = B / Math.Pow((STEP / 2), 2.0) + B;
 		double b = Math.Sqrt(Math.Pow(d, 2.0) + Math.Pow(E - h, 2.0));
-		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos(Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - Math.Pow(A, 2.0)) / (-2 * b * A));
-		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos(Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C));
+		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos(Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - Math.Pow(A, 2.0)).ToRadians() / (-2 * b * A));
+		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos(Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)).ToRadians() / (-2 * A * C));
 		if (coxaChange >= 90) set = false;
 		if (coxaChange <=  0) set = true;
 	}
