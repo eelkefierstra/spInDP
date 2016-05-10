@@ -358,7 +358,7 @@ public class ServoConnection
 	{
 		// TODO: Figure out if this is a good implementation.
 		if (ids.length != positions.length) throw new IllegalArgumentException("Arrays must be same length");
-		byte[] parameters = new byte[3];
+		byte[] parameters = new byte[ids.length * 3];
 		for (int i = 0; i < ids.length * 3; i+=3)
 		{
 			parameters[i  ] = ids[i/3];
@@ -374,7 +374,6 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		//return true;
 	}
 	
 	/**

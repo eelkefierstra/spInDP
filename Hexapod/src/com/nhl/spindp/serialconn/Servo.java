@@ -123,34 +123,20 @@ public class Servo
 		return buffer;
 	}
 	
-	public static byte[] createSyncWriteDataInstruction(byte address, byte[] ... parameters)
+	public static byte[] createSyncWriteDataInstruction(byte address, byte[] parameters)
 	{
 		// TODO: Figure out if this is a good implementation.
-		int len = 0;
-		int parameterlen = parameters[0].length;
-		for (byte[] data : parameters)
-		{
-			if (data.length != parameterlen)
-			{
-				throw new IllegalArgumentException("Arguments must have same length, length is " + String.valueOf(data.length) + " must be: " + String.valueOf(parameterlen));
-			}
-			len += data.length;
-		}
-		
-		byte[] buffer = new byte[len + 4];
+		byte[] buffer = new byte[parameters.length + 7];
 		buffer[0] = buffer[1] = INSTRUCTION_PREFIX;
 		buffer[2] = BCASTID;
 		buffer[3] = INSTRUCTION_SYNC_WRITE;
 		buffer[4] = (byte)(buffer.length - 4);
 		buffer[5] = address;
 		int i = 6;
-		for (byte[] data : parameters)
+		for (byte data : parameters)
 		{
-			for (byte b : data)
-			{
-				buffer[i] = b;
-				i++;
-			}
+			buffer[i] = data;
+			i++;
 		}
 		buffer[buffer.length - 1] = computeChecksum(BCASTID, buffer[4], INSTRUCTION_SYNC_WRITE, address, Arrays.copyOfRange(buffer, 6, buffer.length));
 		return buffer;
