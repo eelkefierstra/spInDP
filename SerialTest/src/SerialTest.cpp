@@ -7,7 +7,11 @@
 //============================================================================
 
 #include <iostream>
+#include <fstream>
 #include <boost/asio.hpp>
+
+#define SERIAL_IN  "/tmp/S_IN"
+#define SERIAL_OUT "/tmp/S_OUT"
 
 using namespace std;
 
@@ -16,14 +20,28 @@ int main()
 	static boost::asio::io_service ios;
 	boost::asio::serial_port sp(ios, "/dev/serial0");
 	sp.set_option(boost::asio::serial_port::baud_rate(1000000));
-	// You can set other options using similar syntax
 	char tmp[64];
-	//auto length = sp.read_some(boost::asio::buffer(tmp));
-	// process the info received
-	std::string message = "hello, world";
-	sp.write_some(boost::asio::buffer(message));
-	//char* mess = { 255, 255, 1, 2, 1, 251 };
-	//sp.write_some(mess);
+
+	mknod(SERIAL_IN, S_IFIFO|0666, 0);
+	mknod(SERIAL_OUT, S_IFIFO|0666, 0);
+	ofstream s_out;
+	ifstream s_in;
+	string line;
+	bool done = false;
+
+	while (!done)
+	{
+		s_in.open(SERIAL_OUT);
+	    getline(s_in, line);
+		s_in.close();
+		cout << line << endl;
+		sp.write_some(boost::asio::buffer(line));
+		sp.read_some(boost::asio::buffer(tmp));
+		s_out.open(SERIAL_IN);
+		s_out << tmp;
+		s_out.close();
+	}
+
 	sp.close();
 	return 0;
 }

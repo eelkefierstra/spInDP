@@ -1,7 +1,5 @@
 package com.nhl.spindp;
 
-import jssc.SerialPortList;
-
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
 
@@ -21,21 +19,8 @@ public class Main
 		
 		SpiderBody body = new SpiderBody(1);
 		body.testCalcs();
-		
-		String[] portNames = SerialPortList.getPortNames();
-		if (portNames.length == 0)
-		{
-			System.out.println("No serial devices found");
-		}
-		else
-		{
-			for (String s : portNames)
-			{
-				System.out.println(s);
-			}
-		}
-		
-		conn = new ServoConnection("/dev/serial0");
+				
+		conn = new ServoConnection();
 		/*System.out.print("Sending reset... ");
 		conn.sendResetToAll();
 		System.out.println("Reset send.");

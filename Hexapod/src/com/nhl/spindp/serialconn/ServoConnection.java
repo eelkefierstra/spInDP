@@ -9,7 +9,6 @@ import java.util.Arrays;
 import javax.xml.bind.DatatypeConverter;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import jssc.*;
 
 /**
  * A class to facilitate the connection with the servo via a serial port
@@ -22,85 +21,26 @@ public class ServoConnection
 	private Servo[] servos;
 	private byte error;
 	private int signalPin;
-	private static final File pigpioFile = new File("/dev/pigpio");
+	private static final File pigpioFile    = new File("/dev/pigpio");
 	
 	/**
 	 * Creates a ServoConnection object
 	 */
 	public ServoConnection()
 	{
+		serialPort = new SerialPort();
 		servos = new Servo[18];
 		signalPin = 18;
 	}
 	
-	// /dev/ttyAMA0
-	/**
-	 * Creates a ServoConnection object and connects to the given serial port
-	 * @param device The name of the serial port to connect to
-	 * @throws SerialPortException
-	 */
-	public ServoConnection(String device) throws SerialPortException
-	{
-		this();
-		serialPort = new SerialPort(device);
-		serialPort.openPort();
-		serialPort.setParams(Servo.BAUDRATE_1, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
-		serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-		Runtime.getRuntime().addShutdownHook(new Thread()
-		{
-			@Override
-			public void run()
-			{
-				System.out.println("doei!");
-				try
-				{
-					serialPort.closePort();
-				}
-				catch (SerialPortException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Connects to the given serial port
-	 * @param device The name of the serial port to connect to
-	 * @throws SerialPortException
-	 */
-	public void connect(String device) throws SerialPortException
-	{
-		serialPort = new SerialPort(device);
-		serialPort.openPort();
-		serialPort.setParams(Servo.BAUDRATE_1, Servo.DATABITS, Servo.STOPBITS, Servo.PARITY);
-		serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-		servos = new Servo[18];
-		signalPin = 18;
-		Runtime.getRuntime().addShutdownHook(new Thread()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					serialPort.closePort();
-				}
-				catch (SerialPortException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
+	// /dev/ttyAMA0	
 	/**
 	 * Sends a reset instruction to all possible servos
 	 * @throws SerialPortException
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public void sendResetToAll() throws SerialPortException, InterruptedException, IOException
+	public void sendResetToAll() throws IOException
 	{
 		for (int i = 0; i < Servo.BCASTID; i++)
 		{
@@ -122,7 +62,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean writeData(byte id, byte address, byte data) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean writeData(byte id, byte address, byte data) throws IOException
 	{
 		byte[] buffer = Servo.createWriteDataInstruction(id, address, data);
 		setDirectionPin(true);
@@ -139,7 +79,7 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
-	public void sendAsyncInstruction() throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public void sendAsyncInstruction() throws IOException
 	{
 		setDirectionPin(true);
 		
@@ -156,7 +96,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean pingServo(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean pingServo(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createPingInstruction(id);
 		setDirectionPin(true);
@@ -182,7 +122,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean resetServo(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean resetServo(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createResetInstruction(id);
 		setDirectionPin(true);
@@ -206,7 +146,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean setServoId(byte id, byte newId) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean setServoId(byte id, byte newId) throws IOException
 	{
 		byte[] buffer = Servo.createWriteDataInstruction(id, Servo.ADDRESS_ID, newId);
 		setDirectionPin(true);
@@ -233,11 +173,10 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean moveServo(byte id, short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean moveServo(byte id, short position) throws IOException
 	{
 		byte[] buffer = Servo.createMoveServoInstruction(id, position);
-		System.out.print(DatatypeConverter.printHexBinary(buffer));
-		System.out.println();
+		System.out.println(DatatypeConverter.printHexBinary(buffer));
 		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
@@ -263,7 +202,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean moveServo(byte id, short position, short speed) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean moveServo(byte id, short position, short speed) throws IOException
 	{
 		byte[] buffer = Servo.createMoveServoInstruction(id, position, speed);
 		setDirectionPin(true);
@@ -290,7 +229,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean writeMoveServo(byte id, short position) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean writeMoveServo(byte id, short position) throws IOException
 	{
 		byte[] buffer = Servo.createWriteMoveServoInstruction(id, position);
 		setDirectionPin(true);
@@ -318,7 +257,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean writeMoveServo(byte id, short position, short speed) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean writeMoveServo(byte id, short position, short speed) throws IOException
 	{
 		byte[] buffer = Servo.createWriteMoveServoInstruction(id, position, speed);
 		setDirectionPin(true);
@@ -342,7 +281,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public void sendAction() throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public void sendAction() throws IOException
 	{
 		byte[] buffer = Servo.createActionInstruction();
 		setDirectionPin(true);
@@ -353,7 +292,7 @@ public class ServoConnection
 		setDirectionPin(false);
 	}
 	
-	public void moveMultiple(byte[] ids, short[] positions) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public void moveMultiple(byte[] ids, short[] positions) throws IOException
 	{
 		// TODO: Figure out if this is a good implementation.
 		if (ids.length != positions.length) throw new IllegalArgumentException("Arrays must be same length");
@@ -386,7 +325,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean setAngleLimit(byte id, short cwLimit, short ccwLimit) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean setAngleLimit(byte id, short cwLimit, short ccwLimit) throws IOException
 	{
 		byte[] buffer = Servo.createSetAngleLimitInstruction(id, cwLimit, ccwLimit);
 		setDirectionPin(true);
@@ -413,7 +352,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean setTorqueLimit(byte id, short limit) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean setTorqueLimit(byte id, short limit) throws IOException
 	{
 		byte[] buffer = Servo.createSetTorqueLimitInstruction(id, limit);
 		setDirectionPin(true);
@@ -440,7 +379,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public boolean setPunchLimit(byte id, short limit) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean setPunchLimit(byte id, short limit) throws IOException
 	{
 		byte[] buffer = Servo.createSetPunchLimit(id, limit);
 		setDirectionPin(true);
@@ -457,7 +396,7 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
-	public boolean setCompliance(byte id, byte cwMargin, byte ccwMargin, byte cwSlope, byte ccwSlope) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public boolean setCompliance(byte id, byte cwMargin, byte ccwMargin, byte cwSlope, byte ccwSlope) throws IOException
 	{
 		byte[] buffer = Servo.createSetComplianceInstruction(id, cwMargin, ccwMargin, cwSlope, ccwSlope);
 		setDirectionPin(true);
@@ -483,7 +422,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public int readTemperature(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public int readTemperature(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_TEMP);
 		setDirectionPin(true);
@@ -509,7 +448,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public int readPresentLocation(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public int readPresentLocation(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_POS);
 		setDirectionPin(true);
@@ -535,7 +474,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public int readVoltage(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public int readVoltage(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_VOLTAGE); 
 		setDirectionPin(true);
@@ -561,7 +500,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public int readSpeed(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public int readSpeed(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_SPEED); 
 		setDirectionPin(true);
@@ -587,7 +526,7 @@ public class ServoConnection
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public int readLoad(byte id) throws SerialPortException, SerialPortTimeoutException, InterruptedException, IOException
+	public int readLoad(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_LOAD);
 		setDirectionPin(true);
@@ -603,38 +542,23 @@ public class ServoConnection
 		}
 		return (res[0] << 8) | res[1];
 	}
-	
-	/**
-	 * Closes the connection with the serial port
-	 */
-	public void disconnect()
-	{
-		try
-		{
-			serialPort.closePort();
-		}
-		catch (SerialPortException e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
+		
 	/**
 	 * Reads the data from the serial port
 	 * @return The read data
 	 * @throws SerialPortException
 	 * @throws SerialPortTimeoutException
 	 */
-	private byte[] readData() throws SerialPortException, SerialPortTimeoutException
+	private byte[] readData() throws IOException
 	{
-		byte[] buffer = serialPort.readBytes(5, 100);
+		byte[] buffer = serialPort.readBytes(5);//, 100);
 		byte[] data = new byte[0];
 		//if prefix incorrect
 		if((buffer[0] != 0xFF) || (buffer[1] != 0xFF)) return data;
 		error = buffer[4];
 		if (buffer[3] != 0)
 		{
-			data = serialPort.readBytes(buffer[3] - 1, 10);
+			data = serialPort.readBytes(buffer[3] - 1);//, 10);
 			boolean checksum = Servo.compareChecksum(concat(buffer, data), data[data.length - 1]);
 			System.out.println("Recieved " + String.valueOf(buffer.length) + " bytes");
 			for (byte b : data)
@@ -701,22 +625,5 @@ public class ServoConnection
 			offset += array.length;
 		}
 		return result;
-	}
-	
-	//in case shutdown thread doesn't work use this
-	private class ShutdownHook extends Thread
-	{
-		ServoConnection conn;
-		
-		public ShutdownHook(ServoConnection conn)
-		{
-			this.conn = conn;
-		}
-		
-		@Override
-		public void run()
-		{
-			conn.disconnect();
-		}
 	}
 }
