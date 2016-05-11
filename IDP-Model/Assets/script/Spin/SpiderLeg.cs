@@ -4,6 +4,7 @@ using System.Collections;
 
 public class SpiderLeg
 {
+    public GameObject spider; 
 	private static readonly double A       =  80.0;
 	private static readonly double A_MAX   =  90.0;
 	private static readonly double A_RAD   = (A_MAX / 2.0).ToRadians();
@@ -22,7 +23,7 @@ public class SpiderLeg
 	private double DELTA   = Math.Atan(D / E).ToRadians();
 	private double STEP    = Math.Sqrt(Math.Pow(L, 2.0) - Math.Pow(LACCENT, 2.0) * 2);
 	private bool set       = false;
-
+    
 	public double coxaChange = 0.0;
 
 	SpiderJoint[] servos = new SpiderJoint[3];
@@ -53,7 +54,9 @@ public class SpiderLeg
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos(Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)).ToRadians() / (-2 * A * C));
 		if (coxaChange >= 90) set = false;
 		if (coxaChange <=  0) set = true;
-	}
+        spider.GetComponent<walk>().moveSelectedLegg(servos[SpiderJoint.COXA].getId(), (float)gamma, (float)alpha, (float)beta);
+
+    }
 
 	internal int[] getIds()
 	{
