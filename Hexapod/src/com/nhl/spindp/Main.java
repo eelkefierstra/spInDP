@@ -18,7 +18,7 @@ public class Main
 		instance = new Main();
 		
 		SpiderBody body = new SpiderBody(1);
-		body.testCalcs();
+		//body.testCalcs();
 				
 		conn = new ServoConnection();
 		/*System.out.print("Sending reset... ");
@@ -42,7 +42,11 @@ public class Main
 				conn.moveServo(i, (short)(j * 4));
 			}
 		}*/
-		body.testLegMovements();
+		//body.testLegMovements();
+		while (true)
+		{
+			conn.sendTestingInstruction();
+		}
 	}
 	
 	public void driveServo(int[] ids, int[] angles)

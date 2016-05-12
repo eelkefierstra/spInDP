@@ -29,6 +29,8 @@ int main()
 	string line;
 	bool done = false;
 
+	char test[] = { 0xFF, 0xFF, 0x01, 0x02, 0x00, 0xFC };
+
 	while (!done)
 	{
 		s_in.open(SERIAL_OUT);
@@ -36,10 +38,11 @@ int main()
 		s_in.close();
 		cout << line << endl;
 		sp.write_some(boost::asio::buffer(line));
-		sp.read_some(boost::asio::buffer(tmp));
-		s_out.open(SERIAL_IN);
-		s_out << tmp;
-		s_out.close();
+		////sp.read_some(boost::asio::buffer(tmp));
+		//s_out.open(SERIAL_IN);
+		////s_out << tmp;
+		//s_out << test;
+		//s_out.close();
 	}
 
 	sp.close();
