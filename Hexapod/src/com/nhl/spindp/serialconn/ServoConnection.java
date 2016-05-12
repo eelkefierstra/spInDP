@@ -38,6 +38,7 @@ public class ServoConnection
 		setDirectionPin(true);
 		serialPort.writeBytes(new byte[] { (byte)0xFF, (byte)0xFF, 0x01, 0x02, 0x01, (byte)0xFB });
 		setDirectionPin(false);
+		serialPort.readBytes();
 	}
 	
 	// /dev/ttyAMA0	

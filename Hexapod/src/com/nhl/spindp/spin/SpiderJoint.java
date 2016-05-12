@@ -63,9 +63,9 @@ public class SpiderJoint
 	void setAngle(double angle)
 	{
 		double val = Math.toDegrees(angle);
-		if (val >= 0 || val <= 0) 
+		/*if (val >= 0 || val <= 0) 
 		System.out.println(String.valueOf(servoId) + ':' + String.valueOf(val));
-		else System.err.println("we have isues");
+		else System.err.println("we have isues");*/
 		if (val > range ) val = range;
 		if (val < offset) val = offset;
 		this.angle = val;
@@ -75,5 +75,10 @@ public class SpiderJoint
 	{
 		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");
 		return (int)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-}
+	}
+	
+	public String toString()
+	{
+		return "Id: " + String.valueOf(servoId) + " angle: " + String.valueOf(angle) + " offset: " + String.valueOf(offset) + " range: " + String.valueOf(range);
+	}
 }

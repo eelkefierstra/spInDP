@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import javax.xml.bind.DatatypeConverter;
+
 public class SerialPort
 {
 	private static final File serialInFile  = new File("/tmp/S_IN");
@@ -13,7 +15,9 @@ public class SerialPort
 	
 	boolean writeBytes(byte[] message) throws IOException
 	{
+		System.out.print("Sent: ");
 		FileOutputStream writer = new FileOutputStream(serialOutFile);
+		System.out.println(DatatypeConverter.printHexBinary(message));
 		writer.write(message);
 		writer.flush();
 		writer.close();
@@ -22,10 +26,13 @@ public class SerialPort
 	
 	byte[] readBytes() throws IOException
 	{
+		System.out.print("Received: ");
 		byte[] buffer = new byte[64];
 		FileInputStream reader = new FileInputStream(serialInFile);
 		int read = reader.read(buffer);
+		System.out.println(DatatypeConverter.printHexBinary(buffer));
 		reader.close();
+		if (read < 0) throw new IOException("No reaction from servo!");
 		return Arrays.copyOf(buffer, read);
 	}
 	

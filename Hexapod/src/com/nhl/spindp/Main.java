@@ -1,5 +1,7 @@
 package com.nhl.spindp;
 
+import java.io.IOException;
+
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
 
@@ -42,11 +44,19 @@ public class Main
 				conn.moveServo(i, (short)(j * 4));
 			}
 		}*/
-		//body.testLegMovements();
-		while (true)
+		body.testLegMovements();
+		/*while (true)
 		{
-			conn.sendTestingInstruction();
-		}
+			try
+			{
+				conn.sendTestingInstruction();
+				Thread.sleep(1);
+			}
+			catch (IOException ex)
+			{
+				ex.printStackTrace();
+			}
+		}*/
 	}
 	
 	public void driveServo(int[] ids, int[] angles)
@@ -57,7 +67,9 @@ public class Main
 			for (int i = 0; i < ids.length; i++)
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
+				Thread.sleep(1);
 			}
+			Thread.sleep(1000);
 		}
 		catch (Exception ex)
 		{

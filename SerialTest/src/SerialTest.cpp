@@ -38,21 +38,21 @@ int main()
 	while (!done)
 	{
 		s_in.open(SERIAL_OUT);
-	    getline(s_in, line);
-		s_in.close();
-		cout << line << endl;
 		pigs.open(PIGPIO);
 		pigs << "w " << signalPin << " 1" << endl;
+	    getline(s_in, line);
+	    s_in.close();
 		sp.write_some(boost::asio::buffer(line));
 		pigs << "w " << signalPin << " 0" << endl;
 		pigs.flush();
 		pigs.close();
-		////sp.read_some(boost::asio::buffer(tmp));
-		//s_out.open(SERIAL_IN);
-		////s_out << tmp;
-		//s_out << test;
-		//s_out.flush();
-		//s_out.close();
+		cout << "sent: " << line << endl;
+		sp.read_some(boost::asio::buffer(tmp));
+		s_out.open(SERIAL_IN);
+		cout << "received: " << tmp << endl;
+		s_out << tmp;
+		s_out.flush();
+		s_out.close();
 	}
 
 	sp.close();
