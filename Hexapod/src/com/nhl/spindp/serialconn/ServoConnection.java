@@ -33,6 +33,13 @@ public class ServoConnection
 		signalPin = 18;
 	}
 	
+	public void sendTestingInstruction() throws IOException
+	{
+		setDirectionPin(true);
+		serialPort.writeBytes(new byte[] { (byte)0xFF, (byte)0xFF, 0x01, 0x02, 0x01, (byte)0xFB });
+		setDirectionPin(false);
+	}
+	
 	// /dev/ttyAMA0	
 	/**
 	 * Sends a reset instruction to all possible servos
@@ -551,14 +558,15 @@ public class ServoConnection
 	 */
 	private byte[] readData() throws IOException
 	{
-		byte[] buffer = serialPort.readBytes(5);//, 100);
+		byte[] buffer = serialPort.readBytes();//(5, 100);
 		byte[] data = new byte[0];
 		//if prefix incorrect
 		if((buffer[0] != 0xFF) || (buffer[1] != 0xFF)) return data;
 		error = buffer[4];
 		if (buffer[3] != 0)
 		{
-			data = serialPort.readBytes(buffer[3] - 1);//, 10);
+			//data = serialPort.readBytes(buffer[3] - 1);//, 10);
+			data = Arrays.copyOfRange(buffer, 5, buffer.length);
 			boolean checksum = Servo.compareChecksum(concat(buffer, data), data[data.length - 1]);
 			System.out.println("Recieved " + String.valueOf(buffer.length) + " bytes");
 			for (byte b : data)
@@ -603,11 +611,11 @@ public class ServoConnection
 	 * @throws IOException
 	 */
 	private void setDirectionPin(boolean val) throws IOException
-	{
+	{/*
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
 		writer.write(String.format("w %s %s\n", signalPin, val ? 1 : 0));
 		writer.flush();
-		writer.close();
+		writer.close();*/
 	}
 	
 	public static byte[] concat(byte[] first, byte[]... rest)
