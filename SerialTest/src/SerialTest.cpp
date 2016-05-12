@@ -12,6 +12,7 @@
 
 #define SERIAL_IN  "/tmp/S_IN"
 #define SERIAL_OUT "/tmp/S_OUT"
+#define PIGPIO     "/dev/pigpio"
 
 using namespace std;
 
@@ -22,8 +23,11 @@ int main()
 	sp.set_option(boost::asio::serial_port::baud_rate(1000000));
 	char tmp[64];
 
+	int signalPin = 18;
+
 	mknod(SERIAL_IN, S_IFIFO|0666, 0);
 	mknod(SERIAL_OUT, S_IFIFO|0666, 0);
+	ofstream pigs;
 	ofstream s_out;
 	ifstream s_in;
 	string line;
@@ -37,11 +41,17 @@ int main()
 	    getline(s_in, line);
 		s_in.close();
 		cout << line << endl;
+		pigs.open(PIGPIO);
+		pigs << "w " << signalPin << " 1" << endl;
 		sp.write_some(boost::asio::buffer(line));
+		pigs << "w " << signalPin << " 0" << endl;
+		pigs.flush();
+		pigs.close();
 		////sp.read_some(boost::asio::buffer(tmp));
 		//s_out.open(SERIAL_IN);
 		////s_out << tmp;
 		//s_out << test;
+		//s_out.flush();
 		//s_out.close();
 	}
 

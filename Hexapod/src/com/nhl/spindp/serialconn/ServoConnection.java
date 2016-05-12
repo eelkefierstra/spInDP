@@ -611,11 +611,11 @@ public class ServoConnection
 	 * @throws IOException
 	 */
 	private void setDirectionPin(boolean val) throws IOException
-	{
+	{/*
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
 		writer.write(String.format("w %s %s\n", signalPin, val ? 1 : 0));
 		writer.flush();
-		writer.close();
+		writer.close();*/
 	}
 	
 	public static byte[] concat(byte[] first, byte[]... rest)
