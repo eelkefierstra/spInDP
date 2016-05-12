@@ -1,6 +1,5 @@
-package recognition;
+package com.nhl.spindp.vision;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -9,15 +8,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
-
-import javafx.scene.image.Image;
 
 import java.awt.event.*;
 
@@ -25,7 +20,6 @@ import java.awt.event.*;
 public class ObjRecognitionController
 {
 	private int x = 0;
-	private int y = 0;
 	public String type = "balloon";
 	// a timer for acquiring the video stream
 	private ScheduledExecutorService timer;
@@ -36,7 +30,8 @@ public class ObjRecognitionController
 	
 
 	// closes the camera
-	public void WindowClosing(WindowEvent e){
+	public void WindowClosing(WindowEvent e)
+	{
 		startCamera();
 	}
 	
@@ -48,38 +43,32 @@ public class ObjRecognitionController
 		
 		start.startCamera();
 	}
-	//@FXML
+	
 	public void startCamera()
 	{		
-		if (!this.cameraActive)
+		if (!cameraActive)
 		{
 			// start the video capture
-			this.capture.open(0);
+			capture.open(0);
 			
 			// is the video stream available?
-			if (this.capture.isOpened())
+			if (capture.isOpened())
 			{
-				this.cameraActive = true;
+				cameraActive = true;
 				
 				// grab a frame every 33 ms (30 frames/sec)
-				Runnable frameGrabber = new Runnable() {
-					
+				Runnable frameGrabber = new Runnable()
+				{
 					@Override
 					public void run()
 					{
-						Image imageToShow = grabFrame();
-						//originalFrame.setImage(imageToShow);
+						grabFrame();
 					}
 				};
 				
 				
-				this.timer = Executors.newSingleThreadScheduledExecutor();
-				this.timer.scheduleAtFixedRate(frameGrabber, 0, 33, TimeUnit.MILLISECONDS);
-				
-				
-				
-				// update the button content
-				//this.cameraButton.setText("Stop Camera");
+				timer = Executors.newSingleThreadScheduledExecutor();
+				timer.scheduleAtFixedRate(frameGrabber, 0, 33, TimeUnit.MILLISECONDS);
 			}
 			else
 			{
@@ -90,12 +79,12 @@ public class ObjRecognitionController
 		else
 		{
 			// the camera is not active at this point
-			this.cameraActive = false;
+			cameraActive = false;
 
 			try
 			{
-				this.timer.shutdown();
-				this.timer.awaitTermination(33, TimeUnit.MILLISECONDS);
+				timer.shutdown();
+				timer.awaitTermination(33, TimeUnit.MILLISECONDS);
 			}
 			catch (InterruptedException e)
 			{
@@ -104,7 +93,7 @@ public class ObjRecognitionController
 			}
 			
 			// release the camera
-			this.capture.release();
+			capture.release();
 		}
 	}
 	
@@ -113,19 +102,18 @@ public class ObjRecognitionController
 	 * 
 	 * @return the {@link Image} to show
 	 */
-	private Image grabFrame()
+	private void grabFrame()
 	{
 		// init everything
-		Image imageToShow = null;
 		Mat frame = new Mat();
 		
 		// check if the capture is open
-		if (this.capture.isOpened())
+		if (capture.isOpened())
 		{
 			try
 			{
 				// read the current frame
-				this.capture.read(frame);
+				capture.read(frame);
 				
 				// if the frame is not empty, process it
 				if (!frame.empty())
@@ -195,10 +183,7 @@ public class ObjRecognitionController
 					}
 		
 					// find the tennis ball(s) contours and show them
-					frame = this.findAndDrawBalls(morphOutput, frame);
-					
-					// convert the Mat object (OpenCV) to Image (JavaFX)
-					imageToShow = mat2Image(frame);
+					frame = findAndDrawBalls(morphOutput, frame);
 				}
 				
 			}
@@ -209,8 +194,6 @@ public class ObjRecognitionController
 				e.printStackTrace();
 			}
 		}
-		
-		return imageToShow;
 	}
 	
 	/**
@@ -256,15 +239,4 @@ public class ObjRecognitionController
 		
 		return frame;
 	}
-
-	private Image mat2Image(Mat frame)
-	{
-		// create a temporary buffer
-		MatOfByte buffer = new MatOfByte();
-		// encode the frame in the buffer, according to the PNG format
-		Imgcodecs.imencode(".png", frame, buffer);
-		// build and return an Image created from the image encoded in the
-		// buffer
-		return new Image(new ByteArrayInputStream(buffer.toArray()));
-	}	
 }
