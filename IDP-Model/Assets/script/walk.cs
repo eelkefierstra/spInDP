@@ -32,14 +32,15 @@ public class walk : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {                
-       
+    {
+        moveSelectedLegg(1, 60, 70, 90);
     }
 
     public void moveSelectedLegg(int id, float c, float a, float b)
     {   
         // get right id     
         id = (int)(Mathf.Floor(id / 3) + 1);
+        id = 1;
         // get legg with id
         legg = allLeggs[id];
         // find gamma from legg
