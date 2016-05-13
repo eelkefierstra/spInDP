@@ -14,9 +14,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
-import java.awt.event.*;
-
-
 public class ObjectRecognition
 {
 	private Object locker;

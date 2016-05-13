@@ -1,7 +1,5 @@
 package com.nhl.spindp;
 
-import java.io.IOException;
-
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
 

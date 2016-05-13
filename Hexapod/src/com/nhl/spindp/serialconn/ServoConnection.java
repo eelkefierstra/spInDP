@@ -1,9 +1,6 @@
 package com.nhl.spindp.serialconn;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
@@ -20,8 +17,6 @@ public class ServoConnection
 	private SerialPort serialPort;
 	private Servo[] servos;
 	private byte error;
-	private int signalPin;
-	private static final File pigpioFile    = new File("/dev/pigpio");
 	
 	/**
 	 * Creates a ServoConnection object
@@ -30,7 +25,6 @@ public class ServoConnection
 	{
 		serialPort = new SerialPort();
 		servos = new Servo[18];
-		signalPin = 18;
 	}
 	
 	public void sendTestingInstruction() throws IOException
