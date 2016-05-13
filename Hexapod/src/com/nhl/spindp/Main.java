@@ -13,6 +13,12 @@ public class Main
 		return instance;
 	}
 	
+	
+	/**
+	 * Implementation of the main program.
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception
 	{
 		instance = new Main();
@@ -57,6 +63,11 @@ public class Main
 		}*/
 	}
 	
+	/**
+	 * Sends instructions to connection to drive servo's
+	 * @param ids The id's of the servo's to be moved
+	 * @param angles The angles to move to
+	 */
 	public void driveServo(int[] ids, int[] angles)
 	{
 		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");

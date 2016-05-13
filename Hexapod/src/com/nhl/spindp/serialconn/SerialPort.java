@@ -8,11 +8,23 @@ import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
 
+
+/**
+ * A class to facilitate the serialport connection
+ * @author dudeCake
+ *
+ */
 public class SerialPort
 {
 	private static final File serialInFile  = new File("/tmp/S_IN");
 	private static final File serialOutFile = new File("/tmp/S_OUT");
 	
+	/**
+	 * Writes message to serialOutFile
+	 * @param message The message to send
+	 * @return True when no Exceptions occur
+	 * @throws IOException
+	 */
 	boolean writeBytes(byte[] message) throws IOException
 	{
 		System.out.print("Sent: ");
@@ -24,6 +36,11 @@ public class SerialPort
 		return true;
 	}
 	
+	/**
+	 * Reads the data in serialInFile
+	 * @return The data from serialInFile
+	 * @throws IOException
+	 */
 	byte[] readBytes() throws IOException
 	{
 		System.out.print("Received: ");
@@ -36,6 +53,12 @@ public class SerialPort
 		return Arrays.copyOf(buffer, read);
 	}
 	
+	/**
+	 * Reads the serialInFile for an given length
+	 * @param len The length to read the serialInFile
+	 * @return A byte array with the data from serialInFile 
+	 * @throws IOException
+	 */
 	byte[] readBytes(int len) throws IOException
 	{
 		byte[] buffer = new byte[64];

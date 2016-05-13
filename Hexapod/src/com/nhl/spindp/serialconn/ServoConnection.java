@@ -2,9 +2,7 @@ package com.nhl.spindp.serialconn;
 
 import java.io.IOException;
 import java.util.Arrays;
-
 import javax.xml.bind.DatatypeConverter;
-
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -27,6 +25,10 @@ public class ServoConnection
 		servos = new Servo[18];
 	}
 	
+	/**
+	 * Sends tests instructions
+	 * @throws IOException
+	 */
 	public void sendTestingInstruction() throws IOException
 	{
 		setDirectionPin(true);
@@ -38,8 +40,6 @@ public class ServoConnection
 	// /dev/ttyAMA0	
 	/**
 	 * Sends a reset instruction to all possible servos
-	 * @throws SerialPortException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public void sendResetToAll() throws IOException
@@ -53,15 +53,13 @@ public class ServoConnection
 		}
 	}
 	
+
 	/**
-	 * Write arbitrary data to the servo
+	 * Write arbitrary data to the servo, and reads all the data it gets back from the servo
 	 * @param id The id of the receiving servo
 	 * @param address The address to be written
 	 * @param data The data to be written
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean writeData(byte id, byte address, byte data) throws IOException
@@ -81,21 +79,22 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	/**
+	 * Sets direction pin true and directly false
+	 * @throws IOException
+	 */
 	public void sendAsyncInstruction() throws IOException
 	{
 		setDirectionPin(true);
-		
 		setDirectionPin(false);
 		throw new NotImplementedException();
 	}
 	
+	
 	/**
-	 * Pings a servo
+	 * Pings a servo and reads the data it gets back from the servo
 	 * @param id The id to be pinged
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean pingServo(byte id) throws IOException
@@ -115,13 +114,11 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+
 	/**
-	 * Sends a reset instruction to a servo
+	 * Sends a reset instruction to a servo and reads the data it gets back from the servo
 	 * @param id The id of the servo to be reset
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean resetServo(byte id) throws IOException
@@ -139,13 +136,10 @@ public class ServoConnection
 	}
 	
 	/**
-	 * Sets the id of a servo
+	 * Sets the id of a servo  and reads the data it gets back from the servo
 	 * @param id The current id of the servo
 	 * @param newId The desired new id of the servo
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean setServoId(byte id, byte newId) throws IOException
@@ -165,14 +159,12 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+
 	/**
-	 * Moves a servo to the given position
+	 * Moves a servo to the given position and reads the data it gets back from the servo
 	 * @param id The id of the servo to be moved 
 	 * @param position The desired position
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean moveServo(byte id, short position) throws IOException
@@ -193,15 +185,13 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+
 	/**
 	 * Moves a servo to the given location with the given speed
 	 * @param id The id of the servo to be moved
 	 * @param position The desired position
 	 * @param speed The desired speed
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean moveServo(byte id, short position, short speed) throws IOException
@@ -221,14 +211,12 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+
 	/**
 	 * Writes a move instruction to the servo to be executed on a sendAction() call
 	 * @param id The id of the servo to be written
 	 * @param position the desired position
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean writeMoveServo(byte id, short position) throws IOException
@@ -254,9 +242,6 @@ public class ServoConnection
 	 * @param position the desired position
 	 * @param speed The desired speed
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean writeMoveServo(byte id, short position, short speed) throws IOException
@@ -275,12 +260,9 @@ public class ServoConnection
 		}
 		return res.length != 0;
 	}
-	
+
 	/**
 	 * Sends an instruction to execute the written instruction
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public void sendAction() throws IOException
@@ -294,6 +276,12 @@ public class ServoConnection
 		setDirectionPin(false);
 	}
 	
+	/**
+	 * Sends move instructions to multiple servo's
+	 * @param ids The ids of the servo's to be moved
+	 * @param positions The positions of the servo's to be moved
+	 * @throws IOException
+	 */
 	public void moveMultiple(byte[] ids, short[] positions) throws IOException
 	{
 		// TODO: Figure out if this is a good implementation.
@@ -316,15 +304,13 @@ public class ServoConnection
 		setDirectionPin(false);
 	}
 	
+
 	/**
 	 * Set the angle limit of the given servo
 	 * @param id The id of the servo to be limited
 	 * @param cwLimit The clockwise limit
 	 * @param ccwLimit The counterclockwise limit
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean setAngleLimit(byte id, short cwLimit, short ccwLimit) throws IOException
@@ -344,14 +330,12 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	
 	/**
 	 * Sets the torque limit of the given servo
 	 * @param id The id of the servo to be limited
-	 * @param limit the desired limit
+	 * @param limit The desired limit
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean setTorqueLimit(byte id, short limit) throws IOException
@@ -371,14 +355,12 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+
 	/**
 	 * Sets the punch limit of the given servo
 	 * @param id The id of the servo to be limited
 	 * @param limit The desired limit
 	 * @return Whether the servo returns a status packet
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public boolean setPunchLimit(byte id, short limit) throws IOException
@@ -398,6 +380,16 @@ public class ServoConnection
 		return res.length != 0;
 	}
 	
+	/**
+	 * ***********************************Geen idee wat dit is*******************
+	 * @param id
+	 * @param cwMargin
+	 * @param ccwMargin
+	 * @param cwSlope
+	 * @param ccwSlope
+	 * @return
+	 * @throws IOException
+	 */
 	public boolean setCompliance(byte id, byte cwMargin, byte ccwMargin, byte cwSlope, byte ccwSlope) throws IOException
 	{
 		byte[] buffer = Servo.createSetComplianceInstruction(id, cwMargin, ccwMargin, cwSlope, ccwSlope);
@@ -419,9 +411,6 @@ public class ServoConnection
 	 * Reads the temperature of the given servo
 	 * @param id The id of the servo to be read
 	 * @return the (approximate) temperature
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public int readTemperature(byte id) throws IOException
@@ -445,9 +434,6 @@ public class ServoConnection
 	 * Reads the current location of the given servo
 	 * @param id The id of the servo to be read
 	 * @return the current location of the servo
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public int readPresentLocation(byte id) throws IOException
@@ -467,13 +453,11 @@ public class ServoConnection
 		return (res[0] << 8) | res[1];
 	}
 	
+	
 	/**
 	 * Reads the voltage of the given servo
 	 * @param id The id of the servo to be read
 	 * @return The current voltage of the servo
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public int readVoltage(byte id) throws IOException
@@ -493,13 +477,11 @@ public class ServoConnection
 		return Byte.toUnsignedInt(res[0]);
 	}
 	
+
 	/**
 	 * Reads the speed of the given servo
 	 * @param id The id of the servo to be read
 	 * @return The current speed of the servo
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public int readSpeed(byte id) throws IOException
@@ -519,13 +501,11 @@ public class ServoConnection
 		return (res[0] << 8) | res[1];
 	}
 	
+	 
 	/**
 	 * Reads the load on the given servo
 	 * @param id The id of the servo to be read
 	 * @return The load on the servo
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
-	 * @throws InterruptedException
 	 * @throws IOException
 	 */
 	public int readLoad(byte id) throws IOException
@@ -545,11 +525,11 @@ public class ServoConnection
 		return (res[0] << 8) | res[1];
 	}
 		
+	
 	/**
 	 * Reads the data from the serial port
 	 * @return The read data
-	 * @throws SerialPortException
-	 * @throws SerialPortTimeoutException
+	 * @throws IOException
 	 */
 	private byte[] readData() throws IOException
 	{
@@ -593,6 +573,7 @@ public class ServoConnection
 | |              | || |              | || |              | || |              | || |              | |
 | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
+				 * This is an error warning!
 				 */
 			}
 			System.out.println();
@@ -605,6 +586,7 @@ public class ServoConnection
 	 * @param val The value to set the pin to
 	 * @throws IOException
 	 */
+	//TODO: vragen of dit de bedoeling is
 	private void setDirectionPin(boolean val) throws IOException
 	{/*
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
@@ -613,6 +595,13 @@ public class ServoConnection
 		writer.close();*/
 	}
 	
+	/**
+	 * Combines a list of arrays into one byte array
+	 * @param first the first array
+	 * @param rest the rest of the array's
+	 * @return
+	 */
+	// TODO: Vragen wat byte[]... betekend  
 	public static byte[] concat(byte[] first, byte[]... rest)
 	{
 		int totalLength = first.length;
