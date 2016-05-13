@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost/asio.hpp>
+#include "blocking_header.h"
 
 #define SERIAL_IN  "/tmp/S_IN"
 #define SERIAL_OUT "/tmp/S_OUT"
@@ -19,9 +20,11 @@ using namespace std;
 int main()
 {
 	static boost::asio::io_service ios;
-	boost::asio::serial_port sp(ios, "/dev/serial0");
+	boost::asio::serial_port sp(ios, "/dev/pts/1");
 	sp.set_option(boost::asio::serial_port::baud_rate(1000000));
-	char tmp[64];
+	blocking_reader reader(sp, 3);
+	string res;
+	char c;
 
 	int signalPin = 18;
 
@@ -33,7 +36,7 @@ int main()
 	string line;
 	bool done = false;
 
-	char test[] = { 0xFF, 0xFF, 0x01, 0x02, 0x00, 0xFC };
+	//char test[] = { 0xFF, 0xFF, 0x01, 0x02, 0x00, 0xFC };
 
 	while (!done)
 	{
@@ -47,10 +50,14 @@ int main()
 		pigs.flush();
 		pigs.close();
 		cout << "sent: " << line << endl;
-		sp.read_some(boost::asio::buffer(tmp));
+		while(reader.read_char(c) && c != '\n')
+		{
+			res += c;
+		}
+		//sp.read_some(boost::asio::buffer(tmp));
 		s_out.open(SERIAL_IN);
-		cout << "received: " << tmp << endl;
-		s_out << tmp;
+		cout << "received: " << res << endl;
+		s_out << res;
 		s_out.flush();
 		s_out.close();
 	}
