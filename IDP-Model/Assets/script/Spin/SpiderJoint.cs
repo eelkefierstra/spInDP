@@ -1,8 +1,12 @@
 ﻿using System;
+using UnityEngine;
 
 public class SpiderJoint
 {
-	public static readonly int COXA  = 0;
+    private static readonly double MIN_ANGLE =   0.0;
+    private static readonly double MAC_ANGLE = 300.0;
+
+    public static readonly int COXA  = 0;
 	public static readonly int FEMUR = 1;
 	public static readonly int TIBIA = 2;
 
@@ -76,6 +80,13 @@ public class SpiderJoint
 
 	internal void setAngle(double angle)
 	{
-		this.angle = angle;
+        if (Double.IsNaN(angle)) //throw new ArgumentException("Argument must not be NaN", "angle");
+        {
+            Debug.LogException(new ArgumentException("Argument must not be NaN", "angle"));
+        }
+        double val = angle.ToDegrees();
+        if (val > range ) val = range;
+        if (val < offset) val = offset;
+		this.angle = val;
 	}
 }
