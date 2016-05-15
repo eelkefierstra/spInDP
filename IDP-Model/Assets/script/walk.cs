@@ -28,13 +28,17 @@ public class walk : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        body.run();
         KeyValuePair<int, double[]>[] angles = body.getLegAngles();
         for (int i = 0; i < angles.Length; i++)
         {
             moveSelectedLeg(angles[i].Key, angles[i].Value[0], angles[i].Value[1], angles[i].Value[2]);
         }
         //moveSelectedLeg(1, 60, 70, 90);
+    }
+
+    void FixedUpdate()
+    {
+        body.run();
     }
 
     public void moveSelectedLeg(int id, double c, double a, double b)
@@ -48,9 +52,10 @@ public class walk : MonoBehaviour
         GameObject gamma = leg.transform.Find("poot1.1_pivot").gameObject;
         // set gamma
 
-        gamma.transform.rotation = Quaternion.AngleAxis((float)c, Vector3.up);
+        gamma.transform.localRotation = Quaternion.AngleAxis((float)c, Vector3.up);
         // find alpha from leg
-        GameObject alpha = leg.transform.Find("poot1.1_pivot/poot1.2_pivot").gameObject;
+        GameObject alpha = gamma.transform.Find("poot1.2_pivot").gameObject;
+        //GameObject alpha = leg.transform.Find("poot1.1_pivot/poot1.2_pivot").gameObject;
         // set alpha
         alpha.transform.localRotation = Quaternion.AngleAxis((float)a, Vector3.left);
         // find beta from leg

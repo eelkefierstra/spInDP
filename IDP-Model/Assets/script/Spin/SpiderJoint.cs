@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 public class SpiderJoint
 {
@@ -82,7 +81,8 @@ public class SpiderJoint
 	{
         if (Double.IsNaN(angle)) //throw new ArgumentException("Argument must not be NaN", "angle");
         {
-            Debug.LogException(new ArgumentException("Argument must not be NaN", "angle"));
+            //UnityEngine.Debug.LogException(new ArgumentException("Argument must not be NaN", "angle"));
+            angle = 150.0;
         }
         double val = angle.ToDegrees();
         if (val > range ) val = range;
