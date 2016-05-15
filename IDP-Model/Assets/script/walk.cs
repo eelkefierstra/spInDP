@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class walk : MonoBehaviour
 {
-    List<GameObject> allLegs = new List<GameObject>();
     SpiderBody body;
+    GameObject[] allLegs;
     public GameObject RV;
     public GameObject RM;
     public GameObject RA;
@@ -19,14 +20,9 @@ public class walk : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        // add all legs to list
-        allLegs.Add(RV);
-        allLegs.Add(RM);
-        allLegs.Add(RA);
-        allLegs.Add(LV);
-        allLegs.Add(LM);
-        allLegs.Add(LA);
         body = new SpiderBody();
+        // add all legs to list
+        allLegs = new GameObject[] { RV, RM, RA, LV, LM, LA };
     }
 
     // Update is called once per frame
@@ -44,8 +40,8 @@ public class walk : MonoBehaviour
     public void moveSelectedLeg(int id, double c, double a, double b)
     {
         // get right id     
-        int legId = (int)(Mathf.Floor(id / 3) + 1);
-        legId = 1;
+        int legId = (int)(Math.Floor(id / 3.0));
+        //legId = 1;
         // get leg with id
         GameObject leg = allLegs[legId];
         // find gamma from leg

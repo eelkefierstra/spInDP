@@ -62,12 +62,13 @@ public class SerialPort
 	byte[] readBytes(int len) throws IOException
 	{
 		byte[] buffer = new byte[64];
+		Arrays.fill(buffer, (byte)-1);
 		int temp = 0;
 		FileInputStream reader = new FileInputStream(serialInFile);
 		int i = 0;
 		for (; i < len; i++)
 		{
-			temp = (byte)reader.read();
+			temp = reader.read();
 			if (temp == -1) break;
 			buffer[i] = (byte)temp;
 		}

@@ -63,7 +63,7 @@ public class SpiderJoint
 	void setAngle(double angle)
 	{
 		double val = Math.toDegrees(angle);
-		if (Double.isNaN(val) throw new IllegalArgumentException("angle must not be NaN");
+		if (Double.isNaN(val)) throw new IllegalArgumentException("angle must not be NaN");
 		if (val > range ) val = range;
 		if (val < offset) val = offset;
 		this.angle = val;

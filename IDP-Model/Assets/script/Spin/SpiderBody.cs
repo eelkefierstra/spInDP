@@ -11,7 +11,7 @@ public class SpiderBody
 		legs = new SpiderLeg[6];
 		for (int i = 0; i < legs.Length; i++)
 		{
-			legs[i] = new SpiderLeg(i+1);
+			legs[i] = new SpiderLeg((i * 3) + 1);
 		}
 		//body.transform.childCount
 	}
