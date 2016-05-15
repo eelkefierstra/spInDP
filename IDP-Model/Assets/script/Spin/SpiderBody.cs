@@ -21,10 +21,10 @@ public class SpiderBody
 	{
 		foreach (SpiderLeg leg in legs)
 		{
-			if ( flip) leg.coxaChange += 1;
-			if (!flip) leg.coxaChange -= 1;
+			if (!flip) leg.coxaChange += 1;
+			if ( flip) leg.coxaChange -= 1;
 			if (leg.coxaChange > 90) flip = true;
-			if (leg.coxaChange <= 0) flip = true;
+			if (leg.coxaChange <= 0) flip = false;
 			leg.run();
 		}
 	}
@@ -48,8 +48,8 @@ public class SpiderBody
 		{
 			foreach (SpiderLeg leg in legs)
 			{
-				if ( flip) leg.coxaChange += 1;
-				if (!flip) leg.coxaChange -= 1;
+				if (!flip) leg.coxaChange += 1;
+				if ( flip) leg.coxaChange -= 1;
 				if (leg.coxaChange > 90) flip = true;
 				if (leg.coxaChange <= 0) flip = true;
 				leg.run();

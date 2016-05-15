@@ -45,8 +45,8 @@ class SpiderLeg implements Runnable
 		if (coxaChange < 45) step *= -1;
 		if (set ) h = (PAR_Y * -1) * Math.pow(step, 2.0) + PAR_X;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E - h, 2.0));
-		//double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
-		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
+		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
+		servos[SpiderJoint.FEMUR].setAngle(gamma = test4);//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
 		if (coxaChange >= 90) set = false;
 		if (coxaChange <= 0) set = true;
