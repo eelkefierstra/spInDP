@@ -41,6 +41,15 @@ public class SpiderBody
         return res;
     }
 
+    public void testIdleStance(int coxaChange)
+    {
+        foreach (SpiderLeg leg in legs)
+        {
+            leg.coxaChange = coxaChange;
+            leg.run();
+        }
+    }
+
 	public void testLegMovements()
 	{
 		bool flip = false;

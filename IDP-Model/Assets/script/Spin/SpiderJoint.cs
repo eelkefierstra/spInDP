@@ -13,35 +13,23 @@ public class SpiderJoint
 
 	private int servoId;
 	private double angle;
-	private int offset;
-	private int range;
+    private readonly int offset;
+    private readonly int lowerRange;
+	private readonly int upperRange;
 
-	internal SpiderJoint()
-	{
-		this.servoId = 0;
-		this.angle   = 0.0;
-		this.offset  = 0;
-		this.range   = 300;
-	}
+	internal SpiderJoint(int servoId) : this(servoId, 0.0) { }
 
-	internal SpiderJoint(int servoId) : this()
-	{
-		this.servoId = servoId;
-	}
+    internal SpiderJoint(int servoId, double angle) : this(servoId, angle, 0) { }
 
-	internal SpiderJoint(int servoId, double angle) : this(servoId)
-	{
-		this.angle = angle;
-	}
+    internal SpiderJoint(int servoId, double angle, int offset) : this(servoId, angle, offset, 0, 300) { }
 
-	internal SpiderJoint(int servoId, double angle, int offset) : this(servoId, angle)
+	internal SpiderJoint(int servoId, double angle, int offset, int lowerRange, int upperRange)
 	{
-		this.offset = offset;
-	}
-
-	internal SpiderJoint(int servoId, double angle, int offset, int range) : this (servoId, angle, offset)
-	{
-		this.range = range;
+        this.servoId    = servoId;
+        this.angle      = angle;
+        this.offset     = offset;
+        this.lowerRange = lowerRange;
+		this.upperRange = upperRange;
 	}
 
 	public int getId()
@@ -67,9 +55,9 @@ public class SpiderJoint
         }
         else
         {
-            double val = angle.ToDegrees();
-            if (val > range) val = range;
-            if (val < offset) val = offset;
+            double val = angle.ToDegrees() + offset;
+            if (val > upperRange) val = upperRange;
+            if (val < lowerRange) val = lowerRange;
             this.angle = val;
         }
 	}

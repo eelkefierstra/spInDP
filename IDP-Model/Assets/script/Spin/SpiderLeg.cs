@@ -31,7 +31,7 @@ public class SpiderLeg
 	internal SpiderLeg(int startServoId)
 	{
         coxaChange += (startServoId * 5);
-		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha);
+		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
 	}
@@ -40,8 +40,8 @@ public class SpiderLeg
 	{
         //lock (locker)
         {
-            servos[SpiderJoint.COXA].setAngle(alpha = Math.Abs(coxaChange - (.5 * A_MAX)).ToRadians());
-            double lAccent = LACCENT / Math.Cos(alpha);
+            servos[SpiderJoint.COXA].setAngle(alpha = coxaChange.ToRadians());
+            double lAccent = LACCENT / Math.Cos(alpha = Math.Abs(coxaChange - (.5 * A_MAX)).ToRadians());
             double d = lAccent - F;
             double h = 0;
             step = Math.Abs(Math.Sqrt(Math.Pow(lAccent, 2.0) - Math.Pow(LACCENT, 2.0)));

@@ -29,7 +29,7 @@ class SpiderLeg implements Runnable
 		
 	SpiderLeg(int startServoId)
 	{
-		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha);
+		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
 	}
