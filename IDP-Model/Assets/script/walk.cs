@@ -50,8 +50,7 @@ public class walk : MonoBehaviour
         // find gamma from leg
         GameObject gamma = allLegs[legId].transform.Find("poot1.1_pivot").gameObject;
         // set gamma
-
-        gamma.transform.localRotation = Quaternion.AngleAxis((float)c, Vector3.up);
+        gamma.transform.localRotation = Quaternion.AngleAxis((float)c, (legId >= 3) ? Vector3.down : Vector3.up);
         // find alpha from leg
         GameObject alpha = gamma.transform.Find("poot1.2_pivot").gameObject;
         //GameObject alpha = leg.transform.Find("poot1.1_pivot/poot1.2_pivot").gameObject;

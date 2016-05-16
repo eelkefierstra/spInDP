@@ -27,22 +27,19 @@ public class SpiderJoint
 	SpiderJoint(int servoId, double angle)
 	{
 		this(servoId);
-		this.angle   = angle;
-		this.offset  = 0;
-		this.range   = 300;
+		this.angle = angle;
 	}
 	
 	SpiderJoint(int servoId, double angle, int offset)
 	{
 		this(servoId, angle);
-		this.offset  = offset;
-		this.range   = 300;
+		this.offset = offset;
 	}
 	
 	SpiderJoint(int servoId, double angle, int offset, int range)
 	{
 		this(servoId, angle, offset);
-		this.range   = range;
+		this.range = range;
 	}
 	
 	public int getId()
