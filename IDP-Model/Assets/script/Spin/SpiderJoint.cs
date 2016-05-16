@@ -65,10 +65,13 @@ public class SpiderJoint
         {
             UnityEngine.Debug.LogException(new ArgumentException("Argument must not be NaN", "angle"));
         }
-        double val = angle.ToDegrees();
-        if (val > range ) val = range;
-        if (val < offset) val = offset;
-		this.angle = val;
+        else
+        {
+            double val = angle.ToDegrees();
+            if (val > range) val = range;
+            if (val < offset) val = offset;
+            this.angle = val;
+        }
 	}
 
     private int mapPosition(double x, double in_min, double in_max, double out_min, double out_max)

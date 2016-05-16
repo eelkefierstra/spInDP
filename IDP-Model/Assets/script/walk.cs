@@ -4,41 +4,31 @@ using System.Collections.Generic;
 
 public class walk : MonoBehaviour
 {
-    SpiderBody body;
-    GameObject[] allLegs;
-    public GameObject RV;
-    public GameObject RM;
-    public GameObject RA;
-    public GameObject LV;
-    public GameObject LM;
-    public GameObject LA;
-    public float rotateSpeed = 10f;
-    public float c;
-    public float a;
-    public float b;
+    private SpiderBody body;
+    public GameObject[] allLegs;
+    //public float rotateSpeed = 10f;
 
     // Use this for initialization
     void Start()
     {
         body = new SpiderBody();
-        // add all legs to list
-        allLegs = new GameObject[] { RV, RM, RA, LV, LM, LA };
     }
 
     // Update is called once per frame
     void Update()
     {
-        KeyValuePair<int, double[]>[] angles = body.getLegAngles();
-        for (int i = 0; i < angles.Length; i++)
-        {
-            moveSelectedLeg(angles[i].Key, angles[i].Value[0], angles[i].Value[1], angles[i].Value[2]);
-        }
+        
         //moveSelectedLeg(1, 60, 70, 90);
     }
 
     void FixedUpdate()
     {
         body.run();
+        KeyValuePair<int, double[]>[] angles = body.getLegAngles();
+        for (int i = 0; i < angles.Length; i++)
+        {
+            moveSelectedLeg(angles[i].Key, angles[i].Value[0], angles[i].Value[1], angles[i].Value[2]);
+        }
     }
 
     public void moveSelectedLeg(int id, double c, double a, double b)

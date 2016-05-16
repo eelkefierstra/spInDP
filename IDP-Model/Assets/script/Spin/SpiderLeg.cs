@@ -15,14 +15,14 @@ public class SpiderLeg
     private static double PAR_X            = 25;
     private static double PAR_Y            = PAR_X / Math.Pow(Math.Sqrt(Math.Pow(L, 2.0) - Math.Pow(LACCENT, 2.0)) * 2, 2.0);
 
-    private Object locker  = new Object();
+    //private Object locker  = new Object();
     private double alpha   = Math.Acos((Math.Pow(A, 2) - Math.Pow(C, 2) - Math.Pow(B, 2)) / (-2 * C * B)).ToRadians();
 	private double gamma   = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(B, 2.0) - Math.Pow(A, 2.0)) / (-2 * B * A)).ToRadians();
 	private double beta    = Math.Acos((Math.Pow(B, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)).ToRadians();
 	private double EPSILON = Math.Atan(E / D).ToRadians();
 	private double DELTA   = Math.Atan(D / E).ToRadians();
 	private double step    = 0.0;
-	private bool set       = false;
+	public bool set       = false;
     
 	public double coxaChange = 0.0;
 
@@ -30,7 +30,7 @@ public class SpiderLeg
 
 	internal SpiderLeg(int startServoId)
 	{
-
+        coxaChange += (startServoId * 5);
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
@@ -38,7 +38,7 @@ public class SpiderLeg
 
 	public void run()
 	{
-        lock (locker)
+        //lock (locker)
         {
             servos[SpiderJoint.COXA].setAngle(alpha = Math.Abs(coxaChange - (.5 * A_MAX)).ToRadians());
             double lAccent = LACCENT / Math.Cos(alpha);
@@ -69,13 +69,13 @@ public class SpiderLeg
 
     internal double[] getLegAngles()
     {
-        lock (locker)
+        //lock (locker)
             return new double[] { servos[0].getAngle(), servos[1].getAngle(), servos[2].getAngle() };
     }
 
 	internal int[] getAngles()
 	{
-        lock (locker)
+        //lock (locker)
             return new int[] { servos[0].getServoAngle(), servos[1].getServoAngle(), servos[2].getServoAngle() };
 	}
 
