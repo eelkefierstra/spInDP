@@ -71,18 +71,19 @@ public class Main
 	public void driveServo(int[] ids, int[] angles)
 	{
 		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");
-		try
+		for (int i = 0; i < ids.length; i++)
 		{
-			for (int i = 0; i < ids.length; i++)
+			try
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
-				Thread.sleep(1);
+				//System.out.println(conn.readPresentLocation((byte)i));
+				Thread.sleep(5);
 			}
-			Thread.sleep(1000);
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
 		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
+			//Thread.sleep(1000);
 	}
 }

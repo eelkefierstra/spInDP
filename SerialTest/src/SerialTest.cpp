@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <thread>
+#include <chrono>
 #include <boost/asio.hpp>
 #include "blocking_header.h"
 
@@ -20,7 +22,7 @@ using namespace std;
 int main()
 {
 	static boost::asio::io_service ios;
-	boost::asio::serial_port sp(ios, "/dev/pts/1");
+	boost::asio::serial_port sp(ios, "/dev/serial0");
 	sp.set_option(boost::asio::serial_port::baud_rate(1000000));
 	blocking_reader reader(sp, 3);
 	string res;
@@ -46,6 +48,7 @@ int main()
 	    getline(s_in, line);
 	    s_in.close();
 		sp.write_some(boost::asio::buffer(line));
+		this_thread::sleep_for(chrono::microseconds(2));
 		pigs << "w " << signalPin << " 0" << endl;
 		pigs.flush();
 		pigs.close();
@@ -60,6 +63,7 @@ int main()
 		s_out << res;
 		s_out.flush();
 		s_out.close();
+		res = "";
 	}
 
 	sp.close();

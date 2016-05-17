@@ -34,7 +34,7 @@ public class ServoConnection
 		setDirectionPin(true);
 		serialPort.writeBytes(new byte[] { (byte)0xFF, (byte)0xFF, 0x01, 0x02, 0x01, (byte)0xFB });
 		setDirectionPin(false);
-		serialPort.readBytes();
+		serialPort.readBytes(1);
 	}
 	
 	// /dev/ttyAMA0	
@@ -71,7 +71,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -106,7 +106,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -127,7 +127,7 @@ public class ServoConnection
 		setDirectionPin(true);
 		serialPort.writeBytes(buffer);
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -151,7 +151,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -166,18 +166,20 @@ public class ServoConnection
 	 * @param position The desired position
 	 * @return Whether the servo returns a status packet
 	 * @throws IOException
+	 * @throws InterruptedException 
 	 */
-	public boolean moveServo(byte id, short position) throws IOException
+	public boolean moveServo(byte id, short position) throws IOException, InterruptedException
 	{
 		byte[] buffer = Servo.createMoveServoInstruction(id, position);
-		System.out.println(DatatypeConverter.printHexBinary(buffer));
+		//System.out.println(DatatypeConverter.printHexBinary(buffer));
 		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		//Thread.sleep(1000);
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -203,7 +205,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -228,7 +230,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -253,7 +255,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -322,7 +324,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -347,7 +349,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -372,7 +374,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -399,7 +401,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -422,7 +424,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -445,7 +447,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -469,7 +471,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -493,7 +495,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -517,7 +519,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		byte[] res = readData();
+		byte[] res = readData(id);
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -531,9 +533,9 @@ public class ServoConnection
 	 * @return The read data
 	 * @throws IOException
 	 */
-	private byte[] readData() throws IOException
+	private byte[] readData(int id) throws IOException
 	{
-		byte[] buffer = serialPort.readBytes();//(5, 100);
+		byte[] buffer = serialPort.readBytes(id);//(5, 100);
 		byte[] data = new byte[0];
 		//if prefix incorrect
 		if((buffer[0] != 0xFF) || (buffer[1] != 0xFF)) return data;
@@ -543,7 +545,7 @@ public class ServoConnection
 			//data = serialPort.readBytes(buffer[3] - 1);//, 10);
 			data = Arrays.copyOfRange(buffer, 5, buffer.length);
 			boolean checksum = Servo.compareChecksum(concat(buffer, data), data[data.length - 1]);
-			System.out.println("Recieved " + String.valueOf(buffer.length) + " bytes");
+			//System.out.println("Recieved " + String.valueOf(buffer.length) + " bytes");
 			for (byte b : data)
 			{
 				System.out.print(String.valueOf(b) + ' ');
@@ -576,7 +578,7 @@ public class ServoConnection
 				 * This is an error warning!
 				 */
 			}
-			System.out.println();
+			//System.out.println();
 		}
 		return data;
 	}

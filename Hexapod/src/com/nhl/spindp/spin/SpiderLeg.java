@@ -30,16 +30,17 @@ class SpiderLeg implements Runnable
 	SpiderLeg(int startServoId)
 	{
 		if (startServoId % 2 == 0) coxaChange = 90.0;
-		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
-		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 75);
-		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 175);
+		startServoId += 2;
+		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId--, alpha, 100);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId--, gamma, 75);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId--, beta, 175);
 	}
 	
 	@Override
 	public void run()
 	{
-		servos[SpiderJoint.COXA ].setAngle(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
-		double lAccent = LACCENT / Math.cos(alpha);
+		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
+		double lAccent = LACCENT / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
 		double d = lAccent - F;
 		double h = 0;
 		step = Math.abs(Math.sqrt(Math.pow(lAccent, 2.0) - Math.pow(LACCENT, 2.0)));
