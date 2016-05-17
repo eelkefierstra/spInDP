@@ -48,12 +48,12 @@ public class SpiderJoint
 	
 	public int getServoAngle()
 	{
-		return mapPosition(angle, MIN_ANGLE, MAX_ANGLE, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE);
+		return mapPosition(angle + offset, MIN_ANGLE, MAX_ANGLE, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE);
 	}
 	
 	public double getAngle()
 	{
-		return angle;
+		return angle + offset;
 	}
 	
 	void setAngle(double angle)
@@ -62,8 +62,16 @@ public class SpiderJoint
 		if (Double.isNaN(val)) throw new IllegalArgumentException("angle must not be NaN");
 		else
 		{
-			if (val > upperRange) val = upperRange;
-			if (val < lowerRange) val = lowerRange;
+			if (val > upperRange)
+            {
+                System.err.println("val of servo " + servoId + " clamped");
+                val = upperRange;
+            }
+            if (val < lowerRange)
+            {
+            	System.err.println("val of servo " + servoId + " clamped");
+                val = lowerRange;
+            }
 			this.angle = val;
 		}
 	}

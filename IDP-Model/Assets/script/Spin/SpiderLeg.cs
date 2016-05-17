@@ -30,7 +30,7 @@ public class SpiderLeg
 
 	internal SpiderLeg(int startServoId)
 	{
-        if (startServoId % 2 == 0) coxaChange = 45.0;
+        if (startServoId % 2 == 0) coxaChange = 90.0;
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 75);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 175);

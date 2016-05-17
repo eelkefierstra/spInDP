@@ -21,7 +21,7 @@ class SpiderLeg implements Runnable
 	private double EPSILON = Math.toRadians(Math.atan(E / D));
 	private double DELTA   = Math.toRadians(Math.atan(D / E));
 	private double step    = 0.0;
-	private boolean set    = false;
+	public boolean set     = false;
 	
 	public double coxaChange = 0.0;
 	
@@ -29,9 +29,10 @@ class SpiderLeg implements Runnable
 		
 	SpiderLeg(int startServoId)
 	{
+		if (startServoId % 2 == 0) coxaChange = 90.0;
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
-		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma);
-		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 75);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 175);
 	}
 	
 	@Override
@@ -43,13 +44,13 @@ class SpiderLeg implements Runnable
 		double h = 0;
 		step = Math.abs(Math.sqrt(Math.pow(lAccent, 2.0) - Math.pow(LACCENT, 2.0)));
 		if (coxaChange < 45) step *= -1;
-		if (set ) h = (PAR_Y * -1) * Math.pow(step, 2.0) + PAR_X;
+		if (!set) h = (PAR_Y * -1) * Math.pow(step, 2.0) + PAR_X;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E - h, 2.0));
 		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
 		servos[SpiderJoint.FEMUR].setAngle(gamma = test4);//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
-		if (coxaChange >= 90) set = false;
-		if (coxaChange <= 0) set = true;
+		if (coxaChange >= 90) set = true;
+		if (coxaChange <= 0) set = false;
 	}
 	
 	int[] getIds()

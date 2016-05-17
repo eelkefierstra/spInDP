@@ -34,16 +34,15 @@ public class SpiderBody
 	
 	public void testLegMovements()
 	{
-		boolean flip = false;
 		while (true)
 		{
 			SpiderLeg leg = legs[5];
 			//for (SpiderLeg leg : legs)
 			{
-				if (!flip) leg.coxaChange += 1;
-				if ( flip) leg.coxaChange -= 1;
-				if (leg.coxaChange > 90) flip = true;
-				if (leg.coxaChange <= 0) flip = false;
+				if (!leg.set) leg.coxaChange += 1;
+				if ( leg.set) leg.coxaChange -= 1;
+				//if (leg.coxaChange > 90) flip = true;
+				//if (leg.coxaChange <= 0) flip = false;
 				leg.run();
 				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 			}
