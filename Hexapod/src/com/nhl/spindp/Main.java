@@ -13,6 +13,12 @@ public class Main
 		return instance;
 	}
 	
+	
+	/**
+	 * Implementation of the main program.
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception
 	{
 		instance = new Main();
@@ -42,13 +48,26 @@ public class Main
 				conn.moveServo(i, (short)(j * 4));
 			}
 		}*/
-		//body.testLegMovements();
-		while (true)
+		body.testLegMovements();
+		/*while (true)
 		{
-			conn.sendTestingInstruction();
-		}
+			try
+			{
+				conn.sendTestingInstruction();
+				Thread.sleep(1);
+			}
+			catch (IOException ex)
+			{
+				ex.printStackTrace();
+			}
+		}*/
 	}
 	
+	/**
+	 * Sends instructions to connection to drive servo's
+	 * @param ids The id's of the servo's to be moved
+	 * @param angles The angles to move to
+	 */
 	public void driveServo(int[] ids, int[] angles)
 	{
 		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");
@@ -57,7 +76,9 @@ public class Main
 			for (int i = 0; i < ids.length; i++)
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
+				Thread.sleep(1);
 			}
+			Thread.sleep(1000);
 		}
 		catch (Exception ex)
 		{

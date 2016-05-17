@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+
 public class Servo
 {
 	/**
@@ -105,6 +106,13 @@ public class Servo
 		return id;
 	}
 	
+	/**
+	 * Create's an write data instruction for the servo
+	 * @param id The id of the servo
+	 * @param address The adress to write
+	 * @param data The data to write
+	 * @return Data instruction
+	 */
 	public static byte[] createWriteDataInstruction(byte id, byte address, byte data)
 	{
 		byte[] buffer =
@@ -123,6 +131,12 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param address
+	 * @param parameters
+	 * @return
+	 */
 	public static byte[] createSyncWriteDataInstruction(byte address, byte[] parameters)
 	{
 		// TODO: Figure out if this is a good implementation.
@@ -142,6 +156,12 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param address
+	 * @return
+	 */
 	public static byte[] createReadDataInstruction(byte id, byte address)
 	{
 		byte[] buffer = 
@@ -159,6 +179,10 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public static byte[] createResetInstruction()
 	{
 		byte[] buffer = 
@@ -175,6 +199,11 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public static byte[] createResetInstruction(byte id)
 	{
 		byte[] buffer = 
@@ -191,6 +220,11 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public static byte[] createPingInstruction(byte id)
 	{
 		byte[] buffer =
@@ -207,6 +241,12 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param newId
+	 * @return
+	 */
 	public static byte[] createSetServoIdInstruction(byte id, byte newId)
 	{
 		byte[] buffer = 
@@ -225,6 +265,12 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param position
+	 * @return
+	 */
 	public static byte[] createMoveServoInstruction(byte id, short position)
 	{
 		if (position < 0)     position = 0;
@@ -246,6 +292,13 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param position
+	 * @param speed
+	 * @return
+	 */
 	public static byte[] createMoveServoInstruction(byte id, short position, short speed)
 	{
 		if (position < 0)     position = 0;
@@ -269,6 +322,12 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param position
+	 * @return
+	 */
 	public static byte[] createWriteMoveServoInstruction(byte id, short position)
 	{
 		if (position < 0)     position = 0;
@@ -290,6 +349,13 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param position
+	 * @param speed
+	 * @return
+	 */
 	public static byte[] createWriteMoveServoInstruction(byte id, short position, short speed)
 	{
 		if (position < 0)     position = 0;
@@ -313,6 +379,10 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public static byte[] createActionInstruction()
 	{
 		byte[] buffer = 
@@ -329,11 +399,22 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public static byte[] createSyncWriteInstruction()
 	{
 		throw new NotImplementedException();
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param cwLimit
+	 * @param ccwLimit
+	 * @return
+	 */
 	public static byte[] createSetAngleLimitInstruction(byte id, short cwLimit, short ccwLimit)
 	{
 		byte[] buffer = 
@@ -355,6 +436,12 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param limit
+	 * @return
+	 */
 	public static byte[] createSetTorqueLimitInstruction(byte id, short limit)
 	{
 		byte[] buffer = 
@@ -374,6 +461,12 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param limit
+	 * @return
+	 */
 	public static byte[] createSetPunchLimit(byte id, short limit)
 	{
 		byte[] buffer = 
@@ -393,6 +486,15 @@ public class Servo
 		return buffer;
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param cwMargin
+	 * @param ccwMargin
+	 * @param cwSlope
+	 * @param ccwSlope
+	 * @return
+	 */
 	public static byte[] createSetComplianceInstruction(byte id, byte cwMargin, byte ccwMargin, byte cwSlope, byte ccwSlope)
 	{
 		byte[] buffer = 
@@ -442,6 +544,15 @@ public class Servo
 		return (byte)~(res &0xFF);
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param length
+	 * @param instruction
+	 * @param address
+	 * @param parameters
+	 * @return
+	 */
 	private static byte computeChecksum(byte id, byte length, byte instruction, byte address, byte[] parameters)
 	{
 		int res = id + length + instruction + address;

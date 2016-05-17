@@ -13,36 +13,32 @@ public class SpiderJoint
 	
 	private int servoId;
 	private double angle;
-	private int offset;
-	private int range;
+	private final int offset;
+	private final int lowerRange;
+	private final int upperRange;
 	
 	SpiderJoint(int servoId)
 	{
-		this.servoId = servoId;
-		this.angle   = 0.0;
-		this.offset  = 0;
-		this.range   = 300;
+		this(servoId, 0.0);
 	}
 	
 	SpiderJoint(int servoId, double angle)
 	{
-		this(servoId);
-		this.angle   = angle;
-		this.offset  = 0;
-		this.range   = 300;
+		this(servoId, angle, 0);
 	}
 	
 	SpiderJoint(int servoId, double angle, int offset)
 	{
-		this(servoId, angle);
-		this.offset  = offset;
-		this.range   = 300;
+		this(servoId, angle, offset, 0, 300);
 	}
 	
-	SpiderJoint(int servoId, double angle, int offset, int range)
+	SpiderJoint(int servoId, double angle, int offset, int lowerRange, int upperRange)
 	{
-		this(servoId, angle, offset);
-		this.range   = range;
+		this.servoId    = servoId;
+		this.angle      = angle;
+		this.offset     = offset;
+		this.lowerRange = lowerRange;
+		this.upperRange = upperRange;
 	}
 	
 	public int getId()
@@ -62,18 +58,25 @@ public class SpiderJoint
 	
 	void setAngle(double angle)
 	{
-		double val = Math.toDegrees(angle);
-		if (val >= 0 || val <= 0) 
-		System.out.println(String.valueOf(servoId) + ':' + String.valueOf(val));
-		else System.err.println("we have isues");
-		if (val > range ) val = range;
-		if (val < offset) val = offset;
-		this.angle = val;
+		double val = Math.toDegrees(angle) + offset;
+		if (Double.isNaN(val)) throw new IllegalArgumentException("angle must not be NaN");
+		else
+		{
+			if (val > upperRange) val = upperRange;
+			if (val < lowerRange) val = lowerRange;
+			this.angle = val;
+		}
 	}
 	
 	private int mapPosition(double x, double in_min, double in_max, double out_min, double out_max)
 	{
 		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");
 		return (int)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-}
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Id: " + String.valueOf(servoId) + " angle: " + String.valueOf(angle) + " offset: " + String.valueOf(lowerRange) + " range: " + String.valueOf(upperRange);
+	}
 }

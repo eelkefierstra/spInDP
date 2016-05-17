@@ -16,7 +16,8 @@ public class SpiderBody
 		legs     = new SpiderLeg[6];
 		for (int i = legs.length-1; i >= 0; i--)
 		{
-			legs[i] = new SpiderLeg(startId++);
+			legs[i] = new SpiderLeg(startId);
+			startId += 3;
 		}
 	}
 	
@@ -36,7 +37,7 @@ public class SpiderBody
 		boolean flip = false;
 		while (true)
 		{
-			SpiderLeg leg = legs[0];
+			SpiderLeg leg = legs[5];
 			//for (SpiderLeg leg : legs)
 			{
 				if (!flip) leg.coxaChange += 1;
