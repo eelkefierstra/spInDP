@@ -30,10 +30,10 @@ public class SpiderLeg
 
 	internal SpiderLeg(int startServoId)
 	{
-        coxaChange += (startServoId * 5);
+        if (startServoId % 2 == 0) coxaChange = 45.0;
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
-		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma);
-		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 75);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 175);
 	}
 
 	public void run()
@@ -46,13 +46,13 @@ public class SpiderLeg
             double h = 0;
             step = Math.Abs(Math.Sqrt(Math.Pow(lAccent, 2.0) - Math.Pow(LACCENT, 2.0)));
             if (coxaChange < 45) step *= -1;
-            if (set) h = (PAR_Y * -1) * Math.Pow(step, 2.0) + PAR_X;
+            if (!set) h = (PAR_Y * -1) * Math.Pow(step, 2.0) + PAR_X;
             double b = Math.Sqrt(Math.Pow(d, 2.0) + Math.Pow(E - h, 2.0));
             //double test1 = Math.Pow(C, 2.0), test2 = Math.Pow(b, 2.0), test3 = Math.Pow(A, 2.0), test4 = Math.Acos((test1 - test2 - test3) / (-2 * b * A));
             servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - Math.Pow(A, 2.0)) / (-2 * b * A)));
             servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)));
-            if (coxaChange >= 90) set = false;
-            if (coxaChange <= 0) set = true;
+            if (coxaChange >= 90) set = true;
+            if (coxaChange <= 0) set = false;
             //spider.GetComponent<walk>().moveSelectedLegg(servos[SpiderJoint.COXA].getId(), (float)gamma, (float)alpha, (float)beta);
         }
     }

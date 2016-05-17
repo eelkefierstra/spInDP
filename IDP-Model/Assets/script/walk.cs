@@ -28,15 +28,15 @@ public class walk : MonoBehaviour
 
     void FixedUpdate()
     {
-        //body.run();
-        /*body.testIdleStance(testCoxaChange);
+        body.run();
+        //body.testIdleStance(testCoxaChange);
         KeyValuePair<int, double[]>[] pairs = body.getLegAngles();
         foreach (KeyValuePair<int, double[]> p in pairs)
         {
             moveSelectedLeg(p.Key, p.Value[0], p.Value[1], p.Value[2]);
-        }*/
+        }
         //for (int i = 1; i <= 18; i+=3)
-        moveSelectedLeg(0, testAngles[0], testAngles[1], testAngles[2]);
+        //moveSelectedLeg(0, testAngles[0], testAngles[1], testAngles[2]);
     }
 
     public void moveSelectedLeg(int id, double c, double a, double b)

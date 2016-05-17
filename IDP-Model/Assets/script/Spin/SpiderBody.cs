@@ -3,7 +3,6 @@
 public class SpiderBody
 {
     SpiderLeg[] legs;
-	bool flip = false;
 
 	// Use this for initialization
 	public SpiderBody()
@@ -21,8 +20,8 @@ public class SpiderBody
 	{
 		foreach (SpiderLeg leg in legs)
 		{
-			if ( leg.set) leg.coxaChange += 1;
-			if (!leg.set) leg.coxaChange -= 1;
+			if (!leg.set) leg.coxaChange += 1;
+			if ( leg.set) leg.coxaChange -= 1;
 			//if (leg.coxaChange > 90) flip = true;
 			//if (leg.coxaChange <= 0) flip = false;
 			leg.run();
@@ -52,16 +51,15 @@ public class SpiderBody
 
 	public void testLegMovements()
 	{
-		bool flip = false;
 		while (true)
 		{
 			foreach (SpiderLeg leg in legs)
 			{
-				if (!flip) leg.coxaChange += 1;
-				if ( flip) leg.coxaChange -= 1;
-				if (leg.coxaChange > 90) flip = true;
-				if (leg.coxaChange <= 0) flip = true;
-				leg.run();
+                if (!leg.set) leg.coxaChange += 1;
+                if (leg.set) leg.coxaChange -= 1;
+                //if (leg.coxaChange > 90) flip = true;
+                //if (leg.coxaChange <= 0) flip = false;
+                leg.run();
 				//Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 			}
 		}

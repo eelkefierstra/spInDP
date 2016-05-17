@@ -56,8 +56,16 @@ public class SpiderJoint
         else
         {
             double val = angle.ToDegrees() + offset;
-            if (val > upperRange) val = upperRange;
-            if (val < lowerRange) val = lowerRange;
+            if (val > upperRange)
+            {
+                UnityEngine.Debug.Log("val of servo " + servoId + " clamped");
+                val = upperRange;
+            }
+            if (val < lowerRange)
+            {
+                UnityEngine.Debug.Log("val of servo " + servoId + " clamped");
+                val = lowerRange;
+            }
             this.angle = val;
         }
 	}
