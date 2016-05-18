@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
 
+import com.nhl.spindp.Main;
+
 
 /**
  * A class to facilitate the serialport connection
@@ -31,7 +33,7 @@ public class SerialPort
 		FileOutputStream writer = new FileOutputStream(serialOutFile);
 		//System.out.println(DatatypeConverter.printHexBinary(message));
 		writer.write(message);
-		writer.flush();
+		//writer.flush();
 		writer.close();
 		return true;
 	}
@@ -49,7 +51,12 @@ public class SerialPort
 		int read = reader.read(buffer);
 		//System.out.println(DatatypeConverter.printHexBinary(buffer));
 		reader.close();
-		if (read < 0) throw new IOException("No reaction from servo" + String.valueOf(id) + '!');
+		if (read < 0)
+		{
+			Main.servoFailed((byte) id);
+			//throw new IOException("No reaction from servo" + String.valueOf(id) + '!');
+			System.err.println("No reaction from servo" + String.valueOf(id) + '!');
+		}
 		return Arrays.copyOf(buffer, read);
 	}
 	

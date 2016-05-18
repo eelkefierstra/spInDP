@@ -24,7 +24,7 @@ int main()
 	static boost::asio::io_service ios;
 	boost::asio::serial_port sp(ios, "/dev/serial0");
 	sp.set_option(boost::asio::serial_port::baud_rate(1000000));
-	blocking_reader reader(sp, 3);
+	blocking_reader reader(sp, 5);
 	string res;
 	char c;
 

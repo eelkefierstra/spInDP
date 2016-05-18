@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.nhl.spindp.Main;
+import com.nhl.spindp.Time;
 
 public class SpiderBody
 {
@@ -34,17 +35,20 @@ public class SpiderBody
 	
 	public void testLegMovements()
 	{
-		while (true)
+		//SpiderLeg leg = legs[5];
+		for (SpiderLeg leg : legs)
 		{
-			SpiderLeg leg = legs[5];
-			//for (SpiderLeg leg : legs)
-			{
-				if (!leg.set) leg.coxaChange += 1;
-				if ( leg.set) leg.coxaChange -= 1;
-				//if (leg.coxaChange > 90) flip = true;
-				//if (leg.coxaChange <= 0) flip = false;
-				leg.run();
-				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			if (!leg.set) leg.coxaChange += (25.0 * Time.deltaTime);
+			if ( leg.set) leg.coxaChange -= (25.0 * Time.deltaTime);
+			leg.run();
+			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			for (short s : Main.failedServos)
+				System.out.println(s);
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

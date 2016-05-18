@@ -3,18 +3,21 @@ from time import sleep
 
 servo = Ax12();
 speed=500
-stand=300
+startStand=450
+endStand=550
 startID=1
-endID=3
+endID=18
+
+stand=startStand
 id=startID
 while(1):
 	while(id<=endID):
-		servo.moveSpeed(id,stand,speed)
+		servo.move(id,stand)
 		print('moved '+str(id))
-		sleep(0.5)
+		sleep(0.04)
 		id=id+1
 	id=startID
-	if(stand==600):
-		stand=300
+	if(stand==endStand):
+		stand=startStand
 	else:
-		stand=600
+		stand=endStand

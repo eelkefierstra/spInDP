@@ -195,8 +195,9 @@ public class ServoConnection
 	 * @param speed The desired speed
 	 * @return Whether the servo returns a status packet
 	 * @throws IOException
+	 * @throws InterruptedException 
 	 */
-	public boolean moveServo(byte id, short position, short speed) throws IOException
+	public boolean moveServo(byte id, short position, short speed) throws IOException, InterruptedException
 	{
 		byte[] buffer = Servo.createMoveServoInstruction(id, position, speed);
 		setDirectionPin(true);
@@ -205,6 +206,7 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
+		Thread.sleep(20);
 		byte[] res = readData(id);
 		for (byte b : res)
 		{

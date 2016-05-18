@@ -29,11 +29,12 @@ class SpiderLeg implements Runnable
 		
 	SpiderLeg(int startServoId)
 	{
-		if (startServoId % 2 == 0) coxaChange = 90.0;
-		startServoId += 2;
-		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId--, alpha, 100);
-		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId--, gamma, 75);
-		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId--, beta, 175);
+		//if (startServoId % 2 == 0) coxaChange = 90.0;
+		//startServoId += 2;
+		// 200, 75, 175
+		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 25);
 	}
 	
 	@Override
@@ -50,8 +51,8 @@ class SpiderLeg implements Runnable
 		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
 		servos[SpiderJoint.FEMUR].setAngle(gamma = test4);//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
-		if (coxaChange >= 90) set = true;
-		if (coxaChange <= 0) set = false;
+		if (coxaChange >= 80) set = true;
+		if (coxaChange <= 10) set = false;
 	}
 	
 	int[] getIds()
