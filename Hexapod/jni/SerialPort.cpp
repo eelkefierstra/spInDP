@@ -41,7 +41,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 }
 
 JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeReadBytes
-  (JNIEnv *env, jobject, jint id)
+  (JNIEnv *env, jobject, jint)
 {
 	string buff;
 	ifstream s_in;
