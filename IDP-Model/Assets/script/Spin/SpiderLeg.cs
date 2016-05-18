@@ -51,8 +51,8 @@ public class SpiderLeg
             //double test1 = Math.Pow(C, 2.0), test2 = Math.Pow(b, 2.0), test3 = Math.Pow(A, 2.0), test4 = Math.Acos((test1 - test2 - test3) / (-2 * b * A));
             servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - Math.Pow(A, 2.0)) / (-2 * b * A)));
             servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)));
-            if (coxaChange >= 90) set = true;
-            if (coxaChange <= 0) set = false;
+            if (coxaChange >= 80) set = true;
+            if (coxaChange <= 10) set = false;
             //spider.GetComponent<walk>().moveSelectedLegg(servos[SpiderJoint.COXA].getId(), (float)gamma, (float)alpha, (float)beta);
         }
     }

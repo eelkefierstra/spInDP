@@ -20,8 +20,8 @@ public class SpiderBody
 	{
 		foreach (SpiderLeg leg in legs)
 		{
-			if (!leg.set) leg.coxaChange += 1;
-			if ( leg.set) leg.coxaChange -= 1;
+			if (!leg.set) leg.coxaChange += (75.0 * UnityEngine.Time.deltaTime);
+			if ( leg.set) leg.coxaChange -= (75.0 * UnityEngine.Time.deltaTime);
 			//if (leg.coxaChange > 90) flip = true;
 			//if (leg.coxaChange <= 0) flip = false;
 			leg.run();
@@ -55,8 +55,8 @@ public class SpiderBody
 		{
 			foreach (SpiderLeg leg in legs)
 			{
-                if (!leg.set) leg.coxaChange += 1;
-                if (leg.set) leg.coxaChange -= 1;
+				if (!leg.set) leg.coxaChange += (75.0 * UnityEngine.Time.deltaTime);
+				if ( leg.set) leg.coxaChange -= (75.0 * UnityEngine.Time.deltaTime);
                 //if (leg.coxaChange > 90) flip = true;
                 //if (leg.coxaChange <= 0) flip = false;
                 leg.run();

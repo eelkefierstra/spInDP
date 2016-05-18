@@ -38,6 +38,10 @@ public class SerialPort
 		return true;
 	}
 	
+	native boolean nativeWriteBytes(byte[] message);
+	
+	native byte[] nativeReadBytes(int id);
+	
 	/**
 	 * Reads the data in serialInFile
 	 * @return The data from serialInFile
