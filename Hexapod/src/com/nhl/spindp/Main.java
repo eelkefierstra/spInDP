@@ -87,7 +87,6 @@ public class Main
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
 				//System.out.println(conn.readPresentLocation((byte)i));
-				Thread.sleep(10);
 			}
 			catch (Exception ex)
 			{

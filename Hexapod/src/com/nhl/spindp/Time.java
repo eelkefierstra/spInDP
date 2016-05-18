@@ -9,7 +9,7 @@ public class Time
 	public static void updateDeltaTime()
 	{
 		long currentTime = System.currentTimeMillis();
-		deltaTime =+ ((double)(currentTime - lastTime) / 1000.0);
+		deltaTime = (double)(currentTime - lastTime) / 1000.0;
 		lastTime = currentTime;
 	}
 }

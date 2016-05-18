@@ -206,7 +206,6 @@ public class ServoConnection
 			System.out.println("Send instruction failed");
 		}
 		setDirectionPin(false);
-		Thread.sleep(20);
 		byte[] res = readData(id);
 		for (byte b : res)
 		{
