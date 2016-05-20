@@ -48,12 +48,12 @@ public class SpiderJoint
 	
 	public int getServoAngle()
 	{
-		return mapPosition(angle + offset, MIN_ANGLE, MAX_ANGLE, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE);
+		return mapPosition(angle, MIN_ANGLE, MAX_ANGLE, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE);
 	}
 	
 	public double getAngle()
 	{
-		return angle + offset;
+		return angle;
 	}
 	
 	void setAngle(double angle)

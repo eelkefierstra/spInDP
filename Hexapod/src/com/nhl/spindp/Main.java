@@ -1,5 +1,7 @@
 package com.nhl.spindp;
 
+import java.util.Arrays;
+
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
 
@@ -7,6 +9,7 @@ public class Main
 {
 	private static Main instance;
 	private static ServoConnection conn;
+	public static short[] failedServos;
 	
 	public static Main getInstance()
 	{
@@ -21,8 +24,10 @@ public class Main
 	 */
 	public static void main(String[] args) throws Exception
 	{
+		failedServos = new short[18];
+		Arrays.fill(failedServos, (short)-1);
 		instance = new Main();
-		
+		Time.updateDeltaTime();
 		SpiderBody body = new SpiderBody(1);
 		//body.testCalcs();
 				
@@ -48,19 +53,24 @@ public class Main
 				conn.moveServo(i, (short)(j * 4));
 			}
 		}*/
-		body.testLegMovements();
-		/*while (true)
+		
+		while (true)
 		{
-			try
-			{
-				conn.sendTestingInstruction();
-				Thread.sleep(1);
-			}
-			catch (IOException ex)
-			{
-				ex.printStackTrace();
-			}
-		}*/
+			Time.updateDeltaTime();
+			body.testLegMovements();
+		}
+	}
+	
+	public static void servoFailed(short id)
+	{
+		int i = 0;
+		for (; i < failedServos.length; i++)
+		{
+			if (failedServos[i] == id) return;
+			if (failedServos[i] == -1) break;
+		}
+		failedServos[i] = id;
+		Arrays.sort(failedServos);
 	}
 	
 	/**
@@ -71,18 +81,18 @@ public class Main
 	public void driveServo(int[] ids, int[] angles)
 	{
 		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");
-		try
+		for (int i = 0; i < ids.length; i++)
 		{
-			for (int i = 0; i < ids.length; i++)
+			try
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
-				Thread.sleep(1);
+				//System.out.println(conn.readPresentLocation((byte)i));
 			}
-			Thread.sleep(1000);
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
 		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
+			//Thread.sleep(1000);
 	}
 }

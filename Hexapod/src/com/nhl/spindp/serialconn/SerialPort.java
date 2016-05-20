@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
 
+import com.nhl.spindp.Main;
+
 
 /**
  * A class to facilitate the serialport connection
@@ -27,11 +29,11 @@ public class SerialPort
 	 */
 	boolean writeBytes(byte[] message) throws IOException
 	{
-		System.out.print("Sent: ");
+		//System.out.print("Sent: ");
 		FileOutputStream writer = new FileOutputStream(serialOutFile);
-		System.out.println(DatatypeConverter.printHexBinary(message));
+		//System.out.println(DatatypeConverter.printHexBinary(message));
 		writer.write(message);
-		writer.flush();
+		//writer.flush();
 		writer.close();
 		return true;
 	}
@@ -41,15 +43,20 @@ public class SerialPort
 	 * @return The data from serialInFile
 	 * @throws IOException
 	 */
-	byte[] readBytes() throws IOException
+	byte[] readBytes(int id) throws IOException
 	{
-		System.out.print("Received: ");
-		byte[] buffer = new byte[64];
+		//System.out.print("Received: ");
+		byte[] buffer = new byte[32];
 		FileInputStream reader = new FileInputStream(serialInFile);
 		int read = reader.read(buffer);
-		System.out.println(DatatypeConverter.printHexBinary(buffer));
+		//System.out.println(DatatypeConverter.printHexBinary(buffer));
 		reader.close();
-		if (read < 0) throw new IOException("No reaction from servo!");
+		if (read < 0)
+		{
+			Main.servoFailed((byte) id);
+			//throw new IOException("No reaction from servo" + String.valueOf(id) + '!');
+			System.err.println("No reaction from servo" + String.valueOf(id) + '!');
+		}
 		return Arrays.copyOf(buffer, read);
 	}
 	
@@ -59,9 +66,9 @@ public class SerialPort
 	 * @return A byte array with the data from serialInFile 
 	 * @throws IOException
 	 */
-	byte[] readBytes(int len) throws IOException
+	byte[] readBytes(int id, int len) throws IOException
 	{
-		byte[] buffer = new byte[64];
+		byte[] buffer = new byte[len];
 		Arrays.fill(buffer, (byte)-1);
 		int temp = 0;
 		FileInputStream reader = new FileInputStream(serialInFile);
