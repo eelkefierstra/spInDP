@@ -547,10 +547,10 @@ public class ServoConnection
 			data = Arrays.copyOfRange(buffer, 5, buffer.length);
 			boolean checksum = Servo.compareChecksum(concat(buffer, data), data[data.length - 1]);
 			//System.out.println("Recieved " + String.valueOf(buffer.length) + " bytes");
-			for (byte b : data)
+			/*for (byte b : data)
 			{
 				System.out.print(String.valueOf(b) + ' ');
-			}
+			}*/
 			if(!checksum)
 			{
 				System.err.println(" .----------------.  .----------------.  .----------------.  .----------------.  .----------------. ");
@@ -589,8 +589,8 @@ public class ServoConnection
 	 * @param val The value to set the pin to
 	 * @throws IOException
 	 */
-	//TODO: vragen of dit de bedoeling is
-	private void setDirectionPin(boolean val) throws IOException
+	@Deprecated
+	private void setDirectionPin(boolean val)
 	{/*
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
 		writer.write(String.format("w %s %s\n", signalPin, val ? 1 : 0));

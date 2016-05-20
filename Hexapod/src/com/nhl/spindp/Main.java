@@ -14,7 +14,7 @@ public class Main
 	
 	static
 	{
-		File lib = new File(Main.class.getResource("/lib/").getPath(), "libHexapod.so");
+		File lib = new File(Main.class.getResource("/libs/").getPath(), "libHexapod.so");
 		System.load(lib.getAbsolutePath());
 	}
 	

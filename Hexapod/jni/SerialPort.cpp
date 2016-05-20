@@ -32,6 +32,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 		throw_java_exception(env, &clazz[0], &mess[0]);
 	}
 	jbyte *messPntr = env->GetByteArrayElements(message, NULL);
+	//cout << "writing to s_out" << endl;
 	ofstream s_out;
 	s_out.open(SERIAL_OUT);
 	s_out << messPntr;
@@ -44,16 +45,25 @@ JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeRea
   (JNIEnv *env, jobject, jint)
 {
 	string buff;
+	cout << "reading from s_in" << endl;
 	ifstream s_in;
 	s_in.open(SERIAL_IN);
 	getline(s_in, buff);
 	s_in.close();
-	jbyte res[buff.length()];
-	for (unsigned i = 0; i < buff.length(); i++)
+	//cout << "received: " << buff << endl;
+	jsize size = buff.length();
+	if (size == 0)
+	{
+		size = 2;
+		char prefix[2] = { 0x00, 0x00 };
+		buff.append(prefix, 2);
+	}
+	jbyte res[size];
+	for (int i = 0; i < size; i++)
 	{
 		buff[i] = res[i];
 	}
-	jbyteArray resArr = env->NewByteArray(buff.length());
-	env->SetByteArrayRegion(resArr, 0, buff.length(), res);
+	jbyteArray resArr = env->NewByteArray(size);
+	env->SetByteArrayRegion(resArr, 0, size, res);
 	return resArr;
 }

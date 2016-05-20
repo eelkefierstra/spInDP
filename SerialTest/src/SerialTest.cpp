@@ -48,7 +48,7 @@ int main()
 	    getline(s_in, line);
 	    s_in.close();
 		sp.write_some(boost::asio::buffer(line));
-		this_thread::sleep_for(chrono::microseconds(2));
+		this_thread::sleep_for(chrono::microseconds(1));
 		pigs << "w " << signalPin << " 0" << endl;
 		pigs.flush();
 		pigs.close();
