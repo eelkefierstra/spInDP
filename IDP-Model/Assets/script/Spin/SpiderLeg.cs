@@ -15,7 +15,6 @@ public class SpiderLeg
     private static double PAR_X            = 25;
     private static double PAR_Y            = PAR_X / Math.Pow(Math.Sqrt(Math.Pow(L, 2.0) - Math.Pow(LACCENT, 2.0)) * 2, 2.0);
 
-    //private Object locker  = new Object();
     private double alpha   = Math.Acos((Math.Pow(A, 2) - Math.Pow(C, 2) - Math.Pow(B, 2)) / (-2 * C * B)).ToRadians();
 	private double gamma   = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(B, 2.0) - Math.Pow(A, 2.0)) / (-2 * B * A)).ToRadians();
 	private double beta    = Math.Acos((Math.Pow(B, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)).ToRadians();
@@ -25,7 +24,8 @@ public class SpiderLeg
 	public bool set       = false;
     
 	public double coxaChange = 0.0;
-    string testMove = "forward";
+    double speed     = 1.0;
+    double direction = 1.0;
     // bocht
     private static readonly double Lengte = 300;
     private static readonly double Breedte = 80;
@@ -64,72 +64,83 @@ public class SpiderLeg
 	}
     public void run()
     {
-        if (testMove == "forward")
+        if (speed == 1.0)
             forward();
-        else if (testMove == "turn")
+        else if (direction == 1.0)
             turn();
         else //360
             noscope360();
 
-    }   
+    }
+
     public void turn()
     {
-        //RV (leidend)        
-        pootRVA();
-        servohoek_rv = 0;
-        gamma = servohoek + gamma_a;
-        alpha = Math.Sinh(Math.Sin(gamma * (Math.PI / 180) * l4) / r4) * (180 / Math.PI);
-        beta = 180 - gamma - alpha;
-        beta_RV = beta;
-        servohoek = servohoek_rv;        
-        laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / Math.Sin(gamma * (Math.PI / 180));
-        b_turn = beta - beta_a;
-        
-        //LV
-        pootLVA();
-        beta = servohoek + beta_a;
-        laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta * (Math.PI / 180)));
-        alpha = 180-Math.Sinh(Math.Sin(beta * (Math.PI / 180) * l4) / laccent) * (180 / Math.PI);
-        gamma = 180 - alpha - beta;        
-        servohoek = 0;
-        
-        //RM
-        pootRM();
-        servohoek = gamma - 135;
-        gamma = 180 - alpha - beta;
-        alpha = Math.Sinh((r4 * Math.Sin(beta * (Math.PI / 180))) / laccent) * (Math.PI / 180);
-        beta = beta_a - b_turn;
-        laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * l4 * r4 * Math.Cos(beta * (Math.PI / 180)));
-        
-        //LM
-        pootLM();
-        servohoek = gamma + 45;
-        gamma = 180 - alpha - beta;
-        alpha = 180 - Math.Sinh((l4 * Math.Sin(beta * (Math.PI / 180))) / laccent) * (180 / Math.PI);
-        beta = beta_a - b_turn;
-        laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta * (Math.PI / 180)));
-
-        //RA
-        pootRVA();
-        servohoek = servohoek_rv;
-        gamma = gamma_a + (90 - servohoek);
-        alpha = Math.Sinh((Math.Sin(gamma * (Math.PI / 180)) * l4) / r4) * (180 / Math.PI);
-        beta = 180 - gamma - alpha;
-        laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / Math.Sin(gamma * (Math.PI / 180));
-
-        //LA        
-        pootLVA();
-        if (beta < 0)
-            servohoek = gamma_a + gamma;
-        else
-            servohoek = gamma_a - gamma;
-        gamma = 180 - alpha - Math.Abs(beta);
-        if (180 + Math.Sinh(Math.Sin(beta * (Math.PI / 180)) * l4) / laccent > 180)
-            alpha = -(180 + (Math.Sin((Math.Sin(beta * (Math.PI / 180)) * l4) / laccent) * (180 / Math.PI))) + 360;            
-        else
-            alpha = (180 + (Math.Sin((Math.Sin(beta * (Math.PI / 180)) * l4) / laccent) * (180 / Math.PI))) + 360;
-        beta = beta_b - b_turn;
-        laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta * (Math.PI / 180)));     
+        switch (getFirstId() / 3)
+        {
+            case 1:
+                //RV (leidend)        
+                pootRVA();
+                servohoek_rv = 0;
+                gamma = servohoek + gamma_a;
+                alpha = Math.Sinh(Math.Sin(gamma.ToRadians() * l4) / r4).ToDegrees();
+                beta = 180 - gamma - alpha;
+                beta_RV = beta;
+                servohoek = servohoek_rv;
+                laccent = (r4 * Math.Sin(beta.ToRadians())) / Math.Sin(gamma.ToRadians());
+                b_turn = beta - beta_a;
+                break;
+            case 2:
+                //LV
+                pootLVA();
+                beta = servohoek + beta_a;
+                laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
+                alpha = 180 - Math.Sinh(Math.Sin(beta.ToRadians() * l4) / laccent).ToDegrees();
+                gamma = 180 - alpha - beta;
+                servohoek = 0;
+                break;
+            case 3:
+                //RM
+                pootRM();
+                servohoek = gamma - 135;
+                gamma = 180 - alpha - beta;
+                alpha = Math.Sinh((r4 * Math.Sin(beta.ToRadians())) / laccent).ToRadians();
+                beta = beta_a - b_turn;
+                laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * l4 * r4 * Math.Cos(beta.ToRadians()));
+                break;
+            case 4:
+            //LM
+                pootLM();
+                servohoek = gamma + 45;
+                gamma = 180 - alpha - beta;
+                alpha = 180 - Math.Sinh((l4 * Math.Sin(beta.ToRadians())) / laccent).ToDegrees();
+                beta = beta_a - b_turn;
+                laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
+                break;
+            case 5:
+                //RA
+                pootRVA();
+                servohoek = servohoek_rv;
+                gamma = gamma_a + (90 - servohoek);
+                alpha = Math.Sinh((Math.Sin(gamma.ToRadians()) * l4) / r4).ToDegrees();
+                beta = 180 - gamma - alpha;
+                laccent = (r4 * Math.Sin(beta.ToRadians())) / Math.Sin(gamma.ToRadians());
+                break;
+            case 6:
+                //LA
+                pootLVA();
+                if (beta < 0)
+                    servohoek = gamma_a + gamma;
+                else
+                    servohoek = gamma_a - gamma;
+                gamma = 180 - alpha - Math.Abs(beta);
+                if (180 + Math.Sinh(Math.Sin(beta.ToRadians()) * l4) / laccent > 180)
+                    alpha = -(180 + (Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees())) + 360;
+                else
+                    alpha = (180 + (Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees())) + 360;
+                beta = beta_b - b_turn;
+                laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
+                break;
+        }
     }
 
     public void smallBetaTurn()
@@ -161,12 +172,12 @@ public class SpiderLeg
         I = 0.5f * Lengte;
         II = R - 0.5f * Breedte;
         l4 = Math.Sqrt(I * I + II * II);
-        a = Math.Tanh((II / I) * (180 / Math.PI));
+        a = Math.Tanh((II / I).ToDegrees());
         gamma_a = 180 - (A_MAX / 2) + (90 - a); //(180 - A_MAX) / 2 + 90 + (90 - a);
-        alpha_a = 180 - Math.Sinh(Math.Sin(gamma_a * (Math.PI / 180) * l4) / r4) * (180 / Math.PI);
+        alpha_a = 180 - Math.Sinh(Math.Sin(gamma_a.ToRadians() * l4) / r4).ToDegrees();
         beta_a = 180 - alpha_a - gamma_a;
         gamma_b = a - ((180 - A_MAX) / 2);
-        alpha_b = 180 - Math.Sinh(Math.Sin(gamma_b * (Math.PI / 180) * l4) / r4) * (180 / Math.PI);
+        alpha_b = 180 - Math.Sinh(Math.Sin(gamma_b.ToRadians() * l4) / r4).ToDegrees();
         beta_b = 180 - alpha_b - gamma_b;
         beta = beta_b + beta_a;
     }
@@ -180,12 +191,12 @@ public class SpiderLeg
         I = 0.5f * Lengte;
         II = R - 0.5f * Breedte;
         l4 = Math.Sqrt(I * I + II * II);
-        a = Math.Tanh((II / I) * (180 / Math.PI));
+        a = Math.Tanh((II / I).ToDegrees());
         gamma_a = (A_MAX / 2) + (90 - a);
-        alpha_a = 180 - Math.Sinh(Math.Sin(gamma_a * (Math.PI / 180) * l4) / r4) * (180 / Math.PI);
+        alpha_a = 180 - Math.Sinh(Math.Sin(gamma_a.ToRadians() * l4) / r4).ToDegrees();
         beta_a = 180 - alpha_a - gamma_a;
         gamma_b = a - ((180 - A_MAX) / 2);
-        alpha_b = 180 - Math.Sinh(Math.Sin(gamma_b * (Math.PI / 180) * l4) / r4) * (180 / Math.PI);
+        alpha_b = 180 - Math.Sinh(Math.Sin(gamma_b.ToRadians() * l4) / r4).ToDegrees();
         beta_b = 180 - alpha_b - gamma_b;
         beta = beta_b + beta_a;        
     }
@@ -193,9 +204,9 @@ public class SpiderLeg
     {
         // links mid
         l4 = R - ((3 / 2) * Breedte);
-        r4 = Math.Sqrt(l4 * l4 + L * L) - 2 * l4 * L * Math.Cos((A_MAX / 2) * (Math.PI / 180));
+        r4 = Math.Sqrt(l4 * l4 + L * L) - 2 * l4 * L * Math.Cos((A_MAX / 2).ToRadians());
         gamma_a = (A_MAX / 2);
-        alpha_a = 180 - Math.Sinh(Math.Sin(gamma_a * (Math.PI / 180) * l4) / r4) * (180 / Math.PI);
+        alpha_a = 180 - Math.Sinh(Math.Sin(gamma_a.ToRadians() * l4) / r4).ToDegrees();
         beta_a = 180 - alpha_a - gamma_a;
         beta = 2 * beta_a;
     }
@@ -203,9 +214,9 @@ public class SpiderLeg
     {
         // rechts mid
         l4 = R - ((3 / 2) * Breedte);
-        r4 = Math.Sqrt(l4 * l4 + L * L) - 2 * l4 * L * Math.Cos((A_MAX / 2) * (Math.PI / 180));
+        r4 = Math.Sqrt(l4 * l4 + L * L) - 2 * l4 * L * Math.Cos((A_MAX / 2).ToRadians());
         gamma_a = (A_MAX / 2);
-        alpha_a = 180 - Math.Sinh(Math.Sin(gamma_a * (Math.PI / 180) * l4) / r4) * (180 / Math.PI);
+        alpha_a = 180 - Math.Sinh(Math.Sin(gamma_a.ToRadians() * l4) / r4).ToDegrees();
         beta_a = 180 - alpha_a - gamma_a;
         beta = 2 * beta_a;        
     }   
@@ -214,71 +225,71 @@ public class SpiderLeg
         //RV
         VA360();
         servohoek = 5;
-        gamma = 360 - (Math.Tanh((0.5f * Lengte) / (0.5f * Breedte)) * (180 / Math.PI) + (135 + servohoek));
-        alpha = Math.Sinh((Math.Sin(gamma * (Math.PI / 180)) * l4) / r4) * (180 / Math.PI);
+        gamma = 360 - (Math.Tanh((0.5f * Lengte) / (0.5f * Breedte)).ToDegrees() + (135 + servohoek));
+        alpha = Math.Sinh((Math.Sin(gamma.ToRadians()) * l4) / r4).ToDegrees();
         beta = 180 - gamma - alpha;
-        laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / (Math.Sin(gamma * (Math.PI / 180)));
+        laccent = (r4 * Math.Sin(beta.ToRadians())) / (Math.Sin(gamma.ToRadians()));
 
         //LV
         VA360();
         beta = beta_a - b_turn;
-        alpha = Math.Sin((Math.Sin(beta * (Math.PI / 180)) * l4) / laccent) * (180 / Math.PI);
+        alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
         gamma = 180 - alpha - Lengte;
         servohoek = gamma - test1;     
-        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta * (Math.PI / 180)));
+        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
 
         //RM
         M360();        
         beta = beta_a - b_turn;
-        alpha = Math.Sinh((Math.Sin(beta * (Math.PI / 180)) * l4) / Lengte) * (180 / Math.PI);
+        alpha = Math.Sinh((Math.Sin(beta.ToRadians()) * l4) / Lengte).ToDegrees();
         gamma = 180 - alpha - beta;
         servohoek = gamma - 135;  
-        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta * (Math.PI / 180)));
+        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
 
         //LM
         M360();
         beta = beta_a - b_turn;
-        alpha = Math.Sinh((Math.Sin(beta * (Math.PI / 180)) * l4) / Lengte) * (180 / Math.PI);        
+        alpha = Math.Sinh((Math.Sin(beta.ToRadians()) * l4) / Lengte).ToDegrees();        
         gamma = 180 - alpha - beta;
         servohoek = gamma - 135;
-        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta * (Math.PI / 180)));
+        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
 
         //RA
         VA360();
         beta = beta_a - b_turn;
-        alpha = Math.Sin((Math.Sin(beta * (Math.PI / 180)) * l4) / laccent) * (180 / Math.PI);
+        alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
         gamma = 180 - alpha - Lengte;
         servohoek = gamma - test1;
-        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta * (Math.PI / 180)));
+        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
 
         //LA
         VA360();
-        alpha = Math.Sin((Math.Sin(beta * (Math.PI / 180)) * l4) / laccent) * (180 / Math.PI);
+        alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
         beta = beta_b + b_turn;
         gamma = 180 - Math.Abs(alpha) - Math.Abs(beta);        
         servohoek = test1 - gamma;
-        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta * (Math.PI / 180)));
+        laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
 
     }
     public void VA360()
     {
         l4 = Math.Sqrt(Math.Pow((0.5f * Breedte), 2) + Math.Pow((0.5f * Lengte), 2));        
-        I = 0.5f * Lengte + Math.Sin(45 * (Math.PI / 180)) * (L / 2); //TODO: right name?
-        II = 0.5f * Breedte + Math.Sin(45 * (Math.PI / 180)) * (L / 2); //TODO: right name? 
+        I = 0.5f * Lengte + Math.Sin(45.ToRadians()) * (L / 2); //TODO: right name?
+        II = 0.5f * Breedte + Math.Sin(45.ToRadians()) * (L / 2); //TODO: right name? 
         r4 = Math.Sqrt(I * I + II * II);
-        beta_a = Math.Cosh((L * L - l4 * l4 - r4 * r4) / (-2 * r4 * l4)) * (180 / Math.PI);
-        test1 = 180 - Math.Sinh((r4 * Math.Sin(beta_a * (Math.PI / 180))) / L) * (180 / Math.PI);//TODO: right name!
-        beta_b = Math.Cosh((Math.Pow((L / 2), 2) - r4 * r4 - l4 * l4) / (-2 * r4 * l4)) * (180 / Math.PI);
-        double test2 = 180 - Math.Sinh(r4 * Math.Sin(beta_b * (Math.PI / 180)) / (L / 2)) * (180 / Math.PI);
+        beta_a = Math.Cosh((L * L - l4 * l4 - r4 * r4) / (-2 * r4 * l4)).ToDegrees();
+        test1 = 180 - Math.Sinh((r4 * Math.Sin(beta_a.ToRadians())) / L).ToDegrees();//TODO: right name!
+        beta_b = Math.Cosh((Math.Pow((L / 2), 2) - r4 * r4 - l4 * l4) / (-2 * r4 * l4)).ToDegrees();
+        double test2 = 180 - Math.Sinh(r4 * Math.Sin(beta_b.ToRadians()) / (L / 2)).ToDegrees();
         beta = beta_a - beta_b;
         gamma = test2 - test1;
     }
     public void M360()
     {
         l4 = (3 / 2) * l4;
-        r4 = Math.Sqrt(l4 * l4 + L * L - 2 * l4 * L * Math.Cos(180 - (90 - 0.5f * A_MAX) * (Math.PI / 180)));
+        r4 = Math.Sqrt(l4 * l4 + L * L - 2 * l4 * L * Math.Cos(180 - (90 - 0.5f * A_MAX).ToRadians()));
         gamma_a = 180 - (90 - 0.5f * A_MAX);
-        beta_a = Math.Sinh((Math.Sin(gamma_a * (Math.PI / 180)) * L) / r4);
+        beta_a = Math.Sinh((Math.Sin(gamma_a.ToRadians()) * L) / r4);
         beta = beta_a * 2;                
     }
 
@@ -298,8 +309,6 @@ public class SpiderLeg
         servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)));
         if (coxaChange >= 90) set = true;
         if (coxaChange <= 0) set = false;
-        //spider.GetComponent<walk>().moveSelectedLegg(servos[SpiderJoint.COXA].getId(), (float)gamma, (float)alpha, (float)beta);
-        
     }
 
 	internal int[] getIds()
