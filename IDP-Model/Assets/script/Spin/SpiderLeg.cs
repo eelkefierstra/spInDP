@@ -21,11 +21,12 @@ public class SpiderLeg
 	private double EPSILON = Math.Atan(E / D).ToRadians();
 	private double DELTA   = Math.Atan(D / E).ToRadians();
 	private double step    = 0.0;
-	public bool set       = false;
+	public bool set        = false;
     
 	public double coxaChange = 0.0;
     double speed     = 1.0;
     double direction = 1.0;
+    // TODO: change variable names to english and camelCase
     // bocht
     private static readonly double Lengte = 300;
     private static readonly double Breedte = 80;
@@ -62,11 +63,15 @@ public class SpiderLeg
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 75);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 175);
 	}
+
+    /// <summary>
+    /// Stand in for Runnable.run() from java. Expect this block to run asynchronously.
+    /// </summary>
     public void run()
     {
-        if (speed == 1.0)
+        if (speed > 0.0)
             forward();
-        else if (direction == 1.0)
+        else if (!direction.IsBetweenII(-.25, .25))
             turn();
         else //360
             noscope360();
@@ -77,7 +82,7 @@ public class SpiderLeg
     {
         switch (getFirstId() / 3)
         {
-            case 1:
+            case 0:
                 //RV (leidend)        
                 pootRVA();
                 servohoek_rv = 0;
@@ -89,7 +94,7 @@ public class SpiderLeg
                 laccent = (r4 * Math.Sin(beta.ToRadians())) / Math.Sin(gamma.ToRadians());
                 b_turn = beta - beta_a;
                 break;
-            case 2:
+            case 1:
                 //LV
                 pootLVA();
                 beta = servohoek + beta_a;
@@ -98,7 +103,7 @@ public class SpiderLeg
                 gamma = 180 - alpha - beta;
                 servohoek = 0;
                 break;
-            case 3:
+            case 2:
                 //RM
                 pootRM();
                 servohoek = gamma - 135;
@@ -107,7 +112,7 @@ public class SpiderLeg
                 beta = beta_a - b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * l4 * r4 * Math.Cos(beta.ToRadians()));
                 break;
-            case 4:
+            case 3:
             //LM
                 pootLM();
                 servohoek = gamma + 45;
@@ -116,7 +121,7 @@ public class SpiderLeg
                 beta = beta_a - b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
                 break;
-            case 5:
+            case 4:
                 //RA
                 pootRVA();
                 servohoek = servohoek_rv;
@@ -125,9 +130,10 @@ public class SpiderLeg
                 beta = 180 - gamma - alpha;
                 laccent = (r4 * Math.Sin(beta.ToRadians())) / Math.Sin(gamma.ToRadians());
                 break;
-            case 6:
+            case 5:
                 //LA
                 pootLVA();
+
                 if (beta < 0)
                     servohoek = gamma_a + gamma;
                 else
@@ -140,6 +146,8 @@ public class SpiderLeg
                 beta = beta_b - b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
                 break;
+            default:
+                throw new InvalidOperationException();
         }
     }
 

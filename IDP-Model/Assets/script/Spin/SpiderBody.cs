@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class SpiderBody
 {
@@ -12,19 +13,23 @@ public class SpiderBody
 		{
 			legs[i] = new SpiderLeg((i * 3) + 1);
 		}
-		//body.transform.childCount
 	}
 	
 	// Update is called once per frame
-	public void run()
+	public void walk(double forward, double right)
 	{
 		foreach (SpiderLeg leg in legs)
 		{
-			if (!leg.set) leg.coxaChange += 1;
-			if ( leg.set) leg.coxaChange -= 1;
-			//if (leg.coxaChange > 90) flip = true;
-			//if (leg.coxaChange <= 0) flip = false;
-			leg.run();
+            if (forward != 0.0)
+            {
+                if (!leg.set) leg.coxaChange += (50 * Time.deltaTime * forward);
+                if (leg.set) leg.coxaChange -= (50 * Time.deltaTime * forward);
+                leg.run();
+            }
+            if (!forward.IsBetweenII(-.25, .25))
+            {
+                // curve or something...
+            }
 		}
 	}
 
@@ -35,7 +40,6 @@ public class SpiderBody
         for (int i = 0; i < legs.Length; i++)
         {
             res[i] = new KeyValuePair<int, double[]>(legs[i].getFirstId(), legs[i].getLegAngles());
-            //res[leg.getFirstId()] = leg.getLegAngles();
         }
         return res;
     }
@@ -48,21 +52,4 @@ public class SpiderBody
             leg.run();
         }
     }
-
-	public void testLegMovements()
-	{
-		while (true)
-		{
-			foreach (SpiderLeg leg in legs)
-			{
-                if (!leg.set) leg.coxaChange += 1;
-                if (leg.set) leg.coxaChange -= 1;
-                //if (leg.coxaChange > 90) flip = true;
-                //if (leg.coxaChange <= 0) flip = false;
-                leg.run();
-				//Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
-			}
-		}
-	}
-
 }
