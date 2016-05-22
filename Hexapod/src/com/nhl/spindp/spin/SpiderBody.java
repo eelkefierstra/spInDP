@@ -2,6 +2,7 @@ package com.nhl.spindp.spin;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import com.nhl.spindp.Main;
 import com.nhl.spindp.Time;
@@ -10,11 +11,14 @@ public class SpiderBody
 {
 	ExecutorService executor;
 	SpiderLeg[] legs;
+	Future<?>[] futures;
 	
 	public SpiderBody(int startId)
 	{
 		executor = Executors.newFixedThreadPool(3);
 		legs     = new SpiderLeg[6];
+		futures  = new Future<?>[6];
+		
 		for (int i = legs.length-1; i >= 0; i--)
 		{
 			legs[i] = new SpiderLeg(startId);
@@ -24,26 +28,42 @@ public class SpiderBody
 	
 	public void testCalcs()
 	{
+		int i = 0;
 		long start = System.currentTimeMillis();
 		for (SpiderLeg leg : legs)
 		{
 			leg.coxaChange = 5.0;
-			leg.run();
+			futures[i] = executor.submit(leg);
+			//leg.run();
+			i++;
 		}
 		System.out.println("Calculated in: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
 	}
 	
 	public void testLegMovements()
 	{
-		//SpiderLeg leg = legs[5];
+		int i = 0;
 		for (SpiderLeg leg : legs)
 		{
 			if (!leg.set) leg.coxaChange += (25.0 * Time.deltaTime);
 			if ( leg.set) leg.coxaChange -= (25.0 * Time.deltaTime);
-			leg.run();
+			futures[i] = executor.submit(leg);
+			//leg.run();
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 			for (short s : Main.failedServos)
 				System.out.println(s);
+			i++;
+		}
+		for (Future<?> f : futures)
+		{
+			try
+			{
+				f.get();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 }

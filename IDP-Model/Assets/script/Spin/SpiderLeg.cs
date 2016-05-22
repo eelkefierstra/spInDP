@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Executors;
+using System;
 
-public class SpiderLeg
+public class SpiderLeg : ICallable<object>
 {
 	private static readonly double A       =  80.0;
 	private static readonly double A_MAX   =  90.0;
@@ -67,7 +68,7 @@ public class SpiderLeg
     /// <summary>
     /// Stand in for Runnable.run() from java. Expect this block to run asynchronously.
     /// </summary>
-    public void run()
+    public object Call()
     {
         if (speed > 0.0)
             forward();
@@ -75,7 +76,7 @@ public class SpiderLeg
             turn();
         else //360
             noscope360();
-
+        return new object();
     }
 
     public void turn()
