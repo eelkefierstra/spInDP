@@ -36,18 +36,22 @@ public class SpiderBody
 
             if (forward != 0.0)
             {
+                Debug.Log("FW");
                 if (!leg.set) leg.coxaChange += (50 * Time.deltaTime * forward);
                 if (leg.set) leg.coxaChange -= (50 * Time.deltaTime * forward);
                 futures[i] = executor.Submit(leg);
             }
-            if (!forward.IsBetweenII(-.25, .25))
+            if (true)//!forward.IsBetweenII(-.25, .25))
             {
-                // curve or something...
+                // curve or something...                
+                leg.turn();
             }
+            else
+                Debug.Log("FOUT");
             i++;
 
 		}
-        foreach (Future<object> f in futures) f.GetResult();
+       // foreach (Future<object> f in futures) f.GetResult();
 	}
 
     public KeyValuePair<int, double[]>[] getLegAngles()
