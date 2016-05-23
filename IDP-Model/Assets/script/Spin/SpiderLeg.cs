@@ -85,6 +85,7 @@ public class SpiderLeg
         laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / Math.Sin(gamma * (Math.PI / 180));
         b_turn = beta - beta_a;
         
+
         //LV
         pootLVA();
         beta = servohoek + beta_a;
@@ -130,6 +131,16 @@ public class SpiderLeg
             alpha = (180 + (Math.Sin((Math.Sin(beta * (Math.PI / 180)) * l4) / laccent) * (180 / Math.PI))) + 360;
         beta = beta_b - b_turn;
         laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta * (Math.PI / 180)));     
+    }
+
+    public void setServo()
+    {
+        
+    }
+    public void getServo(int id)
+    {  
+         
+
     }
 
     public void smallBetaTurn()
@@ -218,6 +229,7 @@ public class SpiderLeg
         alpha = Math.Sinh((Math.Sin(gamma * (Math.PI / 180)) * l4) / r4) * (180 / Math.PI);
         beta = 180 - gamma - alpha;
         laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / (Math.Sin(gamma * (Math.PI / 180)));
+        b_turn = beta - beta_b
 
         //LV
         VA360();

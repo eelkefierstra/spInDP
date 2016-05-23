@@ -22,9 +22,9 @@ public class SpiderBody
 		{
 			if (!leg.set) leg.coxaChange += 1;
 			if ( leg.set) leg.coxaChange -= 1;
-			//if (leg.coxaChange > 90) flip = true;
-			//if (leg.coxaChange <= 0) flip = false;
-			leg.run();
+            //if (leg.coxaChange > 90) flip = true;
+            //if (leg.coxaChange <= 0) flip = false;            
+            //leg.turn();
 		}
 	}
 
