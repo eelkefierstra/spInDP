@@ -33,13 +33,17 @@ public class SpiderBody
 		System.out.println("Calculated in: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
 	}
 	
-	public void testLegMovements()
+	/**
+	 * Method that moves the spider
+	 * @param forward speed and forward, backward direction of the spider
+	 * @param right left, right direction of the spider
+	 */
+	public void walk(double forward, double right)
 	{
-		//SpiderLeg leg = legs[5];
 		for (SpiderLeg leg : legs)
 		{
-			if (!leg.set) leg.coxaChange += (25.0 * Time.deltaTime);
-			if ( leg.set) leg.coxaChange -= (25.0 * Time.deltaTime);
+			if (!leg.set) leg.coxaChange += ((25.0 * Time.deltaTime) * forward);
+			if ( leg.set) leg.coxaChange -= ((25.0 * Time.deltaTime) * forward);
 			leg.run();
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 			for (short s : Main.failedServos)

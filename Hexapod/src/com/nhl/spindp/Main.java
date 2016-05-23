@@ -64,7 +64,7 @@ public class Main
 		while (true)
 		{
 			Time.updateDeltaTime();
-			body.testLegMovements();
+			body.walk(1.0, 0.0);;
 		}
 	}
 	
