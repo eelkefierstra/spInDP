@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 using System.Collections.Generic;
 
 public class walk : MonoBehaviour
@@ -22,13 +21,7 @@ public class walk : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        //moveSelectedLeg(1, 60, 70, 90);
-    }
-
-    void FixedUpdate()
-    {
-        body.run();
+        body.walk(1.0, 0.0);
         //body.testIdleStance(testCoxaChange);
         KeyValuePair<int, double[]>[] pairs = body.getLegAngles();
         foreach (KeyValuePair<int, double[]> p in pairs)
@@ -37,6 +30,7 @@ public class walk : MonoBehaviour
         }
         //for (int i = 1; i <= 18; i+=3)
         //moveSelectedLeg(0, testAngles[0], testAngles[1], testAngles[2]);
+        //moveSelectedLeg(1, 60, 70, 90);
     }
 
     public void moveSelectedLeg(int id, double c, double a, double b)
