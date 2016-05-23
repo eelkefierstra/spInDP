@@ -27,13 +27,13 @@ public class SpiderBody
         int i = 0;
 		foreach (SpiderLeg leg in legs)
 		{
-<<<<<<< HEAD
+
 			if (!leg.set) leg.coxaChange += 1;
 			if ( leg.set) leg.coxaChange -= 1;
             //if (leg.coxaChange > 90) flip = true;
             //if (leg.coxaChange <= 0) flip = false;            
             //leg.turn();
-=======
+
             if (forward != 0.0)
             {
                 if (!leg.set) leg.coxaChange += (50 * Time.deltaTime * forward);
@@ -45,7 +45,7 @@ public class SpiderBody
                 // curve or something...
             }
             i++;
->>>>>>> 863fb3912230857d6d4b7b18e961cec033a199df
+
 		}
         foreach (Future<object> f in futures) f.GetResult();
 	}

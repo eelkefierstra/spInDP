@@ -81,7 +81,7 @@ public class SpiderLeg : ICallable<object>
 
     public void turn()
     {
-<<<<<<< HEAD
+
         //RV (leidend)        
         pootRVA();
         servohoek_rv = 0;
@@ -125,7 +125,7 @@ public class SpiderLeg : ICallable<object>
         alpha = Math.Sinh((Math.Sin(gamma * (Math.PI / 180)) * l4) / r4) * (180 / Math.PI);
         beta = 180 - gamma - alpha;
         laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / Math.Sin(gamma * (Math.PI / 180));
-=======
+
         switch (getFirstId() / 3)
         {
             case 0:
@@ -179,7 +179,7 @@ public class SpiderLeg : ICallable<object>
             case 5:
                 //LA
                 pootLVA();
->>>>>>> 863fb3912230857d6d4b7b18e961cec033a199df
+
 
                 if (beta < 0)
                     servohoek = gamma_a + gamma;
@@ -293,12 +293,10 @@ public class SpiderLeg : ICallable<object>
         gamma = 360 - (Math.Tanh((0.5f * Lengte) / (0.5f * Breedte)).ToDegrees() + (135 + servohoek));
         alpha = Math.Sinh((Math.Sin(gamma.ToRadians()) * l4) / r4).ToDegrees();
         beta = 180 - gamma - alpha;
-<<<<<<< HEAD
         laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / (Math.Sin(gamma * (Math.PI / 180)));
-        b_turn = beta - beta_b
-=======
+        b_turn = beta - beta_b;
         laccent = (r4 * Math.Sin(beta.ToRadians())) / (Math.Sin(gamma.ToRadians()));
->>>>>>> 863fb3912230857d6d4b7b18e961cec033a199df
+
 
         //LV
         VA360();
