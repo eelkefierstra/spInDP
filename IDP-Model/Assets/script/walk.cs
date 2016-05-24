@@ -21,9 +21,8 @@ public class walk : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        body.walk(0.0, 1.0);
-        body.testIdleStance(testCoxaChange);
+		//body.testIdleStance(testCoxaChange);
+		body.walk(0.0, 1.0);
         KeyValuePair<int, double[]>[] pairs = body.getLegAngles();
         foreach (KeyValuePair<int, double[]> p in pairs)
         {
@@ -38,7 +37,7 @@ public class walk : MonoBehaviour
     {
         // get right id     
         int legId = id / 3;
-        Debug.Log("Leg: " + legId + " has the angles: " + c + ", " + a + ", " + b, this);
+        //Debug.Log("Leg: " + legId + " has the angles: " + c + ", " + a + ", " + b, this);
         // get leg with id
         // find gamma from leg
         GameObject gamma = allLegs[legId].transform.Find("poot1.1_pivot").gameObject;

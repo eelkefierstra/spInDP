@@ -38,18 +38,15 @@ public class SpiderBody
             {
                 Debug.Log("FW");
                 if (!leg.set) leg.coxaChange += (50 * Time.deltaTime * forward);
-                if (leg.set) leg.coxaChange -= (50 * Time.deltaTime * forward);
+                if ( leg.set) leg.coxaChange -= (50 * Time.deltaTime * forward);
                 futures[i] = executor.Submit(leg);
             }
-            if (true)//!forward.IsBetweenII(-.25, .25))
+            if (!right.IsBetweenII(-.25, .25))
             {
                 // curve or something...                
                 leg.turn();
             }
-            else
-                Debug.Log("FOUT");
             i++;
-
 		}
        // foreach (Future<object> f in futures) f.GetResult();
 	}
