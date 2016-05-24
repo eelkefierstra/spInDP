@@ -48,11 +48,8 @@ int main()
 		pigs.open(PIGPIO);
 		pigs << "w " << signalPin << " 1" << endl;
 	    //getline(s_in, line);
-		s_in.read(readBuff, 4);
-		strcpy(charBuff, readBuff);
-		s_in.read(readBuff, charBuff[3]);
-		for (short i = 0; i < charBuff[3]; i++)
-				charBuff[i+3] = readBuff[i];
+		s_in.read(readBuff, 32);
+		memcpy(charBuff, readBuff, 4 + readBuff[3]);
 	    s_in.close();
 		sp.write_some(boost::asio::buffer(string(charBuff, 4 + charBuff[3])));
 		this_thread::sleep_for(chrono::microseconds(1));
