@@ -1,6 +1,9 @@
 package com.nhl.spindp;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 import com.nhl.spindp.serialconn.ServoConnection;
@@ -101,5 +104,21 @@ public class Main
 			}
 		}
 			//Thread.sleep(1000);
+	}
+	
+	public void dirtyHack(int[] ids, int[] angles) throws IOException, InterruptedException
+	{
+		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have same length");
+		String line = "";
+		for (int i = 0; i < ids.length; i++)
+		{
+			Process p = new ProcessBuilder("python", "~/git/spInDP/python/moveTo.py", String.valueOf(ids[i]), String.valueOf(angles[i])).start();
+			p.waitFor();
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()), 1);
+			while ((line = reader.readLine()) != null)
+			{
+				System.out.println(line);
+			}
+		}
 	}
 }
