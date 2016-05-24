@@ -27,6 +27,7 @@ public class SpiderBody
         int i = 0;
 		foreach (SpiderLeg leg in legs)
 		{
+<<<<<<< HEAD
 
 			if (!leg.set) leg.coxaChange += 1;
 			if ( leg.set) leg.coxaChange -= 1;
@@ -47,6 +48,13 @@ public class SpiderBody
                 leg.turn();
             }
             i++;
+=======
+			if (!leg.set) leg.coxaChange += (75.0 * UnityEngine.Time.deltaTime);
+			if ( leg.set) leg.coxaChange -= (75.0 * UnityEngine.Time.deltaTime);
+			//if (leg.coxaChange > 90) flip = true;
+			//if (leg.coxaChange <= 0) flip = false;
+			leg.run();
+>>>>>>> refs/remotes/origin/nativeTest
 		}
        // foreach (Future<object> f in futures) f.GetResult();
 	}
@@ -70,4 +78,24 @@ public class SpiderBody
             leg.Call();
         }
     }
+<<<<<<< HEAD
+=======
+
+	public void testLegMovements()
+	{
+		while (true)
+		{
+			foreach (SpiderLeg leg in legs)
+			{
+				if (!leg.set) leg.coxaChange += (75.0 * UnityEngine.Time.deltaTime);
+				if ( leg.set) leg.coxaChange -= (75.0 * UnityEngine.Time.deltaTime);
+                //if (leg.coxaChange > 90) flip = true;
+                //if (leg.coxaChange <= 0) flip = false;
+                leg.run();
+				//Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			}
+		}
+	}
+
+>>>>>>> refs/remotes/origin/nativeTest
 }

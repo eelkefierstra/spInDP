@@ -1,5 +1,6 @@
 package com.nhl.spindp;
 
+import java.io.File;
 import java.util.Arrays;
 
 import com.nhl.spindp.serialconn.ServoConnection;
@@ -10,6 +11,12 @@ public class Main
 	private static Main instance;
 	private static ServoConnection conn;
 	public static short[] failedServos;
+	
+	static
+	{
+		File lib = new File(Main.class.getResource("/libs/").getPath(), "libHexapod.so");
+		System.load(lib.getAbsolutePath());
+	}
 	
 	public static Main getInstance()
 	{
@@ -57,7 +64,7 @@ public class Main
 		while (true)
 		{
 			Time.updateDeltaTime();
-			body.testLegMovements();
+			body.walk(1.0, 0.0);;
 		}
 	}
 	
