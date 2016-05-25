@@ -21,9 +21,14 @@ public class walk : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+<<<<<<< HEAD
         
         body.walk(0.0, 1.0);
        // body.testIdleStance(testCoxaChange);
+=======
+		//body.testIdleStance(testCoxaChange);
+		body.walk(0.0, 1.0);
+>>>>>>> 8072597019e6090121794f2753bfb05c94a1f9c0
         KeyValuePair<int, double[]>[] pairs = body.getLegAngles();
         foreach (KeyValuePair<int, double[]> p in pairs)
         {
