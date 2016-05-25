@@ -86,7 +86,6 @@ public class SpiderLeg : ICallable<object>
         
         switch (getFirstId() / 3)
         {
-<<<<<<< HEAD
             case 0:
                 //RV (leidend)                
 
@@ -166,22 +165,6 @@ public class SpiderLeg : ICallable<object>
                 break;
             default:
                 throw new InvalidOperationException();
-=======
-            servos[SpiderJoint.COXA].setAngle(alpha = coxaChange.ToRadians());
-            double lAccent = LACCENT / Math.Cos(alpha = Math.Abs(coxaChange - (.5 * A_MAX)).ToRadians());
-            double d = lAccent - F;
-            double h = 0;
-            step = Math.Abs(Math.Sqrt(Math.Pow(lAccent, 2.0) - Math.Pow(LACCENT, 2.0)));
-            if (coxaChange < 45) step *= -1;
-            if (!set) h = (PAR_Y * -1) * Math.Pow(step, 2.0) + PAR_X;
-            double b = Math.Sqrt(Math.Pow(d, 2.0) + Math.Pow(E - h, 2.0));
-            //double test1 = Math.Pow(C, 2.0), test2 = Math.Pow(b, 2.0), test3 = Math.Pow(A, 2.0), test4 = Math.Acos((test1 - test2 - test3) / (-2 * b * A));
-            servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - Math.Pow(A, 2.0)) / (-2 * b * A)));
-            servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)));
-            if (coxaChange >= 80) set = true;
-            if (coxaChange <= 10) set = false;
-            //spider.GetComponent<walk>().moveSelectedLegg(servos[SpiderJoint.COXA].getId(), (float)gamma, (float)alpha, (float)beta);
->>>>>>> refs/remotes/origin/nativeTest
         }
 
         UnityEngine.Debug.Log("id"+getFirstId() / 3+",c:"+(int)gamma + ",a:" + (int)alpha + ",b:" + (int)beta);
