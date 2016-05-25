@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
 
@@ -34,6 +35,9 @@ public class Main
 	 */
 	public static void main(String[] args) throws Exception
 	{
+		WebSocket sock = new WebSocket(8000);
+		sock.start();
+		/*
 		failedServos = new short[18];
 		Arrays.fill(failedServos, (short)-1);
 		instance = new Main();
@@ -63,12 +67,12 @@ public class Main
 				conn.moveServo(i, (short)(j * 4));
 			}
 		}*/
-		
+		/*
 		while (true)
 		{
 			Time.updateDeltaTime();
 			body.walk(1.0, 0.0);;
-		}
+		}*/
 	}
 	
 	public static void servoFailed(short id)

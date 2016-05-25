@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-
+@SuppressWarnings("restriction")
 public class Servo
 {
 	/**

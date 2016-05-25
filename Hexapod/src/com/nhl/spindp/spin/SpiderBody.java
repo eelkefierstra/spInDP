@@ -53,7 +53,7 @@ public class SpiderBody
 
 			if (!leg.set) leg.coxaChange += ((25.0 * Time.deltaTime) * forward);
 			if ( leg.set) leg.coxaChange -= ((25.0 * Time.deltaTime) * forward);
-			leg.run();
+			futures[i] = executor.submit(leg);
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 			for (short s : Main.failedServos)
 				System.out.println(s);
