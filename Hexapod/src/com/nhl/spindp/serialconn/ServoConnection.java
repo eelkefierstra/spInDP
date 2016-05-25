@@ -181,10 +181,10 @@ public class ServoConnection
 		setDirectionPin(false);
 		//Thread.sleep(1000);
 		byte[] res = readData(id);
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -208,10 +208,10 @@ public class ServoConnection
 		}
 		setDirectionPin(false);
 		byte[] res = readData(id);
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -537,7 +537,7 @@ public class ServoConnection
 	 */
 	private byte[] readData(int id) throws IOException
 	{
-		byte[] buffer = serialPort.nativeReadBytes(id);//(5, 100);
+		byte[] buffer = serialPort.readBytes(id);//(5, 100);
 		byte[] data = new byte[0];
 		//if prefix incorrect
 		if((buffer[0] != 0xFF) || (buffer[1] != 0xFF)) return data;

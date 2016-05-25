@@ -40,6 +40,16 @@ class SpiderLeg implements Runnable
 	@Override
 	public void run()
 	{
+		if (coxaChange >= 80)
+		{
+			set = true;
+			coxaChange = 80;
+		}
+		if (coxaChange <= 10)
+		{
+			set = false;
+			coxaChange = 10;
+		}
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
 		double lAccent = LACCENT / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
 		double d = lAccent - F;
@@ -51,8 +61,6 @@ class SpiderLeg implements Runnable
 		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
 		servos[SpiderJoint.FEMUR].setAngle(gamma = test4);//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
-		if (coxaChange >= 80) set = true;
-		if (coxaChange <= 10) set = false;
 	}
 	
 	int[] getIds()

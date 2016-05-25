@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;
@@ -14,7 +16,7 @@ public class Main
 {
 	private static Main instance;
 	private static ServoConnection conn;
-	public static short[] failedServos;
+	public static List<Short> failedServos;
 	
 	static
 	{
@@ -35,11 +37,11 @@ public class Main
 	 */
 	public static void main(String[] args) throws Exception
 	{
-		WebSocket sock = new WebSocket(8000);
-		sock.start();
 		/*
-		failedServos = new short[18];
-		Arrays.fill(failedServos, (short)-1);
+		WebSocket sock = new WebSocket(8000);
+		sock.start();*/
+		
+		failedServos = new ArrayList<>();
 		instance = new Main();
 		Time.updateDeltaTime();
 		SpiderBody body = new SpiderBody(1);
@@ -67,24 +69,22 @@ public class Main
 				conn.moveServo(i, (short)(j * 4));
 			}
 		}*/
-		/*
+		
 		while (true)
 		{
 			Time.updateDeltaTime();
-			body.walk(1.0, 0.0);;
-		}*/
+			body.walk(1.0, 0.0);
+		}
 	}
 	
 	public static void servoFailed(short id)
 	{
-		int i = 0;
-		for (; i < failedServos.length; i++)
+		for (Short s : failedServos)
 		{
-			if (failedServos[i] == id) return;
-			if (failedServos[i] == -1) break;
+			if (s.equals(id)) return;
 		}
-		failedServos[i] = id;
-		Arrays.sort(failedServos);
+		failedServos.add(id);
+		failedServos.sort(null);
 	}
 	
 	/**

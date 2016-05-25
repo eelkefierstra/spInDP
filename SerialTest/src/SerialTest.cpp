@@ -10,8 +10,10 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
+#include <iomanip>
 #include <boost/asio.hpp>
 #include "blocking_header.h"
+
 
 #define SERIAL_IN  "/tmp/S_IN"
 #define SERIAL_OUT "/tmp/S_OUT"
@@ -19,10 +21,15 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
 	static boost::asio::io_service ios;
-	boost::asio::serial_port sp(ios, "/dev/serial0");
+	string device = "/dev/serial0";
+	if (argc > 1)
+	{
+		device = argv[1];
+	}
+	boost::asio::serial_port sp(ios, device);
 	sp.set_option(boost::asio::serial_port::baud_rate(1000000));
 	blocking_reader reader(sp, 5);
 	string res;
@@ -30,14 +37,17 @@ int main()
 
 	int signalPin = 18;
 
-	mknod(SERIAL_IN, S_IFIFO|0666, 0);
-	mknod(SERIAL_OUT, S_IFIFO|0666, 0);
+	mkfifo(SERIAL_IN, 0666);
+	mkfifo(SERIAL_OUT, 0666);
+	//mknod(SERIAL_IN, S_IFIFO|0666, 0);
+	//mknod(SERIAL_OUT, S_IFIFO|0666, 0);
 	ofstream pigs;
 	ofstream s_out;
 	ifstream s_in;
-	string line;
 	char charBuff[32];
 	char readBuff[32];
+	for (int i = 0; i < 32; i++)
+		readBuff[i] = 0;
 	bool done = false;
 
 	//char test[6] = { 0xFF, 0xFF, 0x01, 0x02, 0x00, 0xFC };
@@ -56,10 +66,19 @@ int main()
 		pigs << "w " << signalPin << " 0" << endl;
 		pigs.flush();
 		pigs.close();
-		cout << "sent: " << line << endl;
+		ostringstream ss;
+		ss << hex << setfill('0');
+		for (char c : charBuff)
+			ss << c;
+		cout << "sent: " << ss.str() << endl;
 		while(reader.read_char(c) && c != '\n')
 		{
 			res += c;
+		}
+		if (res.compare("") == 0)
+		{
+			char prefix[2] = { 0x00, 0x00 };
+			res.append(prefix);
 		}
 		//sp.read_some(boost::asio::buffer(tmp));
 		s_out.open(SERIAL_IN);
