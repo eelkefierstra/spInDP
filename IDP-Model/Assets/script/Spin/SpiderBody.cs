@@ -41,7 +41,7 @@ public class SpiderBody
                 if (leg.set) leg.coxaChange -= (50 * Time.deltaTime * forward);
                 futures[i] = executor.Submit(leg);
             }
-            if (true)//!forward.IsBetweenII(-.25, .25))
+            if (!right.IsBetweenII(-.25, .25))
             {
                 // curve or something...                
                 leg.turn();
