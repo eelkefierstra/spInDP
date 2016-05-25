@@ -106,7 +106,15 @@ public class Main
 			//Thread.sleep(1000);
 	}
 	
-	public void dirtyHack(int[] ids, int[] angles) throws IOException, InterruptedException
+	/**
+	 * Dirty hack for if the C++ thing doesn't work out. Don't use, seriously
+	 * @param ids The id's of the servo's to be moved
+	 * @param angles The angles to move to
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	@Deprecated
+	public void driveServoInPython(int[] ids, int[] angles) throws IOException, InterruptedException
 	{
 		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have same length");
 		String line = "";
