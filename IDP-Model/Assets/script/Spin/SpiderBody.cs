@@ -17,7 +17,7 @@ public class SpiderBody
 
 		for (int i = 0; i < legs.Length; i++)
 		{
-			legs[i] = new SpiderLeg((i * 3) + 1);
+			legs[i] = new SpiderLeg(ref executor, (i * 3) + 1);
 		}
 	}
 	
@@ -27,27 +27,8 @@ public class SpiderBody
         int i = 0;
 		foreach (SpiderLeg leg in legs)
 		{
-
-			if (!leg.set) leg.coxaChange += 1;
-			if ( leg.set) leg.coxaChange -= 1;
-            //if (leg.coxaChange > 90) flip = true;
-            //if (leg.coxaChange <= 0) flip = false;            
-            //leg.turn();
-
-            if (forward != 0.0)
-            {
-                Debug.Log("FW");
-                if (!leg.set) leg.coxaChange += (50 * Time.deltaTime * forward);
-                if ( leg.set) leg.coxaChange -= (50 * Time.deltaTime * forward);
-                futures[i] = executor.Submit(leg);
-            }
-            if (!right.IsBetweenII(-.25, .25))
-            {
-                // curve or something...   
-                if (!leg.set) leg.coxaChange += (50 * Time.deltaTime * forward);
-                if (leg.set) leg.coxaChange -= (50 * Time.deltaTime * forward);
-                leg.turn();
-            }
+			if (leg.walk(forward, right))
+				futures[i] = leg.getFuture();
             i++;
         }
         i++;
@@ -65,7 +46,7 @@ public class SpiderBody
         }
         return res;
     }
-
+	/*
     public void testIdleStance(int coxaChange)
     {
         foreach (SpiderLeg leg in legs)
@@ -73,5 +54,5 @@ public class SpiderBody
             leg.coxaChange = coxaChange;
             leg.Call();
         }
-    }
+    }*/
 }
