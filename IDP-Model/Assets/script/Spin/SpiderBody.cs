@@ -43,15 +43,17 @@ public class SpiderBody
             }
             if (!right.IsBetweenII(-.25, .25))
             {
-                // curve or something...                
+                // curve or something...   
+                if (!leg.set) leg.coxaChange += (50 * Time.deltaTime * forward);
+                if (leg.set) leg.coxaChange -= (50 * Time.deltaTime * forward);
                 leg.turn();
             }
             i++;
-            }
-            i++;
-		}
-       // foreach (Future<object> f in futures) f.GetResult();
+        }
+        i++;
 	}
+       // foreach (Future<object> f in futures) f.GetResult();
+	
 
     public KeyValuePair<int, double[]>[] getLegAngles()
     {

@@ -49,7 +49,7 @@ public class SpiderLeg : ICallable<object>
     private  double beta_RV;
     private  double servoAngle;
     private  double laccent = LACCENT;
-    private  double b_turn;
+    private static double b_turn;
     private  double servoAngle_rv;
     private  double betaD1;
     private  double betaD2;
@@ -87,10 +87,9 @@ public class SpiderLeg : ICallable<object>
         switch (getFirstId() / 3)
         {
             case 0:
-                //RV (leidend)                
-
+                //RV (leidend)   
                 pootRVA();
-                servoAngle_rv = 100;
+                servoAngle_rv = coxaChange;
                 servoAngle = servoAngle_rv;
                 gamma = servoAngle + gamma_a;
                 if (Double.IsNaN(gamma))
@@ -132,7 +131,7 @@ public class SpiderLeg : ICallable<object>
                 //LV
                 pootLVA();
                 servoAngle = servoAngle_rv;
-                beta = servoAngle + beta_a;
+                beta = servoAngle + b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
                 alpha = 180 - Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
                 gamma = 180 - alpha - beta;
@@ -167,11 +166,13 @@ public class SpiderLeg : ICallable<object>
                 throw new InvalidOperationException();
         }
 
-        UnityEngine.Debug.Log("id"+getFirstId() / 3+",c:"+(int)gamma + ",a:" + (int)alpha + ",b:" + (int)beta);
+        UnityEngine.Debug.Log("x:"+(int)coxaChange+",id"+getFirstId() / 3+",c:"+(int)gamma + ",a:" + (int)alpha + ",b:" + (int)beta);
         servos[SpiderJoint.COXA].setAngle(gamma.ToRadians());
         servos[SpiderJoint.FEMUR].setAngle(alpha.ToRadians());
         servos[SpiderJoint.TIBIA].setAngle(beta.ToRadians());
-     
+        if (coxaChange >= 90) set = true;
+        if (coxaChange <= 0) set = false;
+
 
     }
 
