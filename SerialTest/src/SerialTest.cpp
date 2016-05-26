@@ -12,18 +12,11 @@
 #include <chrono>
 #include <boost/asio.hpp>
 #include "blocking_header.h"
-#include <glib.h>
-#include <glib/gprintf.h>
-#include <errno.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <string>
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include <vector>
+#include <iterator>
 
 #define SERIAL_IN  "/tmp/S_IN"
 #define SERIAL_OUT "/tmp/S_OUT"
@@ -84,70 +77,83 @@ int main()
 	return 0;
 }
 
-void i2cSetup()
+bool i2cSetup()
 {
 	int file;
 	string filename = "/dev/i2c-1";
-	const gchar *buffer;
 	int addr = 0x68;
 
-	if ((file=open(filename,O_RDWR)) < 0)
+	if ((file=open(filename.c_str(),O_RDWR)) < 0)
 	{
         cout << "Failed to open the bus." << endl;
-        exit(1);
+        return false;
 	}
 
     if (ioctl(file,I2C_SLAVE,addr) < 0)
     {
         cout << "Failed to acquire bus access and/or talk to slave." << endl;
-        exit(1);
+        return false;
     }
+
+    //wake up gyro
+    char buff[2]={0x6B,0};
+    if (write(file,buff,2) != 1)
+	{
+		cout << "failde to wake device" << endl;
+		return false;
+	}
+    return true;
 }
 
-void i2cRead(int *file)
+vector<char> i2cRead(int file)
 {
-	char buf[20] = {0};
-	float data;
-	char channel;
+	char buf[28] = {0};
 
-	// Using I2C Read
-	if (read(file,buf,14) != 14)
+	buf[0]=0x3B;
+	if (write(file,buf,1) != 1)
 	{
-		/* ERROR HANDLING: i2c transaction failed
-		 * More data expected*/
-		cout << "Failed to read from the i2c bus." << endl;
-		buffer = g_strerror(errno);
-		printf(buffer);
-		cout << endl;
+		cout << "register request failed" << endl;
 	}
 	else
 	{
-		data = (float)((buf[0] & 0b00001111)<<8)+buf[1];
-		data = data/4096*5;
-		channel = ((buf[0] & 0b00110000)>>4);
-		cout << "Data: " << data<< endl;
+		// Using I2C Read
+		if (read(file,buf,14) != 14)
+		{
+			/* More data expected*/
+			cout << "Failed to read correctly from the i2c bus." << endl;
+			cout << endl;
+		}
+		else
+		{
+			vector<char> data(begin(buf),end(buf));
+			return data;
+		}
 	}
+	return vector<char>();
 }
 
+
+
+
+/*
 void sensors_ADC_init()
 {
     int file;
     char filename[40];
-    const gchar *buffer;
     int addr = 0b00101001;        // The I2C address of the ADC
 
     sprintf(filename,"/dev/i2c-2");
     if ((file = open(filename,O_RDWR)) < 0)
     {
         printf("Failed to open the bus.");
-        /* ERROR HANDLING; you can check errno to see what went wrong */
+        //ERROR HANDLING; you can check errno to see what went wrong
         exit(1);
     }
 
     if (ioctl(file,I2C_SLAVE,addr) < 0)
     {
         printf("Failed to acquire bus access and/or talk to slave.\n");
-        /* ERROR HANDLING; you can check errno to see what went wrong */
+        //ERROR HANDLING; you can check errno to see what went wrong
         exit(1);
     }
 
@@ -160,10 +166,8 @@ void sensors_ADC_init()
         // Using I2C Read
         if (read(file,buf,2) != 2)
         {
-            /* ERROR HANDLING: i2c transaction failed */
+            //ERROR HANDLING: i2c transaction failed
             printf("Failed to read from the i2c bus.\n");
-            buffer = g_strerror(errno);
-            printf(buffer);
             printf("\n\n");
         }
         else
@@ -181,10 +185,8 @@ void sensors_ADC_init()
 
     if (write(file,buf,1) != 1)
     {
-        /* ERROR HANDLING: i2c transaction failed */
+        //ERROR HANDLING: i2c transaction failed
         printf("Failed to write to the i2c bus.\n");
-        buffer = g_strerror(errno);
-        printf(buffer);
         printf("\n\n");
     }
-}
+}*/
