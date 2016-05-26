@@ -3,7 +3,7 @@
 // Author      : 
 // Version     : 0.1b
 // Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Description : Hello Serial in C++, Ansi-style
 //============================================================================
 
 #include <iostream>
@@ -26,6 +26,9 @@ using namespace std;
 
 void i2c();
 
+bool done = false;
+string filename = "/dev/i2c-1";
+
 int main()
 {
 	static boost::asio::io_service ios;
@@ -43,7 +46,6 @@ int main()
 	ofstream s_out;
 	ifstream s_in;
 	string line;
-	bool done = false;
 
 	//char test[] = { 0xFF, 0xFF, 0x01, 0x02, 0x00, 0xFC };
 
@@ -77,10 +79,8 @@ int main()
 	return 0;
 }
 
-bool i2cSetup()
+bool i2cSetup(int &file)
 {
-	int file;
-	string filename = "/dev/i2c-1";
 	int addr = 0x68;
 
 	if ((file=open(filename.c_str(),O_RDWR)) < 0)
@@ -105,7 +105,7 @@ bool i2cSetup()
     return true;
 }
 
-vector<char> i2cRead(int file)
+vector<char> i2cRead(int &file)
 {
 	char buf[28] = {0};
 
@@ -132,7 +132,35 @@ vector<char> i2cRead(int file)
 	return vector<char>();
 }
 
+bool i2cClean(int &file)
+{
+	//wake up gyro
+	char buff[2]={0x6B,1};
+	if (write(file,buff,2) != 1)
+	{
+		cout << "fail to put deviceto sleep" << endl;
+		return false;
+	}
 
+	if (close(file) < 0)
+	{
+		cout << "Failed to close the file." << endl;
+		return false;
+	}
+	return true;
+}
+
+void i2c()
+{
+	int file;
+
+	i2cSetup(file);
+	while (!done)
+	{
+		i2cRead(file);
+	}
+	i2cClean(file);
+}
 
 
 /*
