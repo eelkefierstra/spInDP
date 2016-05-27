@@ -27,7 +27,7 @@ public class SpiderBody
         int i = 0;
 		foreach (SpiderLeg leg in legs)
 		{
-
+            forward = 1.0;
 			if (!leg.set) leg.coxaChange += 1;
 			if ( leg.set) leg.coxaChange -= 1;
             //if (leg.coxaChange > 90) flip = true;

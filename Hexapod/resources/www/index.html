@@ -10,8 +10,14 @@
 		<h1>Hoi</h1>
 		<form action="">
 			<input type="button" name="walk" id="walk" />
-			<input type="range" name="forward" id="forward"/>
-			<input type="range" name="right" id="right" />
+			<input id = "forward" type="range" name="forward" id="forward" min="-1" max="1" />
+			<input id = "right" type="range" name="right" id="right" min="-1" max="1"/>
+			<textarea id = "sliderText"></textarea>
+			<script type="text/javascript">
+				var forward =   $('input[name=forward]').val();
+				var right =   $('input[name=right]').val();
+				document.getElementById('sliderText').value = "forward:"+forward+", right:"+right;				
+			</script>
 		</form>
 	</body>
 </html>

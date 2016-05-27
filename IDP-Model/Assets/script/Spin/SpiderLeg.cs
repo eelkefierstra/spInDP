@@ -3,6 +3,7 @@ using System;
 
 public class SpiderLeg : ICallable<object>
 {
+    private static readonly double Weigth = 24.525;
 	private static readonly double A       =  80.0;
 	private static readonly double A_MAX   =  90.0;
 	private static readonly double A_RAD   = (A_MAX / 2.0).ToRadians();
@@ -26,34 +27,47 @@ public class SpiderLeg : ICallable<object>
     private readonly double small_l = Math.Cos(A_RAD)*L;
     private double total_step;
 	public double coxaChange = 0.0;
-    double speed     = 0.0;
+    double speed     = 0.5;
     double direction = 6.0;
-    
+    private double t_a;
+    private double t_b;    
+    private double t_c;
+    private double t_d;
+    private double t_e;
+    private double t_f;
+    private double t_E;
+    private double t_A;
+    private double t_AE;
+    private double t_tms;
+    private double t_femur;
+    private double t_tibia;
+    private double t_coxa;
+
     // bocht
     private static readonly double Length = 300;
     private static readonly double Width = 80;
     private static readonly double R = 400;
-    private  double h;
-    private  double b;
-    private  double r4;
-    private  double I;
-    private  double II;
-    private  double l4;
-    private  double a;
-    private  double gamma_a;
-    private  double alpha_a;
-    private  double beta_a;
-    private  double gamma_b;
-    private  double alpha_b;
-    private  double beta_b;
-    private  double beta_RV;
-    private  double servoAngle;
-    private  double laccent = LACCENT;
+    private double h;
+    private double b;
+    private double r4;
+    private double I;
+    private double II;
+    private double l4;
+    private double a;
+    private double gamma_a;
+    private double alpha_a;
+    private double beta_a;
+    private double gamma_b;
+    private double alpha_b;
+    private double beta_b;
+    private double beta_RV;
+    private double servoAngle;
+    private double laccent = LACCENT;
     private static double b_turn;
-    private  double servoAngle_rv;
-    private  double betaD1;
-    private  double betaD2;
-    private  double test1; //TODO: need name still
+    private double servoAngle_rv;
+    private double betaD1;
+    private double betaD2;
+    private double test1; //TODO: need name still
     private double B_MAX;
    
 
@@ -152,7 +166,7 @@ public class SpiderLeg : ICallable<object>
                 pootLVA();
                 beta = beta_b - b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));                
-                if ((180 + Math.Asin(Math.Sin((beta.ToRadians()) * l4) / laccent).ToDegrees()) > 180)                   
+                if ((180 + Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees()) > 180)                   
                     alpha = -(180 + (Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees())) + 360;
                 else
                     alpha = (180 + (Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees())) + 360;
@@ -165,26 +179,35 @@ public class SpiderLeg : ICallable<object>
             default:
                 throw new InvalidOperationException();
         }
-
-        UnityEngine.Debug.Log("x:"+(int)coxaChange+",id"+getFirstId() / 3+",c:"+(int)gamma + ",a:" + (int)alpha + ",b:" + (int)beta);
-        servos[SpiderJoint.COXA].setAngle(gamma.ToRadians());
-        servos[SpiderJoint.FEMUR].setAngle(alpha.ToRadians());
-        servos[SpiderJoint.TIBIA].setAngle(beta.ToRadians());
+        // set right COXA, FEMUR and TIBIA
+        turn2();
+        if(getFirstId() / 3 == 2)
+            UnityEngine.Debug.Log("x:"+(int)coxaChange+",id"+getFirstId() / 3+",c:"+(int)gamma + ",a:" + (int)alpha + ",b:" + (int)beta);
+        servos[SpiderJoint.COXA].setAngle(servoAngle.ToRadians());
+        servos[SpiderJoint.FEMUR].setAngle(t_femur.ToRadians());
+        servos[SpiderJoint.TIBIA].setAngle(t_tibia.ToRadians());
         if (coxaChange >= 90) set = true;
         if (coxaChange <= 0) set = false;
 
-
     }
 
-    public void setServo()
+    public void turn2()
     {
-        
-    }
-    public void getServo(int id)
-    {  
-         
+        t_a = 80f;       
+        t_c = 160f;
+        t_e = 90f;
+        t_f = 35f;
+        t_d = laccent - t_f;
+        t_b = Math.Sqrt(t_d*t_d + t_e*t_e);
+        t_E = Math.Atan(t_e / t_d).ToDegrees();
+        t_A = Math.Acos((t_a * t_a - t_c * t_c - t_b * t_b) / (-2 * t_c * t_b)).ToDegrees();
+        t_AE = t_E + t_A;
+        t_tms = (Weigth / 3f) * (E / 1000f);
+        t_femur = Math.Acos((t_c * t_c - t_b * t_b - t_a * t_a) / (-2 * t_b * t_a)).ToDegrees();
+        t_tibia = Math.Acos((t_b * t_b - t_a * t_a - t_c * t_c) / (-2 * t_a * t_c)).ToDegrees();
+   
+ }
 
-    }
 
     public void smallBetaTurn()
     {
