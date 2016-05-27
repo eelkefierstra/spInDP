@@ -125,7 +125,11 @@ public class Main
 		String line = "";
 		for (int i = 0; i < ids.length; i++)
 		{
-			Process p = new ProcessBuilder("python", "~/git/spInDP/python/moveTo.py", String.valueOf(ids[i]), String.valueOf(angles[i])).start();
+			Process p = new ProcessBuilder("python",
+					"~/git/spInDP/python/goto.py",
+					String.valueOf(ids[i]),
+					String.valueOf(angles[i]))
+					.directory(new File("~/git/spInDP/python")).start();
 			p.waitFor();
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()), 1);
 			while ((line = reader.readLine()) != null)
