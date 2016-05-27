@@ -62,7 +62,7 @@ public:
 												port(port), timeout(timeout),
 												timer(port.get_io_service()),
 												read_error(true) {
-
+		c = '\0';
 	}
 
 	// Reads a character or times out

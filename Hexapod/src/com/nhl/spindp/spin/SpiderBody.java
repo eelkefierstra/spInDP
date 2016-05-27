@@ -5,7 +5,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.nhl.spindp.Main;
-import com.nhl.spindp.Time;
 
 public class SpiderBody
 {
@@ -21,7 +20,7 @@ public class SpiderBody
 		
 		for (int i = legs.length-1; i >= 0; i--)
 		{
-			legs[i] = new SpiderLeg(startId);
+			legs[i] = new SpiderLeg(executor, startId);
 			startId += 3;
 		}
 	}
@@ -32,8 +31,8 @@ public class SpiderBody
 		long start = System.currentTimeMillis();
 		for (SpiderLeg leg : legs)
 		{
-			leg.coxaChange = 5.0;
-			futures[i] = executor.submit(leg);
+			leg.walk(0, 0);
+			futures[i] = leg.getFuture();
 			//leg.run();
 			i++;
 		}
@@ -50,10 +49,8 @@ public class SpiderBody
 		int i = 0;
 		for (SpiderLeg leg : legs)
 		{
-
-			if (!leg.set) leg.coxaChange += ((25.0 * Time.deltaTime) * forward);
-			if ( leg.set) leg.coxaChange -= ((25.0 * Time.deltaTime) * forward);
-			futures[i] = executor.submit(leg);
+			if (leg.walk(forward, right))
+				futures[i] = leg.getFuture();
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 			for (short s : Main.failedServos)
 				System.out.println(s);

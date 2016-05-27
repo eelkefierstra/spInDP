@@ -12,6 +12,7 @@ import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
 
+@SuppressWarnings("unused")
 public class Main
 {
 	private static Main instance;
