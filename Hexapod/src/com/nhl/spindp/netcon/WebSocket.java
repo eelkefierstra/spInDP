@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
@@ -24,6 +25,7 @@ import org.apache.http.*;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -122,7 +124,8 @@ public class WebSocket
 			System.out.println(""); // empty line before each request
 	        System.out.println(request.getRequestLine());
 	        System.out.println("-------- HEADERS --------");
-	        for(Header header: request.getAllHeaders()) {
+	        for(Header header: request.getAllHeaders())
+	        {
 	            System.out.println(header.getName() + " : " + header.getValue());
 	        }
 	        System.out.println("--------");
@@ -153,31 +156,43 @@ public class WebSocket
 			}
 			reader.close();
 	        */
+	        HttpEntity responseEntity;
 	        RequestLine requestLine = request.getRequestLine();
 	        if (requestLine.getMethod().compareTo("GET") == 0)
 	        {
-				BasicHttpEntity responseEntity = new BasicHttpEntity();
-				URL resourcePath = Main.class.getResource("/www" + requestLine.getUri());
-				if (resourcePath == null)
+	        	File resource = new File(Main.class.getResource("/www" + requestLine.getUri()).getPath());
+				if (!resource.isFile())
 				{
 					response.setStatusCode(HttpStatus.SC_NOT_FOUND);
-					StringEntity notFoundEntity = new StringEntity(
+					responseEntity = new StringEntity(
 	                        "<html><body><h1>File" + requestLine.getUri() +
 	                        " not found</h1></body></html>",
 	                        ContentType.create("text/html", "UTF-8"));
-	                response.setEntity(notFoundEntity);
-	                return;
 				}
-				responseEntity.setContent(resourcePath.openStream());
-		        response.setEntity(responseEntity);
+				else if (!resource.canRead())
+				{
+					response.setStatusCode(HttpStatus.SC_FORBIDDEN);
+					responseEntity = new StringEntity(
+	                        "<html><body><h1>File" + requestLine.getUri() +
+	                        " forbidden</h1></body></html>",
+	                        ContentType.create("text/html", "UTF-8"));
+				}
+				else
+				{
+					InputStream resourceStream = Main.class.getResourceAsStream("/www" + requestLine.getUri());
+					responseEntity = new InputStreamEntity(resourceStream);
+				}
+				response.setEntity(responseEntity);
+	        }
+	        else if (requestLine.getMethod().compareTo("POST") == 0)
+	        {
+	        	System.out.println("ik heb een post gekregen");
 	        }
 	        else
 	        {
 	        	response.setEntity(new StringEntity("dummy response"));
 	        }
 		}
-		
-		
 		/*
 		@Override
 		public void handle(HttpExchange exchange) throws IOException

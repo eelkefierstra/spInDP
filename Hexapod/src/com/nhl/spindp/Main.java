@@ -38,10 +38,10 @@ public class Main
 	 */
 	public static void main(String[] args) throws Exception
 	{
-		/*
-		WebSocket sock = new WebSocket(8000);
-		sock.start();*/
 		
+		WebSocket sock = new WebSocket(8000);
+		sock.start();
+		/*
 		failedServos = new ArrayList<>();
 		instance = new Main();
 		Time.updateDeltaTime();
@@ -70,12 +70,12 @@ public class Main
 				conn.moveServo(i, (short)(j * 4));
 			}
 		}*/
-		
+		/*
 		while (true)
 		{
 			Time.updateDeltaTime();
 			body.walk(1.0, 0.0);
-		}
+		}*/
 	}
 	
 	public static void servoFailed(short id)
