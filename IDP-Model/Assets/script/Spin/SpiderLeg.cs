@@ -1,4 +1,5 @@
 ﻿using Executors;
+using UnityEngine;
 using System;
 
 public class SpiderLeg : ICallable<object>
@@ -70,16 +71,59 @@ public class SpiderLeg : ICallable<object>
     private double test1; //TODO: need name still
     private double B_MAX;
    
-
-
+	private IExecutor executor;
+	private Future<object> future;
+	private double coxaChange = 0.0;
     SpiderJoint[] servos = new SpiderJoint[3];
 
-	internal SpiderLeg(int startServoId)
+	internal SpiderLeg(ref IExecutor executor ,int startServoId)
 	{
-        if (startServoId % 2 == 0) coxaChange = 90.0;
+		set = (startServoId % 2) == 0;
+		coxaChange += 30 * (startServoId / 3);
+		if (coxaChange > 90)
+		{
+			coxaChange -= 90;
+		}
+		this.executor = executor;
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 75);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 175);
+	}
+
+	public bool walk(double forward, double right)
+	{
+		bool res = false;
+		if (Walk.Time.shouldSync())
+		{
+			coxaChange = (int)coxaChange;
+			/*coxaChange += 30 * (getFirstId() / 3);
+			if (coxaChange > 90)
+			{
+				coxaChange -= 90;
+			}*/
+		}
+		if (!right.IsBetweenII(-.25, .25))
+		{
+			// curve or something...   
+			if (!set) coxaChange += (50 * Time.deltaTime * forward);
+			if (set) coxaChange -= (50 * Time.deltaTime * forward);
+			turn();
+		}
+		if (!forward.IsBetweenII(-.25, .25))
+		{
+			if (Walk.Time.shouldSync())
+				Debug.Log("FW");
+			if (!set) coxaChange += (50 * Time.deltaTime * forward);
+			if ( set) coxaChange -= (50 * Time.deltaTime * forward);
+			Call();
+			//future = executor.Submit(this);
+		}
+		return res;
+	}
+
+	public Future<object> getFuture()
+	{
+		return future;
 	}
 
     /// <summary>
@@ -87,30 +131,111 @@ public class SpiderLeg : ICallable<object>
     /// </summary>
     public object Call()
     {
-        if (speed > 0.0)
-            forward();
-        
+		if (coxaChange >= 90)
+		{
+			set = true;
+			coxaChange = 90;
+		}
+		if (coxaChange <= 0)
+		{
+			set = false;
+			coxaChange = 0;
+		}
+		servos[SpiderJoint.COXA].setAngle(alpha = coxaChange.ToRadians());
+		double lAccent = LACCENT / Math.Cos(alpha = Math.Abs(coxaChange - (.5 * A_MAX)).ToRadians());
+		double d = lAccent - F;
+		double h = 0;
+		step = Math.Abs(Math.Sqrt(Math.Pow(lAccent, 2.0) - Math.Pow(LACCENT, 2.0)));
+		if (coxaChange < 45) step *= -1;
+		if (set) h = (PAR_Y * -1) * Math.Pow(step, 2.0) + PAR_X;
+		double b = Math.Sqrt(Math.Pow(d, 2.0) + Math.Pow(E + h, 2.0));
+		//double test1 = Math.Pow(C, 2.0), test2 = Math.Pow(b, 2.0), test3 = Math.Pow(A, 2.0), test4 = 
+Math.Acos((test1 - test2 - test3) / (-2 * b * A));
+		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - 
+Math.Pow(A, 2.0)) / (-2 * b * A)));
+		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - 
+Math.Pow(C, 2.0)) / (-2 * A * C)));
         return new object();
     }
+
     /// <summary>
     /// Main method for making a turn
     /// </summary>
-    public void turn()
-    {
-        
-        switch (getFirstId() / 3)
+	private void turn()
+	{
+		int id = getFirstId() / 3;
+
+		switch (id)
+		{
+			case 0:
+			case 2:
+				// Rechts voor en achter
+				h = 0.5f * Length - 0.5f * (Math.Sqrt(L * L - small_l* small_l) * 2);
+				b = small_l + R + 0.5f * Width;
+				r4 = Math.Sqrt(h * h + b * b);        
+				I = 0.5f * Length;
+				II = R + 0.5f * Width;
+				l4 = Math.Sqrt(I * I + II * II);
+				a = Math.Atan(II / I).ToDegrees();        
+				gamma_a = 180 - (A_MAX / 2) + (90 - a); //(180 - A_MAX) / 2 + 90 + (90 - a);
+				alpha_a = Math.Asin((Math.Sin(gamma_a.ToRadians()) * l4) / r4).ToDegrees();
+				beta_a = 180 - alpha_a - gamma_a;
+				gamma_b = a + ((180 - A_MAX) / 2);
+				alpha_b = Math.Asin((Math.Sin(gamma_b.ToRadians()) * l4) / r4).ToDegrees();
+				beta_b = 180 - alpha_b - gamma_b;
+				B_MAX = beta_b + beta_a;
+				break;
+			case 1:
+				// rechts mid
+				l4 = R + ((3f / 2f) * Width);
+				r4 = l4 + small_l;        
+				gamma_a = 90 + (180 - A_MAX) / 2;
+				alpha_a = Math.Asin((Math.Sin(gamma_a.ToRadians()) * l4) / r4).ToDegrees();
+				beta_a = 180 - alpha_a - gamma_a;
+				B_MAX = 2 * beta_a;
+				break;
+			case 3:
+			case 5:
+				// Links voor en achter
+				h = 0.5f * Length + 0.5f * (Math.Sqrt(L * L - small_l * small_l) * 2);
+				b = R - 0.5f * Width - small_l;
+				r4 = Math.Sqrt(h * h + b * b);
+				I = 0.5f * Length;
+				II = R - 0.5f * Width;
+				l4 = Math.Sqrt(I * I + II * II);
+				a = Math.Atan(II / I).ToDegrees();
+				gamma_a = (A_MAX / 2) + (90 - a);
+				alpha_a = 180 - Math.Asin((Math.Sin(gamma_a.ToRadians()) * l4) / r4).ToDegrees();
+				beta_a = 180 - alpha_a - gamma_a;
+				gamma_b = a - ((180 - A_MAX) / 2);
+				alpha_b = 180 - Math.Asin((Math.Sin(gamma_b.ToRadians()) * l4) / r4).ToDegrees();
+				beta_b = 180 - alpha_b - gamma_b;
+				B_MAX = beta_b + beta_a;
+				break;
+			case 4:
+				// links mid
+				l4 = R - ((3f / 2f) * Width);
+				r4 = Math.Sqrt((l4 * l4 + L * L) - 2 * l4 * L * Math.Cos((A_MAX / 2).ToRadians()));        
+				gamma_a = (A_MAX / 2);
+				alpha_a = 180 - Math.Asin((Math.Sin(gamma_a.ToRadians()) * l4) / r4).ToDegrees();
+				beta_a = 180 - alpha_a - gamma_a;
+				B_MAX = 2 * beta_a;
+				break;
+			default:
+				throw new InvalidOperationException();
+		}
+        switch (id)
         {
             case 0:
                 //RV (leidend)   
-                pootRVA();
                 servoAngle_rv = coxaChange;
                 servoAngle = servoAngle_rv;
                 gamma = servoAngle + gamma_a;
                 if (Double.IsNaN(gamma))
-                    UnityEngine.Debug.Log("gammaRV");
+                    Debug.Log("gammaRV");
                 alpha = Math.Asin((Math.Sin(gamma.ToRadians()) * l4) / r4).ToDegrees();
                 if (Double.IsNaN(alpha))
-                    UnityEngine.Debug.Log("alphaRV");
+                    Debug.Log("alphaRV");
                 beta = 180 - gamma - alpha;
                 beta_RV = beta;
                 
@@ -119,54 +244,45 @@ public class SpiderLeg : ICallable<object>
                 break;
             case 1:
                 //RM
-                pootRM();                
                 beta = beta_a - b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * l4 * r4 * Math.Cos(beta.ToRadians()));
                 alpha = Math.Asin((l4 * Math.Sin(beta.ToRadians())) / laccent).ToDegrees();
                 if (Double.IsNaN(alpha))
-                    UnityEngine.Debug.Log("alphaRM");
+                    Debug.Log("alphaRM");
                 gamma = 180 - alpha - beta;
                 servoAngle = gamma - 135;                
-                break;              
-                
+                break;                
             case 2:
                 //RA
-                pootRVA();
                 servoAngle = servoAngle_rv;
                 gamma = gamma_a + (90 - servoAngle);
                 alpha = Math.Asin((Math.Sin(gamma.ToRadians()) * l4) / r4).ToDegrees();
                 if (Double.IsNaN(alpha))
-                    UnityEngine.Debug.Log("alphaRA");
+                    Debug.Log("alphaRA");
                 beta = 180 - gamma - alpha;
                 laccent = (r4 * Math.Sin(beta.ToRadians())) / Math.Sin(gamma.ToRadians());
                 break;
-
             case 3:
                 //LV
-                pootLVA();
                 servoAngle = servoAngle_rv;
                 beta = servoAngle + b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
                 alpha = 180 - Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
                 gamma = 180 - alpha - beta;
-                                
                 break;
             case 4:
                 //LM
-                pootLM();
                 beta = beta_a - b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
                 alpha = 180 - Math.Asin((l4 * Math.Sin(beta.ToRadians())) / laccent).ToDegrees();
                 gamma = 180 - alpha - beta;
-                servoAngle = gamma + 45;   
-                                
+                servoAngle = gamma + 45;
                 break;
             case 5:
                 //LA
-                pootLVA();
                 beta = beta_b - b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));                
-                if ((180 + Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees()) > 180)                   
+                if ((180 + Math.Asin(Math.Sin((beta.ToRadians()) * l4) / laccent).ToDegrees()) > 180)                   
                     alpha = -(180 + (Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees())) + 360;
                 else
                     alpha = (180 + (Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees())) + 360;
@@ -176,8 +292,6 @@ public class SpiderLeg : ICallable<object>
                 else
                     servoAngle = gamma_b - gamma;   
                 break;
-            default:
-                throw new InvalidOperationException();
         }
         // set right COXA, FEMUR and TIBIA
         turn2();
@@ -188,6 +302,7 @@ public class SpiderLeg : ICallable<object>
         servos[SpiderJoint.TIBIA].setAngle(t_tibia.ToRadians());
         if (coxaChange >= 90) set = true;
         if (coxaChange <= 0) set = false;
+
 
     }
 
@@ -229,68 +344,13 @@ public class SpiderLeg : ICallable<object>
             smallestBeta = betaD2;
         */
     }
-    public void pootRVA()
-    {
-        // Rechts voor en achter
-        h = 0.5f * Length - 0.5f * (Math.Sqrt(L * L - small_l* small_l) * 2);
-        b = small_l + R + 0.5f * Width;
-        r4 = Math.Sqrt(h * h + b * b);        
-        I = 0.5f * Length;
-        II = R + 0.5f * Width;
-        l4 = Math.Sqrt(I * I + II * II);
-        a = Math.Atan(II / I).ToDegrees();        
-        gamma_a = 180 - (A_MAX / 2) + (90 - a); //(180 - A_MAX) / 2 + 90 + (90 - a);
-        alpha_a = Math.Asin((Math.Sin(gamma_a.ToRadians()) * l4) / r4).ToDegrees();
-        beta_a = 180 - alpha_a - gamma_a;
-        gamma_b = a + ((180 - A_MAX) / 2);
-        alpha_b = Math.Asin((Math.Sin(gamma_b.ToRadians()) * l4) / r4).ToDegrees();
-        beta_b = 180 - alpha_b - gamma_b;
-        B_MAX = beta_b + beta_a;
-    }
-    
-    public void pootLVA()
-    {
-        // Links voor en achter
-        h = 0.5f * Length + 0.5f * (Math.Sqrt(L * L - small_l * small_l) * 2);
-        b = R - 0.5f * Width - small_l;
-        r4 = Math.Sqrt(h * h + b * b);
-        I = 0.5f * Length;
-        II = R - 0.5f * Width;
-        l4 = Math.Sqrt(I * I + II * II);
-        a = Math.Atan(II / I).ToDegrees();
-        gamma_a = (A_MAX / 2) + (90 - a);
-        alpha_a = 180 - Math.Asin((Math.Sin(gamma_a.ToRadians()) * l4) / r4).ToDegrees();
-        beta_a = 180 - alpha_a - gamma_a;
-        gamma_b = a - ((180 - A_MAX) / 2);
-        alpha_b = 180 - Math.Asin((Math.Sin(gamma_b.ToRadians()) * l4) / r4).ToDegrees();
-        beta_b = 180 - alpha_b - gamma_b;
-        B_MAX = beta_b + beta_a;        
-    }
-    public void pootLM()
-    {
-        // links mid
-        l4 = R - ((3f / 2f) * Width);
-        r4 = Math.Sqrt((l4 * l4 + L * L) - 2 * l4 * L * Math.Cos((A_MAX / 2).ToRadians()));        
-        gamma_a = (A_MAX / 2);
-        alpha_a = 180 - Math.Asin((Math.Sin(gamma_a.ToRadians()) * l4) / r4).ToDegrees();
-        beta_a = 180 - alpha_a - gamma_a;
-        B_MAX = 2 * beta_a;
-    }
-    public void pootRM()
-    {
-        // rechts mid
-        l4 = R + ((3f / 2f) * Width);
-        r4 = l4 + small_l;        
-        gamma_a = 90 + (180 - A_MAX) / 2;
-        alpha_a = Math.Asin((Math.Sin(gamma_a.ToRadians()) * l4) / r4).ToDegrees();
-        beta_a = 180 - alpha_a - gamma_a;
-        B_MAX = 2 * beta_a;        
-    }   
+
     /// <summary>
     /// Main method for turning around his Y axis
     /// </summary>
-    public void noscope360()
+	private void noscope360()
     {
+		// TODO: put this in a switch
         //RV
         VA360();
         servoAngle = 5;
@@ -300,7 +360,6 @@ public class SpiderLeg : ICallable<object>
         laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / (Math.Sin(gamma * (Math.PI / 180)));
         b_turn = beta - beta_b;
         laccent = (r4 * Math.Sin(beta.ToRadians())) / (Math.Sin(gamma.ToRadians()));
-
 
         //LV
         VA360();
@@ -344,7 +403,8 @@ public class SpiderLeg : ICallable<object>
         laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
 
     }
-    public void VA360()
+
+	private void VA360()
     {
         l4 = Math.Sqrt(Math.Pow((0.5f * Width), 2) + Math.Pow((0.5f * Length), 2));        
         I = 0.5f * Length + Math.Sin(45.ToRadians()) * (L / 2); //TODO: right name?
@@ -357,33 +417,13 @@ public class SpiderLeg : ICallable<object>
         beta = beta_a - beta_b;
         gamma = test2 - test1;
     }
-    public void M360()
+	private void M360()
     {
         l4 = (3 / 2) * l4;
         r4 = Math.Sqrt(l4 * l4 + L * L - 2 * l4 * L * Math.Cos(180 - (90 - 0.5f * A_MAX).ToRadians()));
         gamma_a = 180 - (90 - 0.5f * A_MAX);
         beta_a = Math.Asin((Math.Sin(gamma_a.ToRadians()) * L) / r4);
         beta = beta_a * 2;                
-    }
-    /// <summary>
-    /// Main method for walking forward
-    /// </summary>
-    public void forward()
-    {
-        
-        servos[SpiderJoint.COXA].setAngle(alpha = coxaChange.ToRadians());
-        double lAccent = LACCENT / Math.Cos(alpha = Math.Abs(coxaChange - (.5 * A_MAX)).ToRadians());
-        double d = lAccent - F;
-        double h = 0;
-        step = Math.Abs(Math.Sqrt(Math.Pow(lAccent, 2.0) - Math.Pow(LACCENT, 2.0)));
-        if (coxaChange < 45) step *= -1;
-        if (!set) h = (PAR_Y * -1) * Math.Pow(step, 2.0) + PAR_X;
-        double b = Math.Sqrt(Math.Pow(d, 2.0) + Math.Pow(E - h, 2.0));
-        //double test1 = Math.Pow(C, 2.0), test2 = Math.Pow(b, 2.0), test3 = Math.Pow(A, 2.0), test4 = Math.Acos((test1 - test2 - test3) / (-2 * b * A));
-        servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - Math.Pow(A, 2.0)) / (-2 * b * A)));
-        servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)));
-        if (coxaChange >= 90) set = true;
-        if (coxaChange <= 0) set = false;
     }
 
 	internal int[] getIds()
