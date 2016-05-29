@@ -22,7 +22,7 @@ public class Walk : MonoBehaviour
     void Update()
     {
 		Walk.Time.updateTime();
-        body.walk(0.0, 1.0);
+        body.walk(1.0, 1.0);
        // body.testIdleStance(testCoxaChange);
         KeyValuePair<int, double[]>[] pairs = body.getLegAngles();
         foreach (KeyValuePair<int, double[]> p in pairs)
@@ -65,10 +65,5 @@ public class Walk : MonoBehaviour
 		{
 			return sync;
 		}
-
-        public static bool shouldUpdate()
-        {
-            return update;
-        }
 	}
 }
