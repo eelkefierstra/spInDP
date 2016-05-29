@@ -26,8 +26,7 @@ public class SpiderLeg : ICallable<object>
 	private double step    = 0.0;
 	public bool set        = false;
     private readonly double small_l = Math.Cos(A_RAD)*L;
-    private double total_step;
-	public double coxaChange = 0.0;
+    private double total_step;	
     double speed     = 0.5;
     double direction = 6.0;
     private double t_a;
@@ -35,6 +34,7 @@ public class SpiderLeg : ICallable<object>
     private double t_c;
     private double t_d;
     private double t_e;
+    private double t_h;
     private double t_f;
     private double t_E;
     private double t_A;
@@ -61,11 +61,11 @@ public class SpiderLeg : ICallable<object>
     private double gamma_b;
     private double alpha_b;
     private double beta_b;
-    private double beta_RV;
+    private static double beta_RV;
     private double servoAngle;
-    private double laccent = LACCENT;
+    private double laccent;
     private static double b_turn;
-    private double servoAngle_rv;
+    private static double servoAngle_rv;
     private double betaD1;
     private double betaD2;
     private double test1; //TODO: need name still
@@ -93,6 +93,7 @@ public class SpiderLeg : ICallable<object>
 	public bool walk(double forward, double right)
 	{
 		bool res = false;
+        
 		if (Walk.Time.shouldSync())
 		{
 			coxaChange = (int)coxaChange;
@@ -102,6 +103,7 @@ public class SpiderLeg : ICallable<object>
 				coxaChange -= 90;
 			}*/
 		}
+    
 		if (!right.IsBetweenII(-.25, .25))
 		{
 			// curve or something...   
@@ -109,7 +111,7 @@ public class SpiderLeg : ICallable<object>
 			if (set) coxaChange -= (50 * Time.deltaTime * forward);
 			turn();
 		}
-		if (!forward.IsBetweenII(-.25, .25))
+		else if (!forward.IsBetweenII(-.25, .25))
 		{
 			if (Walk.Time.shouldSync())
 				Debug.Log("FW");
@@ -149,12 +151,9 @@ public class SpiderLeg : ICallable<object>
 		if (coxaChange < 45) step *= -1;
 		if (set) h = (PAR_Y * -1) * Math.Pow(step, 2.0) + PAR_X;
 		double b = Math.Sqrt(Math.Pow(d, 2.0) + Math.Pow(E + h, 2.0));
-		//double test1 = Math.Pow(C, 2.0), test2 = Math.Pow(b, 2.0), test3 = Math.Pow(A, 2.0), test4 = 
-Math.Acos((test1 - test2 - test3) / (-2 * b * A));
-		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - 
-Math.Pow(A, 2.0)) / (-2 * b * A)));
-		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - 
-Math.Pow(C, 2.0)) / (-2 * A * C)));
+		//double test1 = Math.Pow(C, 2.0), test2 = Math.Pow(b, 2.0), test3 = Math.Pow(A, 2.0), test4 = Math.Acos((test1 - test2 - test3) / (-2 * b * A));
+		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - Math.Pow(A, 2.0)) / (-2 * b * A)));
+		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)));
         return new object();
     }
 
@@ -263,12 +262,12 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
                 laccent = (r4 * Math.Sin(beta.ToRadians())) / Math.Sin(gamma.ToRadians());
                 break;
             case 3:
-                //LV
-                servoAngle = servoAngle_rv;
-                beta = servoAngle + b_turn;
+                //LV                 
+                beta = beta_a - b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
                 alpha = 180 - Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
                 gamma = 180 - alpha - beta;
+                servoAngle = gamma_a - gamma;
                 break;
             case 4:
                 //LM
@@ -276,16 +275,16 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
                 alpha = 180 - Math.Asin((l4 * Math.Sin(beta.ToRadians())) / laccent).ToDegrees();
                 gamma = 180 - alpha - beta;
-                servoAngle = gamma + 45;
+                servoAngle = (-gamma) + 45;
                 break;
             case 5:
                 //LA
                 beta = beta_b - b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));                
-                if ((180 + Math.Asin(Math.Sin((beta.ToRadians()) * l4) / laccent).ToDegrees()) > 180)                   
+                if ((180 + Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees()) > 180)                   
                     alpha = -(180 + (Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees())) + 360;
                 else
-                    alpha = (180 + (Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees())) + 360;
+                    alpha = (180 + (Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees()));
                 gamma = 180 - alpha - Math.Abs(beta);
                 if (beta < 0)
                     servoAngle = gamma_b + gamma;
@@ -295,22 +294,34 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
         }
         // set right COXA, FEMUR and TIBIA
         turn2();
-        if(getFirstId() / 3 == 2)
-            UnityEngine.Debug.Log("x:"+(int)coxaChange+",id"+getFirstId() / 3+",c:"+(int)gamma + ",a:" + (int)alpha + ",b:" + (int)beta);
+        if (id % 2 == 1)
+            servoAngle = 90 - servoAngle;
+       // if(getFirstId() / 3 == 2)
+        //UnityEngine.Debug.Log("x:"+coxaChange+",id"+getFirstId() / 3+",c:"+(int)gamma + ",a:" + (int)alpha + ",b:" + (int)beta);
         servos[SpiderJoint.COXA].setAngle(servoAngle.ToRadians());
         servos[SpiderJoint.FEMUR].setAngle(t_femur.ToRadians());
         servos[SpiderJoint.TIBIA].setAngle(t_tibia.ToRadians());
         if (coxaChange >= 90) set = true;
         if (coxaChange <= 0) set = false;
 
-
     }
 
     public void turn2()
     {
+        //calculate hight of legg depending on the servoAngle (aX^2 + b)
+        double f_q = 45; // top is (p , q) 
+        double f_p = 45;
+        double f_a = (-f_q)/Math.Pow(90-f_p, 2);        
+        double f_h = a * Math.Pow((90 - f_p), 2) + f_q;
+        Debug.Log("y:"+f_h+",x:"+servoAngle_rv + ",a:"+f_a);
+        //  0 = a * (90-45)^2 + 45 
+        // a = (-q)/(-p)^2
         t_a = 80f;       
         t_c = 160f;
-        t_e = 90f;
+        if (!set && f_h <90 && f_h>=0)
+            t_e = 90 - f_h;
+        else
+            t_e = 90;
         t_f = 35f;
         t_d = laccent - t_f;
         t_b = Math.Sqrt(t_d*t_d + t_e*t_e);
