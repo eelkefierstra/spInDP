@@ -5,19 +5,20 @@ using System.Collections.Generic;
 public class SpiderBody
 {
     SpiderLeg[] legs;
-    Future<object>[] futures;
+    Queue<Future<object>> futures;
     private IExecutor executor;
 
 	// Use this for initialization
 	public SpiderBody()
 	{
 		legs     = new SpiderLeg[6];
-        futures  = new Future<object>[6];
+        futures = new Queue<Future<object>>();
         executor = new ImmediateExecutor();
+        SharedParams sharedParams = new SharedParams();
 
 		for (int i = 0; i < legs.Length; i++)
 		{
-			legs[i] = new SpiderLeg(ref executor, (i * 3) + 1);
+			legs[i] = new SpiderLeg(ref executor, ref sharedParams, (i * 3) + 1);
 		}
 	}
 	
@@ -28,13 +29,13 @@ public class SpiderBody
 		foreach (SpiderLeg leg in legs)
 		{
 			if (leg.walk(forward, right))
-				futures[i] = leg.getFuture();
+				futures.Enqueue(leg.getFuture());
             i++;
         }
         i++;
-	}
-       // foreach (Future<object> f in futures) f.GetResult();
-	
+        while (futures.Count != 0) futures.Dequeue().GetResult();
+    }
+
 
     public KeyValuePair<int, double[]>[] getLegAngles()
     {
@@ -55,4 +56,22 @@ public class SpiderBody
             leg.Call();
         }
     }*/
+
+    public class SharedParams
+    {
+        public readonly int firstId;
+        public double firstCoxaChange;
+        public double b_turn;
+        
+        public SharedParams() : this(1) { }
+
+        public SharedParams(int firstId) : this(firstId, 0.0, 0.0) { }
+
+        public SharedParams(int firstId, double firstCoxaChange, double b_turn)
+        {
+            this.firstId = firstId;
+            this.firstCoxaChange = firstCoxaChange;
+            this.b_turn = b_turn;
+        }
+    }
 }

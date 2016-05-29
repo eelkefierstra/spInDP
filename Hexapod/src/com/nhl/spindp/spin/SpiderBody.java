@@ -68,4 +68,9 @@ public class SpiderBody
 			}
 		}
 	}
+	
+	public class SharedParams
+	{
+		
+	}
 }

@@ -24,22 +24,20 @@ public class SpiderLeg : ICallable<object>
 	private double EPSILON = Math.Atan(E / D).ToRadians();
 	private double DELTA   = Math.Atan(D / E).ToRadians();
 	private double step    = 0.0;
-	public bool set        = false;
+    private bool set       = false;
     private readonly double small_l = Math.Cos(A_RAD)*L;
     private double total_step;
-	public double coxaChange = 0.0;
-    double speed     = 0.5;
-    double direction = 6.0;
-    private double t_a;
+    /*
+    //private double t_a;
     private double t_b;    
-    private double t_c;
+    //private double t_c;
     private double t_d;
-    private double t_e;
-    private double t_f;
+    //private double t_e;
+    //private double t_f;
     private double t_E;
     private double t_A;
     private double t_AE;
-    private double t_tms;
+    private double t_tms;*/
     private double t_femur;
     private double t_tibia;
     private double t_coxa;
@@ -70,13 +68,14 @@ public class SpiderLeg : ICallable<object>
     private double betaD2;
     private double test1; //TODO: need name still
     private double B_MAX;
-   
+
 	private IExecutor executor;
 	private Future<object> future;
 	private double coxaChange = 0.0;
+    private SpiderBody.SharedParams sharedParams;
     SpiderJoint[] servos = new SpiderJoint[3];
 
-	internal SpiderLeg(ref IExecutor executor ,int startServoId)
+	internal SpiderLeg(ref IExecutor executor, ref SpiderBody.SharedParams sharedParams, int startServoId)
 	{
 		set = (startServoId % 2) == 0;
 		coxaChange += 30 * (startServoId / 3);
@@ -85,6 +84,7 @@ public class SpiderLeg : ICallable<object>
 			coxaChange -= 90;
 		}
 		this.executor = executor;
+        this.sharedParams = sharedParams;
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 75);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 175);
@@ -94,9 +94,11 @@ public class SpiderLeg : ICallable<object>
 	{
 		bool res = false;
 		if (Walk.Time.shouldSync())
-		{
-			coxaChange = (int)coxaChange;
-			/*coxaChange += 30 * (getFirstId() / 3);
+		{/*
+            if (sharedParams.firstId == getFirstId())
+                sharedParams.firstCoxaChange = coxaChange;
+            else
+			    coxaChange = sharedParams.firstCoxaChange + 30 * (getFirstId() / 3);
 			if (coxaChange > 90)
 			{
 				coxaChange -= 90;
@@ -106,17 +108,18 @@ public class SpiderLeg : ICallable<object>
 		{
 			// curve or something...   
 			if (!set) coxaChange += (50 * Time.deltaTime * forward);
-			if (set) coxaChange -= (50 * Time.deltaTime * forward);
-			turn();
+			if ( set) coxaChange -= (50 * Time.deltaTime * forward);
+			turn(400.0);
 		}
-		if (!forward.IsBetweenII(-.25, .25))
+		else if (!forward.IsBetweenII(-.25, .25))
 		{
 			if (Walk.Time.shouldSync())
 				Debug.Log("FW");
 			if (!set) coxaChange += (50 * Time.deltaTime * forward);
 			if ( set) coxaChange -= (50 * Time.deltaTime * forward);
 			Call();
-			//future = executor.Submit(this);
+			future = executor.Submit(this);
+            res = true;
 		}
 		return res;
 	}
@@ -131,15 +134,15 @@ public class SpiderLeg : ICallable<object>
     /// </summary>
     public object Call()
     {
-		if (coxaChange >= 90)
+		if (coxaChange >= 85)
 		{
 			set = true;
-			coxaChange = 90;
+			coxaChange = 85;
 		}
-		if (coxaChange <= 0)
+		else if (coxaChange <= 5)
 		{
 			set = false;
-			coxaChange = 0;
+			coxaChange = 5;
 		}
 		servos[SpiderJoint.COXA].setAngle(alpha = coxaChange.ToRadians());
 		double lAccent = LACCENT / Math.Cos(alpha = Math.Abs(coxaChange - (.5 * A_MAX)).ToRadians());
@@ -149,19 +152,16 @@ public class SpiderLeg : ICallable<object>
 		if (coxaChange < 45) step *= -1;
 		if (set) h = (PAR_Y * -1) * Math.Pow(step, 2.0) + PAR_X;
 		double b = Math.Sqrt(Math.Pow(d, 2.0) + Math.Pow(E + h, 2.0));
-		//double test1 = Math.Pow(C, 2.0), test2 = Math.Pow(b, 2.0), test3 = Math.Pow(A, 2.0), test4 = 
-Math.Acos((test1 - test2 - test3) / (-2 * b * A));
-		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - 
-Math.Pow(A, 2.0)) / (-2 * b * A)));
-		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - 
-Math.Pow(C, 2.0)) / (-2 * A * C)));
+		//double test1 = Math.Pow(C, 2.0), test2 = Math.Pow(b, 2.0), test3 = Math.Pow(A, 2.0), test4 = Math.Acos((test1 - test2 - test3) / (-2 * b * A));
+		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.Acos((Math.Pow(C, 2.0) - Math.Pow(b, 2.0) - Math.Pow(A, 2.0)) / (-2 * b * A)));
+		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.Acos((Math.Pow(b, 2.0) - Math.Pow(A, 2.0) - Math.Pow(C, 2.0)) / (-2 * A * C)));
         return new object();
     }
 
     /// <summary>
     /// Main method for making a turn
     /// </summary>
-	private void turn()
+	private void turn(double r)
 	{
 		int id = getFirstId() / 3;
 
@@ -224,12 +224,23 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
 			default:
 				throw new InvalidOperationException();
 		}
+
+        if (coxaChange >= 85)
+		{
+			set = true;
+			coxaChange = 85;
+		}
+		else if (coxaChange <= 5)
+		{
+			set = false;
+			coxaChange = 5;
+		}
+
         switch (id)
         {
             case 0:
                 //RV (leidend)   
-                servoAngle_rv = coxaChange;
-                servoAngle = servoAngle_rv;
+                servoAngle = servoAngle_rv = coxaChange;
                 gamma = servoAngle + gamma_a;
                 if (Double.IsNaN(gamma))
                     Debug.Log("gammaRV");
@@ -240,11 +251,11 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
                 beta_RV = beta;
                 
                 laccent = (r4 * Math.Sin(beta.ToRadians())) / Math.Sin(gamma.ToRadians());
-                b_turn = beta_a - beta;
+                sharedParams.b_turn = beta_a - beta;
                 break;
             case 1:
                 //RM
-                beta = beta_a - b_turn;
+                beta = beta_a - sharedParams.b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * l4 * r4 * Math.Cos(beta.ToRadians()));
                 alpha = Math.Asin((l4 * Math.Sin(beta.ToRadians())) / laccent).ToDegrees();
                 if (Double.IsNaN(alpha))
@@ -261,18 +272,19 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
                     Debug.Log("alphaRA");
                 beta = 180 - gamma - alpha;
                 laccent = (r4 * Math.Sin(beta.ToRadians())) / Math.Sin(gamma.ToRadians());
+                Debug.Log("x:" + (int)coxaChange + ", id" + getFirstId() / 3 + ", c:" + (int)gamma + ", a:" + (int)alpha + ", b:" + (int)beta);
                 break;
             case 3:
                 //LV
                 servoAngle = servoAngle_rv;
-                beta = servoAngle + b_turn;
+                beta = servoAngle + sharedParams.b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
                 alpha = 180 - Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
                 gamma = 180 - alpha - beta;
                 break;
             case 4:
                 //LM
-                beta = beta_a - b_turn;
+                beta = beta_a - sharedParams.b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
                 alpha = 180 - Math.Asin((l4 * Math.Sin(beta.ToRadians())) / laccent).ToDegrees();
                 gamma = 180 - alpha - beta;
@@ -280,7 +292,7 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
                 break;
             case 5:
                 //LA
-                beta = beta_b - b_turn;
+                beta = beta_b - sharedParams.b_turn;
                 laccent = Math.Sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));                
                 if ((180 + Math.Asin(Math.Sin((beta.ToRadians()) * l4) / laccent).ToDegrees()) > 180)                   
                     alpha = -(180 + (Math.Asin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees())) + 360;
@@ -295,32 +307,27 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
         }
         // set right COXA, FEMUR and TIBIA
         turn2();
-        if(getFirstId() / 3 == 2)
-            UnityEngine.Debug.Log("x:"+(int)coxaChange+",id"+getFirstId() / 3+",c:"+(int)gamma + ",a:" + (int)alpha + ",b:" + (int)beta);
         servos[SpiderJoint.COXA].setAngle(servoAngle.ToRadians());
         servos[SpiderJoint.FEMUR].setAngle(t_femur.ToRadians());
         servos[SpiderJoint.TIBIA].setAngle(t_tibia.ToRadians());
         if (coxaChange >= 90) set = true;
         if (coxaChange <= 0) set = false;
-
-
     }
 
     public void turn2()
     {
-        t_a = 80f;       
-        t_c = 160f;
-        t_e = 90f;
-        t_f = 35f;
-        t_d = laccent - t_f;
-        t_b = Math.Sqrt(t_d*t_d + t_e*t_e);
-        t_E = Math.Atan(t_e / t_d).ToDegrees();
-        t_A = Math.Acos((t_a * t_a - t_c * t_c - t_b * t_b) / (-2 * t_c * t_b)).ToDegrees();
-        t_AE = t_E + t_A;
-        t_tms = (Weigth / 3f) * (E / 1000f);
-        t_femur = Math.Acos((t_c * t_c - t_b * t_b - t_a * t_a) / (-2 * t_b * t_a)).ToDegrees();
-        t_tibia = Math.Acos((t_b * t_b - t_a * t_a - t_c * t_c) / (-2 * t_a * t_c)).ToDegrees();
-   
+        //t_a = 80.0;       
+        //t_c = 160.0;
+        //t_e = 90.0;
+        //t_f = 35.0;
+        double t_d = laccent - F;
+        double t_b = Math.Sqrt(t_d*t_d + E*E);
+        //double t_E = Math.Atan(E / t_d).ToDegrees();
+        //double t_A = Math.Acos((A * A - C * C - t_b * t_b) / (-2 * C * t_b)).ToDegrees();
+        //double t_AE = t_E + t_A;
+        //double t_tms = (Weigth / 30.0) * (E / 1000.0);
+        t_femur = Math.Acos((C * C - t_b * t_b - A * A) / (-2 * t_b * A)).ToDegrees();
+        t_tibia = Math.Acos((t_b * t_b - A * A - C * C) / (-2 * A * C)).ToDegrees();
  }
 
 
@@ -358,12 +365,12 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
         alpha = Math.Asin((Math.Sin(gamma.ToRadians()) * l4) / r4).ToRadians();                  
         beta = 180 - gamma - alpha;
         laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / (Math.Sin(gamma * (Math.PI / 180)));
-        b_turn = beta - beta_b;
+        sharedParams.b_turn = beta - beta_b;
         laccent = (r4 * Math.Sin(beta.ToRadians())) / (Math.Sin(gamma.ToRadians()));
 
         //LV
         VA360();
-        beta = beta_a - b_turn;
+        beta = beta_a - sharedParams.b_turn;
         alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToRadians();
 
         gamma = 180 - alpha - Length;
@@ -372,7 +379,7 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
 
         //RM
         M360();        
-        beta = beta_a - b_turn;
+        beta = beta_a - sharedParams.b_turn;
         alpha = Math.Asin((Math.Sin(beta.ToRadians()) * l4) / Length).ToRadians();
         gamma = 180 - alpha - beta;
         servoAngle = gamma - 135;  
@@ -380,7 +387,7 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
 
         //LM
         M360();
-        beta = beta_a - b_turn;
+        beta = beta_a - sharedParams.b_turn;
         alpha = Math.Asin((Math.Sin(beta.ToRadians()) * l4) / Length).ToRadians();        
         gamma = 180 - alpha - beta;
         servoAngle = gamma - 135;
@@ -388,7 +395,7 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
 
         //RA
         VA360();
-        beta = beta_a - b_turn;
+        beta = beta_a - sharedParams.b_turn;
         alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToRadians();
         gamma = 180 - alpha - Length;
         servoAngle = gamma - test1;
@@ -397,11 +404,10 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
         //LA
         VA360();
         alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToRadians();
-        beta = beta_b + b_turn;
+        beta = beta_b + sharedParams.b_turn;
         gamma = 180 - Math.Abs(alpha) - Math.Abs(beta);        
         servoAngle = test1 - gamma;
         laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
-
     }
 
 	private void VA360()
@@ -438,14 +444,12 @@ Math.Pow(C, 2.0)) / (-2 * A * C)));
 
     internal double[] getLegAngles()
     {
-        //lock (locker)
-            return new double[] { servos[0].getAngle(), servos[1].getAngle(), servos[2].getAngle() };
+        return new double[] { servos[0].getAngle(), servos[1].getAngle(), servos[2].getAngle() };
     }
 
 	internal int[] getAngles()
 	{
-        //lock (locker)
-            return new int[] { servos[0].getServoAngle(), servos[1].getServoAngle(), servos[2].getServoAngle() };
+        return new int[] { servos[0].getServoAngle(), servos[1].getServoAngle(), servos[2].getServoAngle() };
 	}
 
 	public double getAngle(int servo)
