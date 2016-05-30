@@ -5,19 +5,20 @@ using System.Collections.Generic;
 public class SpiderBody
 {
     SpiderLeg[] legs;
-    Future<object>[] futures;
+    Queue<Future<object>> futures;
     private IExecutor executor;
 
 	// Use this for initialization
 	public SpiderBody()
 	{
 		legs     = new SpiderLeg[6];
-        futures  = new Future<object>[6];
+        futures = new Queue<Future<object>>();
         executor = new ImmediateExecutor();
+        SharedParams sharedParams = new SharedParams();
 
 		for (int i = 0; i < legs.Length; i++)
 		{
-			legs[i] = new SpiderLeg((i * 3) + 1);
+			legs[i] = new SpiderLeg(ref executor, ref sharedParams, (i * 3) + 1);
 		}
 	}
 	
@@ -27,32 +28,14 @@ public class SpiderBody
         int i = 0;
 		foreach (SpiderLeg leg in legs)
 		{
-
-			if (!leg.set) leg.coxaChange += 1;
-			if ( leg.set) leg.coxaChange -= 1;
-            //if (leg.coxaChange > 90) flip = true;
-            //if (leg.coxaChange <= 0) flip = false;            
-            //leg.turn();
-
-            if (forward != 0.0)
-            {
-                Debug.Log("FW");
-                if (!leg.set) leg.coxaChange += (50 * Time.deltaTime * forward);
-                if (leg.set) leg.coxaChange -= (50 * Time.deltaTime * forward);
-                futures[i] = executor.Submit(leg);
-            }
-            if (true)//!forward.IsBetweenII(-.25, .25))
-            {
-                // curve or something...                
-                leg.turn();
-            }
-            else
-                Debug.Log("FOUT");
+			if (leg.walk(forward, right))
+				futures.Enqueue(leg.getFuture());
             i++;
+        }
+        i++;
+        while (futures.Count != 0) futures.Dequeue().GetResult();
+    }
 
-		}
-       // foreach (Future<object> f in futures) f.GetResult();
-	}
 
     public KeyValuePair<int, double[]>[] getLegAngles()
     {
@@ -64,13 +47,31 @@ public class SpiderBody
         }
         return res;
     }
-
+	/*
     public void testIdleStance(int coxaChange)
     {
         foreach (SpiderLeg leg in legs)
         {
             leg.coxaChange = coxaChange;
             leg.Call();
+        }
+    }*/
+
+    public class SharedParams
+    {
+        public readonly int firstId;
+        public double firstCoxaChange;
+        public double b_turn;
+        
+        public SharedParams() : this(1) { }
+
+        public SharedParams(int firstId) : this(firstId, 0.0, 0.0) { }
+
+        public SharedParams(int firstId, double firstCoxaChange, double b_turn)
+        {
+            this.firstId = firstId;
+            this.firstCoxaChange = firstCoxaChange;
+            this.b_turn = b_turn;
         }
     }
 }

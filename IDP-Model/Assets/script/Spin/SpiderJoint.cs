@@ -59,12 +59,12 @@ public class SpiderJoint
             if (val > upperRange)
             {
                 UnityEngine.Debug.Log("val of servo " + servoId + " clamped");
-                val = upperRange;
+               // val = upperRange;
             }
             if (val < lowerRange)
             {
                 UnityEngine.Debug.Log("val of servo " + servoId + " clamped");
-                val = lowerRange;
+               // val = lowerRange;
             }
             this.angle = val;
         }

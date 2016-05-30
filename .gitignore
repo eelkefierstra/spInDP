@@ -9,6 +9,7 @@
 *.ear
 *.d
 *.o
+*.so
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
@@ -39,6 +40,7 @@ ExportedObj/
 
 # Unity3D generated meta files
 *.pidb.meta
+*.meta
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt

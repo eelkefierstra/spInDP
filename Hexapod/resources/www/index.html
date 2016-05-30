@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>tester</title>
+		<link href="/content/StyleSheet.css" rel="stylesheet" type="text/css" />
+		<link href="/images/favicon.jpeg" rel="shortcut icon" type="image/x-icon" />
+		<script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+		<script type="text/javascript" src="/scripts/main.js"></script>
+	</head>
+	<body>
+		<h1>Hoi</h1>
+		<form action="" method="post">
+			<input type="checkbox" name="walk" id="walk" />
+			<input id = "forward" type="range" name="forward" id="forward" min="-100" max="100" />
+			<input id = "right" type="range" name="right" id="right" min="-100" max="100"/>
+			<textarea id = "sliderText"></textarea>
+			<script type="text/javascript">
+				document.getElementById('forward').addEventListener('change', setValue);
+				document.getElementById('right').addEventListener('change', setValue);
+				function setValue()
+				{
+					var button  = $('input[name=walk]').val();
+					var forward = $('input[name=forward]').val() / 100;
+					var right   = $('input[name=right]').val() / 100;
+					document.getElementById('sliderText').value = "forward:"+forward+", right:"+right;
+					post("", [forward, right]);
+					/*$.ajax({
+						  type: 'POST',
+						  url: '/index.html',
+						  data: [forward, right],
+						  dataType: multipart/form-data,
+						  crossDomain: true
+						  async: true
+						});*/
+				}
+			</script>
+		</form>
+	</body>
+</html>
