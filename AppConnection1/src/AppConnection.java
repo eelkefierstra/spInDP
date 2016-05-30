@@ -1,5 +1,3 @@
-package com.nhl.spindp.netcon;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,10 +5,9 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class AppConnection
-{
+public class AppConnection {
+
 	private ServerSocket serverSocket;
-	
 	public AppConnection() throws IOException
 	{
 		serverSocket = new ServerSocket(1338);
