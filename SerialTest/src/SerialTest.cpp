@@ -153,13 +153,23 @@ bool i2cClean(int &file)
 void i2c()
 {
 	int file;
+	int err = 0;
 
-	i2cSetup(file);
+	while (!i2cSetup(file) && err < 5)
+		++err;
 	while (!done)
 	{
-		i2cRead(file);
+		vector<char> result = i2cRead(file);
+		//TODO set data in file
+		for (char c : result)
+		{
+			cout << c;
+		}
+		cout << endl;
 	}
-	i2cClean(file);
+	err = 0;
+	while (!i2cClean(file) && err<5)
+			++err;
 }
 
 
