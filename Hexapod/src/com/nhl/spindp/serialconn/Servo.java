@@ -4,95 +4,94 @@ import java.util.Arrays;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-@SuppressWarnings("restriction")
 public class Servo
 {
 	/**
 	 * Prefix for every instruction.
 	 */
-	public static final byte INSTRUCTION_PREFIX      = (byte)0xFF;
+	static final byte INSTRUCTION_PREFIX      = (byte)0xFF;
 	
 	/**
 	 * No action, Used for obtaining a Status Packet.
 	 */
-	public  static final byte INSTRUCTION_PING        = (byte) 0x01;
+	static final byte INSTRUCTION_PING        = (byte) 0x01;
 	
 	/**
 	 * Reading values in the Control Table.
 	 */
-	public  static final byte INSTRUCTION_READ_DATA   = (byte) 0x02;
+	static final byte INSTRUCTION_READ_DATA   = (byte) 0x02;
 	
 	/**
 	 * Writing values to the Control Table.
 	 */
-	public  static final byte INSTRUCTION_WRITE_DATA  = (byte) 0x03;
+	static final byte INSTRUCTION_WRITE_DATA  = (byte) 0x03;
 	
 	/**
 	 * Similar to WRITE_DATA, but stays in standby mode until the ACTION instruction is given.
 	 */
-	public  static final byte INSTRUCTION_REG_WRITE   = (byte) 0x04;
+	static final byte INSTRUCTION_REG_WRITE   = (byte) 0x04;
 	
 	/**
 	 * Triggers the action registered by the REG_WRITE instruction.
 	 */
-	public  static final byte INSTRUCTION_ACTION      = (byte) 0x05;
+	static final byte INSTRUCTION_ACTION      = (byte) 0x05;
 	
 	/**
 	 * Changes the Control Table values of the Dynamixel actuator to the factory default value settings.
 	 */
-	public  static final byte INSTRUCTION_RESET       = (byte) 0x06;
+	static final byte INSTRUCTION_RESET       = (byte) 0x06;
 	
 	/**
 	 * Used for controlling many Dynamixel actuators at the same time.
 	 */
-	public  static final byte INSTRUCTION_SYNC_WRITE  = (byte) 0x86;
+	static final byte INSTRUCTION_SYNC_WRITE  = (byte) 0x86;
 	
 	//EEPROM
-	public static final byte ADDRESS_ID              = (byte) 0x03;
-	public static final byte ADDRESS_BAUD_RATE       = (byte) 0x04;
-	public static final byte ADDRESS_RETURN_DELAY    = (byte) 0x05;
-	public static final byte ADDRESS_CW_ANGLE_LIMIT  = (byte) 0x06;
-	public static final byte ADDRESS_CCW_ANGLE_LIMIT = (byte) 0x08;
-	public static final byte ADDRESS_TEMP_LIMIT      = (byte) 0x0B;
-	public static final byte ADDRESS_VOLT_LIMIT_HIGH = (byte) 0x0C;
-	public static final byte ADDRESS_VOLT_LIMIT_LOW  = (byte) 0x0D;
-	public static final byte ADDRESS_MAX_TORQUE      = (byte) 0x0E;
-	public static final byte ADDRESS_STATUS_RETURN   = (byte) 0x10;
-	public static final byte ADDRESS_ALARM_LED       = (byte) 0x11;
-	public static final byte ADDRESS_ALARM_SHUTDOWN  = (byte) 0x12;
-	public static final byte ADDRESS_DOWN_CALIB      = (byte) 0x14;
-	public static final byte ADDRESS_UP_CALIB        = (byte) 0x16;
+	static final byte ADDRESS_ID              = (byte) 0x03;
+	static final byte ADDRESS_BAUD_RATE       = (byte) 0x04;
+	static final byte ADDRESS_RETURN_DELAY    = (byte) 0x05;
+	static final byte ADDRESS_CW_ANGLE_LIMIT  = (byte) 0x06;
+	static final byte ADDRESS_CCW_ANGLE_LIMIT = (byte) 0x08;
+	static final byte ADDRESS_TEMP_LIMIT      = (byte) 0x0B;
+	static final byte ADDRESS_VOLT_LIMIT_HIGH = (byte) 0x0C;
+	static final byte ADDRESS_VOLT_LIMIT_LOW  = (byte) 0x0D;
+	static final byte ADDRESS_MAX_TORQUE      = (byte) 0x0E;
+	static final byte ADDRESS_STATUS_RETURN   = (byte) 0x10;
+	static final byte ADDRESS_ALARM_LED       = (byte) 0x11;
+	static final byte ADDRESS_ALARM_SHUTDOWN  = (byte) 0x12;
+	static final byte ADDRESS_DOWN_CALIB      = (byte) 0x14;
+	static final byte ADDRESS_UP_CALIB        = (byte) 0x16;
 	
 	//RAM
-	public static final byte ADDRESS_TORQUE_ENABLE   = (byte) 0x18;
-	public static final byte ADDRESS_LED             = (byte) 0x19;
-	public static final byte ADDRESS_CW_COMP_MARGIN  = (byte) 0x1A;
-	public static final byte ADDRESS_CCW_COMP_MARGIN = (byte) 0x1B;
-	public static final byte ADDRESS_CW_COMP_SLOPE   = (byte) 0x1C;
-	public static final byte ADDRESS_CCW_COMP_SLOPE  = (byte) 0x1D;
-	public static final byte ADDRESS_GOAL_POSITION   = (byte) 0x1E;
-	public static final byte ADDRESS_MOVING_SPEED    = (byte) 0x20;
-	public static final byte ADDRESS_TORQUE_LIMIT    = (byte) 0x22;
-	public static final byte ADDRESS_PRESENT_POS     = (byte) 0x24;
-	public static final byte ADDRESS_PRESENT_SPEED   = (byte) 0x26;
-	public static final byte ADDRESS_PRESENT_LOAD    = (byte) 0x28;
-	public static final byte ADDRESS_PRESENT_VOLTAGE = (byte) 0x2A;
-	public static final byte ADDRESS_PRESENT_TEMP    = (byte) 0x2B;
-	public static final byte ADDRESS_REGISTERED_INST = (byte) 0x2C;
-	public static final byte ADDRESS_MOVING          = (byte) 0x2E;
-	public static final byte ADDRESS_LOCK            = (byte) 0x2F;
-	public static final byte ADDRESS_PUNCH           = (byte) 0x30;
+	static final byte ADDRESS_TORQUE_ENABLE   = (byte) 0x18;
+	static final byte ADDRESS_LED             = (byte) 0x19;
+	static final byte ADDRESS_CW_COMP_MARGIN  = (byte) 0x1A;
+	static final byte ADDRESS_CCW_COMP_MARGIN = (byte) 0x1B;
+	static final byte ADDRESS_CW_COMP_SLOPE   = (byte) 0x1C;
+	static final byte ADDRESS_CCW_COMP_SLOPE  = (byte) 0x1D;
+	static final byte ADDRESS_GOAL_POSITION   = (byte) 0x1E;
+	static final byte ADDRESS_MOVING_SPEED    = (byte) 0x20;
+	static final byte ADDRESS_TORQUE_LIMIT    = (byte) 0x22;
+	static final byte ADDRESS_PRESENT_POS     = (byte) 0x24;
+	static final byte ADDRESS_PRESENT_SPEED   = (byte) 0x26;
+	static final byte ADDRESS_PRESENT_LOAD    = (byte) 0x28;
+	static final byte ADDRESS_PRESENT_VOLTAGE = (byte) 0x2A;
+	static final byte ADDRESS_PRESENT_TEMP    = (byte) 0x2B;
+	static final byte ADDRESS_REGISTERED_INST = (byte) 0x2C;
+	static final byte ADDRESS_MOVING          = (byte) 0x2E;
+	static final byte ADDRESS_LOCK            = (byte) 0x2F;
+	static final byte ADDRESS_PUNCH           = (byte) 0x30;
 	
 	//Other info
-	public static final int BAUDRATE_1 = 1000000;
-	public static final int BAUDRATE_3 =  500000;
-	public static final int BAUDRATE_4 =  400000;
-	public static final int BAUDRATE_7 =  250000;
-	public static final int BAUDRATE_9 =  200000;
-	public static final byte DATABITS  = 8;
-	public static final byte STOPBITS  = 1;
-	public static final byte PARITY    = 0;
-	public static final byte BCASTID   = (byte)0xFE;
+	static final int BAUDRATE_1 = 1000000;
+	static final int BAUDRATE_3 =  500000;
+	static final int BAUDRATE_4 =  400000;
+	static final int BAUDRATE_7 =  250000;
+	static final int BAUDRATE_9 =  200000;
+	static final byte DATABITS  = 8;
+	static final byte STOPBITS  = 1;
+	static final byte PARITY    = 0;
+	static final byte BCASTID   = (byte)0xFE;
 	
 	private final byte id;
 	

@@ -29,7 +29,7 @@ class SpiderLeg implements Runnable
 	private double EPSILON = Math.toRadians(Math.atan(E / D));
 	private double DELTA   = Math.toRadians(Math.atan(D / E));
 	private double step    = 0.0;
-	public boolean set     = false;
+	private boolean set     = false;
 	
 	private double coxaChange = 0.0;
 	

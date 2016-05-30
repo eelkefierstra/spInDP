@@ -10,7 +10,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * @author Dudecake
  *
  */
-@SuppressWarnings("restriction")
 public class ServoConnection
 {
 	private SerialPort serialPort;
