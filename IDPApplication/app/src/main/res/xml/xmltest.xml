@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+    <company>
+
+
+    <staff id="1001">
+
+    <spin>Custom Chrome</spin>
+
+    <batterij>100%</batterij>
+
+    <temperatuur>20 graden</temperatuur>
+
+</staff>
+
+
+    -<staff id="2001">
+
+    <spin>Custom Chrome</spin>
+
+    <batterij>90%</batterij>
+
+    <temperatuur>25 graden</temperatuur>
+
+</staff>
+
+</company>

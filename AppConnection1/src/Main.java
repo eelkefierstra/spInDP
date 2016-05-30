@@ -5,7 +5,7 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			AppConnection conn = new AppConnection(1337);
+			AppConnection conn = new AppConnection(444);
 			conn.mainLoop();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

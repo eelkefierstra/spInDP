@@ -10,7 +10,7 @@ public class AppConnection {
 	private ServerSocket serverSocket;
 	public AppConnection() throws IOException
 	{
-		serverSocket = new ServerSocket(1338);
+		serverSocket = new ServerSocket(444);
 	}
 	
 	public AppConnection(int port) throws IOException
