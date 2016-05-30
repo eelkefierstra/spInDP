@@ -45,7 +45,7 @@ public class SpiderLeg : ICallable<object>
     // bocht
     private static readonly double Length = 300;
     private static readonly double Width = 80;
-    private static readonly double R = 400;
+    private static readonly double R = 500;
     private double h;
     private double b;
     private double r4;
@@ -69,7 +69,9 @@ public class SpiderLeg : ICallable<object>
     private double test1; //TODO: need name still
     private double B_MAX;
 
-	private IExecutor executor;
+    private double t_e = 90.0;
+
+    private IExecutor executor;
 	private Future<object> future;
 	private double coxaChange = 0.0;
     private SpiderBody.SharedParams sharedParams;
@@ -225,15 +227,15 @@ public class SpiderLeg : ICallable<object>
 				throw new InvalidOperationException();
 		}
 
-        if (coxaChange >= 85)
+        if (servoAngle >= 85)
 		{
 			set = true;
-			coxaChange = 85;
+            servoAngle = 85;
 		}
-		else if (coxaChange <= 5)
+		else if (servoAngle <= 5)
 		{
 			set = false;
-			coxaChange = 5;
+            servoAngle = 5;
 		}
 
         switch (id)
@@ -272,7 +274,7 @@ public class SpiderLeg : ICallable<object>
                     Debug.Log("alphaRA");
                 beta = 180 - gamma - alpha;
                 laccent = (r4 * Math.Sin(beta.ToRadians())) / Math.Sin(gamma.ToRadians());
-                Debug.Log("x:" + (int)coxaChange + ", id" + getFirstId() / 3 + ", c:" + (int)gamma + ", a:" + (int)alpha + ", b:" + (int)beta);
+               // Debug.Log("x:" + (int)coxaChange + ", id" + getFirstId() / 3 + ", c:" + (int)gamma + ", a:" + (int)alpha + ", b:" + (int)beta);
                 break;
             case 3:
                 //LV                 
@@ -307,9 +309,18 @@ public class SpiderLeg : ICallable<object>
         }
         // set right COXA, FEMUR and TIBIA
         turn2();
+        if (id%2 != 0)
+            servoAngle = 90 - servoAngle;
+        // t_tibia += 145;
+       //  t_femur += -40;
+         //servoAngle = 0;
         servos[SpiderJoint.COXA].setAngle(servoAngle.ToRadians());
         servos[SpiderJoint.FEMUR].setAngle(t_femur.ToRadians());
         servos[SpiderJoint.TIBIA].setAngle(t_tibia.ToRadians());
+
+        //Debug.Log("C:"+ (int)servoAngle +",F:"+ (int)t_femur +",T:"+ (int)t_tibia +",e:"+ (int)t_e);
+
+
         if (coxaChange >= 90) set = true;
         if (coxaChange <= 0) set = false;
     }
@@ -317,31 +328,41 @@ public class SpiderLeg : ICallable<object>
     public void turn2()
     {
         //calculate hight of legg depending on the servoAngle (aX^2 + b)
-        double f_q = 45.0; // top is (p , q) 
+        double f_q = 10.0; // top is (p , q) 
         double f_p = 45.0;
-        double f_a = (-f_q)/Math.Pow(90-f_p, 2);        
-        double f_h = a * Math.Pow((90 - f_p), 2) + f_q;
-        Debug.Log("y:"+f_h+",x:"+servoAngle_rv + ",a:"+f_a);
+        double f_a = (-f_q)/Math.Pow(-f_p, 2);        
+        double f_h = f_a * Math.Pow((servoAngle_rv - f_p), 2) + f_q;
+        //Debug.Log("y:"+f_h+",x:"+servoAngle_rv + ",a:"+f_a);
         //  0 = a * (90-45)^2 + 45 
         // a = (-q)/(-p)^2
         double t_a = 80.0;
         double t_c = 160.0;
-        double t_e = 0.0;
-        if (!set && f_h <90 && f_h>=0)
+        if (set)
+        {
             t_e = 90 - f_h;
+           // t_e = 75;
+        }
         else
             t_e = 90;
-        double t_f = 35f;
-        double t_d = laccent - t_f;
+
+        
+        double t_f = 35;
+        double t_d = laccent - t_f;        
         double t_b = Math.Sqrt(t_d*t_d + t_e*t_e);
+        if (t_b < 80)
+            t_b = 80;
+        double t_delta = Math.Asin(t_d / t_b).ToDegrees();
         double t_E = Math.Atan(t_e / t_d).ToDegrees();
         double t_A = Math.Acos((t_a * t_a - t_c * t_c - t_b * t_b) / (-2 * t_c * t_b)).ToDegrees();
         double t_AE = t_E + t_A;
         double t_tms = (Weigth / 3.0) * (E / 1000.0);
-        t_femur = Math.Acos((t_c * t_c - t_b * t_b - t_a * t_a) / (-2 * t_b * t_a)).ToDegrees();
+        double t_gamma = Math.Acos((t_c * t_c - t_b * t_b - t_a * t_a) / (-2 * t_b * t_a)).ToDegrees();
+        t_femur = 360 - 90 - t_delta - t_gamma;
         t_tibia = Math.Acos((t_b * t_b - t_a * t_a - t_c * t_c) / (-2 * t_a * t_c)).ToDegrees();
-   
- }
+        //if ( == 5)
+            Debug.Log("id:" + getFirstId() / 3 + "h:" + (int)f_h);
+
+    }
 
 
     public void smallBetaTurn()
