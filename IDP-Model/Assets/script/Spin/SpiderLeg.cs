@@ -111,8 +111,10 @@ public class SpiderLeg : ICallable<object>
 			// curve or something...   
 			if (!set) coxaChange += (50 * Time.deltaTime * forward);
 			if ( set) coxaChange -= (50 * Time.deltaTime * forward);
-			turn(400.0);
-		}
+            //turn(400.0);
+            noscope360();
+
+        }
 		else if (!forward.IsBetweenII(-.25, .25))
 		{
 			if (Walk.Time.shouldSync())
@@ -391,7 +393,91 @@ public class SpiderLeg : ICallable<object>
     /// </summary>
 	private void noscope360()
     {
-		// TODO: put this in a switch
+        // TODO: put this in a switch
+        int id = getFirstId() / 3;
+        switch (id)
+        {
+            case 0:
+            case 2:
+            case 3:
+            case 5:
+                l4 = Math.Sqrt(Math.Pow(0.5f * Width, 2) + Math.Pow(0.5f * Length, 2));
+                I = 0.5f * Length + Math.Sin(45.ToRadians()) * (L / 2);
+                II = 0.5f * Width + Math.Cos(45.ToRadians()) * (L / 2); 
+                r4 = Math.Sqrt(I * I + II * II);
+                beta_a = Math.Acos((L * L - l4 * l4 - r4 * r4) / (-2 * r4 * l4)).ToDegrees();
+                test1 = 180 - Math.Asin((r4 * Math.Sin(beta_a.ToRadians())) / L).ToDegrees();//TODO: right name!
+                beta_b = Math.Acos((Math.Pow((L / 2), 2) - r4 * r4 - l4 * l4) / (-2 * r4 * l4)).ToDegrees();
+                double test2 = 180 - Math.Asin(r4 * Math.Sin(beta_b.ToRadians()) / (L / 2)).ToDegrees();
+                B_MAX = beta_a - beta_b;
+                gamma = test2 - test1;
+                break;
+
+            case 1:
+            case 4:
+                l4 = (3 / 2) * l4;
+                r4 = Math.Sqrt(l4 * l4 + L * L - 2 * l4 * L * Math.Cos(180 - (90 - 0.5f * A_MAX).ToDegrees()));
+                gamma_a = 180 - (90 - 0.5f * A_MAX);
+                beta_a = Math.Asin((Math.Sin(gamma_a.ToRadians()) * L) / r4);
+                B_MAX = beta_a * 2;
+                break; 
+            default:
+                throw new InvalidOperationException();
+        }
+        switch (id)
+        {
+            case 0://RV                
+                servoAngle = coxaChange;
+                gamma = 360 - (Math.Atan((0.5f * Length) / (0.5f * Width)).ToRadians() + (135 + servoAngle));
+                alpha = Math.Asin((Math.Sin(gamma.ToRadians()) * l4) / r4).ToDegrees();
+                beta = 180 - gamma - alpha;
+                laccent = (r4 * Math.Sin(beta * (Math.PI / 180))) / (Math.Sin(gamma * (Math.PI / 180)));
+                sharedParams.b_turn = beta - beta_b;
+                laccent = (r4 * Math.Sin(beta.ToRadians())) / (Math.Sin(gamma.ToRadians()));
+                break;
+            case 1://RM
+                beta = beta_a - sharedParams.b_turn;
+                alpha = Math.Asin((Math.Sin(beta.ToRadians()) * l4) / Length).ToDegrees();
+                gamma = 180 - alpha - beta;
+                servoAngle = gamma - 135;
+                laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
+                break;
+            case 2://RA
+                beta = beta_a - sharedParams.b_turn;
+                alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
+                gamma = 180 - alpha - Length;
+                servoAngle = gamma - test1;
+                laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
+                break;
+            case 3://LV
+                beta = beta_a - sharedParams.b_turn;
+                alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
+                gamma = 180 - alpha - Length;
+                servoAngle = gamma - test1;
+                laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
+                break;
+            case 4://LM
+                beta = beta_a - sharedParams.b_turn;
+                alpha = Math.Asin((Math.Sin(beta.ToRadians()) * l4) / Length).ToDegrees();
+                gamma = 180 - alpha - beta;
+                servoAngle = gamma - 135;
+                laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
+                break;
+            case 5://RA
+                alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToDegrees();
+                beta = beta_b + sharedParams.b_turn;
+                gamma = 180 - Math.Abs(alpha) - Math.Abs(beta);
+                servoAngle = test1 - gamma;
+                laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
+                break;            
+        }
+        turn2();
+        if (id % 2 != 0)
+            servoAngle = 90 - servoAngle;
+        servos[SpiderJoint.COXA].setAngle(servoAngle.ToRadians());
+        servos[SpiderJoint.FEMUR].setAngle(t_femur.ToRadians());
+        servos[SpiderJoint.TIBIA].setAngle(t_tibia.ToRadians());
+        /*
         //RV
         VA360();
         servoAngle = 5;
@@ -406,7 +492,6 @@ public class SpiderLeg : ICallable<object>
         VA360();
         beta = beta_a - sharedParams.b_turn;
         alpha = Math.Sin((Math.Sin(beta.ToRadians()) * l4) / laccent).ToRadians();
-
         gamma = 180 - alpha - Length;
         servoAngle = gamma - test1;     
         laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
@@ -442,6 +527,14 @@ public class SpiderLeg : ICallable<object>
         gamma = 180 - Math.Abs(alpha) - Math.Abs(beta);        
         servoAngle = test1 - gamma;
         laccent = Math.Sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.Cos(beta.ToRadians()));
+
+        turn2();
+        if (id % 2 != 0)
+            servoAngle = 90 - servoAngle;        
+        servos[SpiderJoint.COXA].setAngle(servoAngle.ToRadians());
+        servos[SpiderJoint.FEMUR].setAngle(t_femur.ToRadians());
+        servos[SpiderJoint.TIBIA].setAngle(t_tibia.ToRadians());
+        */
     }
 
 	private void VA360()
