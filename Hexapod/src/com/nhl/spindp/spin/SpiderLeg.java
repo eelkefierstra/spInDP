@@ -7,7 +7,7 @@ import com.nhl.spindp.Time;
 
 class SpiderLeg implements Runnable
 {
-	private static final double Weigth = 24.525;
+	private static final double Weigth   = 24.525;
 	private static final double A        =  80.0;
 	private static final double A_MAX    =  90.0;
 	private static final double A_RAD    = Math.toRadians(A_MAX / 2.0);
@@ -33,7 +33,7 @@ class SpiderLeg implements Runnable
 	private double step    = 0.0;
 	private boolean set     = false;
 	
-	private double coxaChange = 0.0;	
+	private double coxaChange = 0.0;
 	
 	private double t_femur;
     private double t_tibia;
@@ -60,8 +60,8 @@ class SpiderLeg implements Runnable
     private static double beta_RV;
     private double servoAngle;
     private double laccent;
-    private static double b_turn;
-    private static double servoAngle_rv;
+    //private static double b_turn;
+    //private static double servoAngle_rv;
     private double betaD1;
     private double betaD2;
     private double test1; //TODO: need name still
@@ -98,7 +98,6 @@ class SpiderLeg implements Runnable
 		}
 		else if (right <= -.25 || .25 <= right)
 		{
-			
 			if (!set) coxaChange += ((25.0 * Time.deltaTime) * forward);
 			if ( set) coxaChange -= ((25.0 * Time.deltaTime) * forward);
 			//leg.curve(right);
@@ -121,15 +120,15 @@ class SpiderLeg implements Runnable
 	@Override
 	public void run()
 	{
-		if (coxaChange >= 90)
+		if (coxaChange >= 85)
 		{
 			set = true;
-			coxaChange = 90;
+			coxaChange = 85;
 		}
-		if (coxaChange <= 0)
+		if (coxaChange <= 5)
 		{
 			set = false;
-			coxaChange = 0;
+			coxaChange = 5;
 		}
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
 		double lAccent = LACCENT / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
@@ -167,25 +166,25 @@ class SpiderLeg implements Runnable
 				// Rechts voor en achter
 				h = 0.5f * Length - 0.5f * (Math.sqrt(L * L - small_l* small_l) * 2);
 				b = small_l + r + 0.5f * Width;
-				r4 = Math.sqrt(h * h + b * b);        
+				r4 = Math.sqrt(h * h + b * b);
 				I = 0.5f * Length;
 				II = r + 0.5f * Width;
 				l4 = Math.sqrt(I * I + II * II);
-				a = Math.atan(II / I)*(180 / Math.PI);        
+				a = Math.toDegrees(Math.atan(II / I));
 				gamma_a = 180 - (A_MAX / 2) + (90 - a); //(180 - A_MAX) / 2 + 90 + (90 - a);
-				alpha_a = Math.asin((Math.sin(gamma_a*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);
+				alpha_a = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma_a)) * l4) / r4));
 				beta_a = 180 - alpha_a - gamma_a;
 				gamma_b = a + ((180 - A_MAX) / 2);
-				alpha_b = Math.asin((Math.sin(gamma_b*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);
+				alpha_b = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma_b)) * l4) / r4));
 				beta_b = 180 - alpha_b - gamma_b;
 				B_MAX = beta_b + beta_a;
 				break;
 			case 1:
 				// rechts mid
 				l4 = r + ((3f / 2f) * Width);
-				r4 = l4 + small_l;        
+				r4 = l4 + small_l;
 				gamma_a = 90 + (180 - A_MAX) / 2;
-				alpha_a = Math.asin((Math.sin(gamma_a*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);
+				alpha_a = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma_a)) * l4) / r4));
 				beta_a = 180 - alpha_a - gamma_a;
 				B_MAX = 2 * beta_a;
 				break;
@@ -198,26 +197,26 @@ class SpiderLeg implements Runnable
 				I = 0.5f * Length;
 				II = r - 0.5f * Width;
 				l4 = Math.sqrt(I * I + II * II);
-				a = Math.atan(II / I)*(180 / Math.PI);
+				a = Math.toDegrees(Math.atan(II / I));
 				gamma_a = (A_MAX / 2) + (90 - a);
-				alpha_a = 180 - Math.asin((Math.sin(gamma_a*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);
+				alpha_a = 180 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma_a)) * l4) / r4));
 				beta_a = 180 - alpha_a - gamma_a;
 				gamma_b = a - ((180 - A_MAX) / 2);
-				alpha_b = 180 - Math.asin((Math.sin(gamma_b*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);
+				alpha_b = 180 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma_a)) * l4) / r4));
 				beta_b = 180 - alpha_b - gamma_b;
 				B_MAX = beta_b + beta_a;
 				break;
 			case 4:
 				// links mid
 				l4 = r - ((3f / 2f) * Width);
-				r4 = Math.sqrt((l4 * l4 + L * L) - 2 * l4 * L * Math.cos((A_MAX / 2)*(Math.PI/180)));        
+				r4 = Math.sqrt((l4 * l4 + L * L) - 2 * l4 * L * Math.cos(Math.toRadians(A_MAX / 2)));
 				gamma_a = (A_MAX / 2);
-				alpha_a = 180 - Math.asin((Math.sin(gamma_a*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);
+				alpha_a = 180 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma_a)) * l4) / r4));
 				beta_a = 180 - alpha_a - gamma_a;
 				B_MAX = 2 * beta_a;
 				break;
 			default:
-				throw new InvalidOperationException();
+				throw new IllegalArgumentException();
 		}
 
         if (servoAngle >= 85)
@@ -235,27 +234,27 @@ class SpiderLeg implements Runnable
         {
             case 0:
                 //RV (leidend)   
-                servoAngle = servoAngle_rv = coxaChange;
+                servoAngle = sharedParams.servoAngle_rv = coxaChange;
                 gamma = servoAngle + gamma_a;
-                alpha = Math.asin((Math.sin(gamma*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);                
+                alpha = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma)) * l4) / r4));
                 beta = 180 - gamma - alpha;
-                beta_RV = beta;                
-                laccent = (r4 * Math.sin(beta*(Math.PI/180))) / Math.sin(gamma*(Math.PI/180));
+                beta_RV = beta;
+                laccent = (r4 * Math.sin(Math.toRadians(beta))) / Math.sin(Math.toRadians(gamma));
                 sharedParams.b_turn = beta_a - beta;
                 break;
             case 1:
                 //RM
                 beta = beta_a - sharedParams.b_turn;
-                laccent = Math.sqrt(r4 * r4 + l4 * l4 - 2 * l4 * r4 * Math.cos(beta*(Math.PI/180)));
-                alpha = Math.asin((l4 * Math.sin(beta*(Math.PI/180))) / laccent)*(180 / Math.PI);                
+                laccent = Math.sqrt(r4 * r4 + l4 * l4 - 2 * l4 * r4 * Math.cos(Math.toRadians(beta)));
+                alpha = Math.toDegrees(Math.asin((l4 * Math.sin(Math.toRadians(beta))) / laccent);
                 gamma = 180 - alpha - beta;
-                servoAngle = gamma - 135;                
-                break;                
+                servoAngle = gamma - 135;
+                break;
             case 2:
                 //RA
-                servoAngle = servoAngle_rv;
+                servoAngle = sharedParams.servoAngle_rv;
                 gamma = gamma_a + (90 - servoAngle);
-                alpha = Math.asin((Math.sin(gamma*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);                
+                alpha = Math.asin((Math.sin(gamma*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);
                 beta = 180 - gamma - alpha;
                 laccent = (r4 * Math.sin(beta*(Math.PI/180))) / Math.sin(gamma*(Math.PI/180));
                // Debug.Log("x:" + (int)coxaChange + ", id" + getFirstId() / 3 + ", c:" + (int)gamma + ", a:" + (int)alpha + ", b:" + (int)beta);
@@ -279,16 +278,16 @@ class SpiderLeg implements Runnable
             case 5:
                 //LA
                 beta = beta_b - sharedParams.b_turn;
-                laccent = Math.sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.cos(beta*(Math.PI/180)));                
+                laccent = Math.sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.cos(beta*(Math.PI/180)));
                 if ((180 + Math.asin((Math.sin(beta*(Math.PI/180)) * l4) / laccent)*(180 / Math.PI)) > 180)                   
-                    alpha = -(180 + (Math.asin((Math.sin(beta*(Math.PI/180)) * l4) / laccent)*(180 / Math.PI))) + 360;
+                    alpha = -Math.toDegrees(180 + (Math.asin((Math.sin(Math.toRadians(beta) * l4) / laccent))) + 360;
                 else
-                    alpha = (180 + (Math.asin((Math.sin(beta*(Math.PI/180)) * l4) / laccent)*(180 / Math.PI)));
+                    alpha = (180 + Math.toDegrees(Math.asin((Math.sin(Math.toRadians(beta)) * l4) / laccent)));
                 gamma = 180 - alpha - Math.abs(beta);
                 if (beta < 0)
                     servoAngle = gamma_b + gamma;
                 else
-                    servoAngle = gamma_b - gamma;   
+                    servoAngle = gamma_b - gamma;
                 break;
         }
         // set right COXA, FEMUR and TIBIA
@@ -298,15 +297,14 @@ class SpiderLeg implements Runnable
         // t_tibia += 145;
        //  t_femur += -40;
          //servoAngle = 0;
-        servos[SpiderJoint.COXA].setAngle(servoAngle*(Math.PI/180));
-        servos[SpiderJoint.FEMUR].setAngle(t_femur*(Math.PI/180));
-        servos[SpiderJoint.TIBIA].setAngle(t_tibia*(Math.PI/180));
+        servos[SpiderJoint.COXA].setAngle(Math.toRadians(servoAngle));
+        servos[SpiderJoint.FEMUR].setAngle(Math.toRadians(t_femur));
+        servos[SpiderJoint.TIBIA].setAngle(Math.toRadians(t_tibia));
 
         //Debug.Log("C:"+ (int)servoAngle +",F:"+ (int)t_femur +",T:"+ (int)t_tibia +",e:"+ (int)t_e);
 
-
-        if (coxaChange >= 90) set = true;
-        if (coxaChange <= 0) set = false;
+        if (coxaChange >= 85) set = true;
+        if (coxaChange <= 5) set = false;
     }
 
     public void turn2()
@@ -314,9 +312,9 @@ class SpiderLeg implements Runnable
         //calculate hight of legg depending on the servoAngle (aX^2 + b)
         double f_q = 10.0; // top is (p , q) 
         double f_p = 45.0;
-        double f_a = (-f_q)/Math.pow(-f_p, 2);        
-        double f_h = f_a * Math.pow((servoAngle_rv - f_p), 2) + f_q;
-        //Debug.Log("y:"+f_h+",x:"+servoAngle_rv + ",a:"+f_a);
+        double f_a = (-f_q)/Math.pow(-f_p, 2);
+        double f_h = f_a * Math.pow((sharedParams.servoAngle_rv - f_p), 2) + f_q;
+        //Debug.Log("y:"+f_h+",x:"+sharedParams.servoAngle_rv + ",a:"+f_a);
         //  0 = a * (90-45)^2 + 45 
         // a = (-q)/(-p)^2
         double t_a = 80.0;
@@ -331,7 +329,7 @@ class SpiderLeg implements Runnable
 
         
         double t_f = 35;
-        double t_d = laccent - t_f;        
+        double t_d = laccent - t_f;
         double t_b = Math.sqrt(t_d*t_d + t_e*t_e);
         if (t_b < 80)
             t_b = 80;
@@ -399,7 +397,7 @@ class SpiderLeg implements Runnable
                 l4 = (3.0 / 2.0) * Width;
                 r4 = Math.sqrt(l4 * l4 + L * L - 2 * l4 * L * Math.cos((180 - (90 - 0.5f * A_MAX))*(Math.PI/180)));
                 gamma_a = 180 - (90 - 0.5f * A_MAX);
-                beta_a = Math.asin((Math.sin(gamma_a*(Math.PI/180)) * L) / r4)*(180 / Math.PI);
+                beta_a = Math.asin((Math.sin(Math.toRadians(gamma_a)) * L) / r4)*(180 / Math.PI);
                 B_MAX = beta_a * 2;
                 break; 
             default:
@@ -410,7 +408,7 @@ class SpiderLeg implements Runnable
             case 0://RV 
             case 5://LA                  
                 servoAngle = coxaChange;
-                servoAngle_rv = servoAngle;
+                sharedParams.servoAngle_rv = servoAngle;
                 gamma = 360 - (Math.atan((0.5f * Length) / (0.5f * Width))*(180 / Math.PI) + (135 + servoAngle));
                 alpha = Math.asin((Math.sin(gamma*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);
                 beta = 180 - gamma - alpha;
@@ -425,18 +423,18 @@ class SpiderLeg implements Runnable
                 laccent = Math.sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.cos(beta*(Math.PI/180)));
                 alpha = Math.asin((Math.sin(beta*(Math.PI/180)) * l4) / laccent)*(180 / Math.PI);
                 gamma = 180 - alpha - beta;
-                servoAngle = gamma - 135;  
-                servoAngle = coxaChange;              
+                servoAngle = gamma - 135;
+                servoAngle = coxaChange;
                 break;
 
             case 2://RA
             case 3://LV
                 beta = beta_a - sharedParams.b_turn;
                 laccent = Math.sqrt(l4 * l4 + r4 * r4 - 2 * r4 * l4 * Math.cos(beta*(Math.PI/180)));
-                alpha = Math.asin((Math.sin(beta*(Math.PI/180)) * l4) / laccent)*(180 / Math.PI);
+                alpha = Math.asin((Math.sin(Math.toRadians(beta)) * l4) / laccent)*(180 / Math.PI);
                 gamma = 180 - alpha - beta;
-                servoAngle = gamma - test1;                
-                break;                          
+                servoAngle = gamma - test1;
+                break;
         }
         if (servoAngle >= 85)
         {
@@ -454,10 +452,9 @@ class SpiderLeg implements Runnable
             servoAngle = 180 - servoAngle;
             */            
             
-        servos[SpiderJoint.COXA].setAngle(servoAngle*(Math.PI/180));
-        servos[SpiderJoint.FEMUR].setAngle(t_femur*(Math.PI/180));
-        servos[SpiderJoint.TIBIA].setAngle(t_tibia*(Math.PI/180));
-    
+        servos[SpiderJoint.COXA].setAngle(Math.toRadians(servoAngle));
+        servos[SpiderJoint.FEMUR].setAngle(Math.toRadians(t_femur));
+        servos[SpiderJoint.TIBIA].setAngle(Math.toRadians(t_tibia));
     }
 	int[] getIds()
 	{

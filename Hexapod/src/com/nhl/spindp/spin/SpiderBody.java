@@ -18,7 +18,7 @@ public class SpiderBody
 		legs     = new SpiderLeg[6];
 		futures  = new Future<?>[6];
 		
-		for (int i = legs.length-1; i >= 0; i--)
+		for (int i = 0; i < legs.length; i++)
 		{
 			legs[i] = new SpiderLeg(executor, startId);
 			startId += 3;
@@ -51,9 +51,6 @@ public class SpiderBody
 		{
 			if (leg.walk(forward, right))
 				futures[i] = leg.getFuture();
-			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
-			for (short s : Main.failedServos)
-				System.out.println(s);
 			i++;
 		}
 		for (Future<?> f : futures)
@@ -67,12 +64,19 @@ public class SpiderBody
 				e.printStackTrace();
 			}
 		}
+		for (SpiderLeg leg : legs)
+		{
+			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			for (short s : Main.failedServos)
+				System.out.println(s);
+		}
 	}
 	
 	public class SharedParams
 	{
 	 	public final int firstId;
         public double firstCoxaChange;
+        public double servoAngle_rv;
         public double b_turn;
         
         public SharedParams()
@@ -82,13 +86,14 @@ public class SpiderBody
 
         public SharedParams(int firstId)
         { 
-        	this(firstId, 0.0, 0.0);
+        	this(firstId, 0.0, 0.0, 0.0);
         }
 
-        public SharedParams(int firstId, double firstCoxaChange, double b_turn)
+        public SharedParams(int firstId, double firstCoxaChange, double servoAngle_rv, double b_turn)
         {
             this.firstId = firstId;
             this.firstCoxaChange = firstCoxaChange;
+            this.servoAngle_rv = servoAngle_rv;
             this.b_turn = b_turn;
         }
 		
