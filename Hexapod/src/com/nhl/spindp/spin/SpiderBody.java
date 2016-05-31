@@ -71,6 +71,26 @@ public class SpiderBody
 	
 	public class SharedParams
 	{
+	 	public final int firstId;
+        public double firstCoxaChange;
+        public double b_turn;
+        
+        public SharedParams()
+        { 
+        	this(1);
+        }
+
+        public SharedParams(int firstId)
+        { 
+        	this(firstId, 0.0, 0.0);
+        }
+
+        public SharedParams(int firstId, double firstCoxaChange, double b_turn)
+        {
+            this.firstId = firstId;
+            this.firstCoxaChange = firstCoxaChange;
+            this.b_turn = b_turn;
+        }
 		
 	}
 }
