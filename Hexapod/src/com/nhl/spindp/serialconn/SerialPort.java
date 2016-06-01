@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import javax.xml.bind.DatatypeConverter;
-
 import com.nhl.spindp.Main;
 
 
