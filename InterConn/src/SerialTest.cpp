@@ -279,38 +279,73 @@ void i2c()
 {
 	int file;
 	int err = 0;
-
+	bool gyro = false, adc = false;
 
 	//open I2C bus
 	while (!i2cSetup(file) && err < 5)
+	{
 		++err;
+		if(err==5)
+		{
+			return;
+		}
+	}
 	err = 0;
-	//if there is no connection to I2C, don't even try
-	if (!file)
-		exit(1); //TODO: Is this overkill?(it does run in its own thread *shrugs*)
 
 
 	//start continues scan gyro
-	while (!i2cSetupGyro(file) && err < 3)
+	while (err < 3)
+	{
+		bool working = i2cSetupGyro(file);
+		if(working)
+		{
+			gyro = true;
+			break;
+		}
+
+		gyro = false;
 		++err;
+	}
 	err = 0;
 
 	//start continues scan ADC
-	while (!i2cSetupADC(file) && err < 3)
+	while (err < 3)
+	{
+		bool working = i2cSetupADC(file);
+		if(working)
+		{
+			adc = true;
+			break;
+		}
+
+		adc = false;
 		++err;
+	}
 	err = 0;
 
 
 	while (!done)
 	{
-		vector<char> result = i2cReadADC(file);
-		//TODO set data in file
-		for (char c : result)
+		if(adc)
 		{
-			cout << c;
+			vector<char> result = i2cReadADC(file);
+			//TODO set data in file
+			for (char c : result)
+			{
+				cout << c;
+			}
+			cout << endl;
 		}
-		cout << endl;
-
+		if(gyro)
+		{
+			vector<char> result = i2cReadGyro(file);
+			//TODO set data in file
+			for (char c : result)
+			{
+				cout << c;
+			}
+			cout << endl;
+		}
 		//TODO: add read for gyro, but since it is not connected it can wait
 	}
 
