@@ -35,7 +35,7 @@ string filename = "/dev/i2c-1";
 int main(int argc, char *argv[])
 {
 	//start I2C reading
-    //thread t1 = thread(i2c);
+    thread t1 = thread(i2c);
 
 	static boost::asio::io_service ios;
 	string device = "/dev/serial0";
@@ -184,9 +184,9 @@ vector<char> i2cReadGyro(int &file)
 	char buf[28] = { 0 };
 
 	buf[0] = 0x3B;
-	if (write(file, buf, 1) != 1)
+	if (write(file, buf, 1) != 0)
 	{
-		cout << "register request failed" << endl;
+		cout << "register request failed(gyro)" << endl;
 	}
 	else
 	{
@@ -213,24 +213,23 @@ vector<char> i2cReadADC(int &file)
 	/*
 		[0]register to read(0b000 00..)
 	*/
-	char writeBuf[1] = { 0x00 };
+	char buf[2] = { 0x00 };
 
-	if (write(file, writeBuf, 1) != 1)
+	if (write(file, buf, 1) < 0)
 	{
-		cout << "register request failed" << endl;
+		cout << "register request failed(ADC)" << endl;
 	}
 	else
 	{
-		char readBuf[2] = { 0 };
 		// Using I2C Read
-		if (read(file, readBuf, 2) != 2)
+		if (read(file, buf, 2) != 2)
 		{
 			/* More data expected*/
 			cout << "Failed to read correctly from the i2c bus. (ADC)" << endl;
 		}
 		else
 		{
-			vector<char> data(begin(readBuf), end(readBuf));
+			vector<char> data(begin(buf), end(buf));
 			return data;
 		}
 	}

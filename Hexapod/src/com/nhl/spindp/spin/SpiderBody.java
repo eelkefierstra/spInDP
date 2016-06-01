@@ -1,5 +1,6 @@
 package com.nhl.spindp.spin;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -11,16 +12,18 @@ public class SpiderBody
 	ExecutorService executor;
 	SpiderLeg[] legs;
 	Future<?>[] futures;
+	SharedParams sharedParams;
 	
 	public SpiderBody(int startId)
 	{
 		executor = Executors.newFixedThreadPool(3);
 		legs     = new SpiderLeg[6];
 		futures  = new Future<?>[6];
+		sharedParams = new SharedParams();
 		
 		for (int i = 0; i < legs.length; i++)
 		{
-			legs[i] = new SpiderLeg(executor, startId);
+			legs[i] = new SpiderLeg(executor, sharedParams, startId);
 			startId += 3;
 		}
 	}
@@ -43,8 +46,10 @@ public class SpiderBody
 	 * Method that moves the spider
 	 * @param forward speed and forward, backward direction of the spider
 	 * @param right left, right direction of the spider
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public void walk(double forward, double right)
+	public void walk(double forward, double right) throws IOException, InterruptedException
 	{
 		int i = 0;
 		for (SpiderLeg leg : legs)

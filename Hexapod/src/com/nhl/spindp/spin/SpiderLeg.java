@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import com.nhl.spindp.Time;
+import com.nhl.spindp.spin.SpiderBody.SharedParams;
 
 class SpiderLeg implements Runnable
 {
@@ -71,16 +72,19 @@ class SpiderLeg implements Runnable
 	
 	SpiderJoint[] servos = new SpiderJoint[3];
 		
-	SpiderLeg(ExecutorService executor,int startServoId)
+	SpiderLeg(ExecutorService executor ,SharedParams sharedParams,int startServoId)
 	{
 		coxaChange += 30 * (startServoId / 3);
 		set = (startServoId % 2) == 0;
+		if (startServoId / 3 > 3)
+			set = !set;
 		if (coxaChange > 90)
 		{
 			coxaChange -= 90;
 		}
 		// 200, 75, 175
 		this.executor = executor;
+		this.sharedParams = sharedParams;
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 25);
@@ -100,7 +104,7 @@ class SpiderLeg implements Runnable
 		{
 			if (!set) coxaChange += ((25.0 * Time.deltaTime) * forward);
 			if ( set) coxaChange -= ((25.0 * Time.deltaTime) * forward);
-			//leg.curve(right);
+			turn(right);
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
@@ -202,7 +206,7 @@ class SpiderLeg implements Runnable
 				alpha_a = 180 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma_a)) * l4) / r4));
 				beta_a = 180 - alpha_a - gamma_a;
 				gamma_b = a - ((180 - A_MAX) / 2);
-				alpha_b = 180 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma_a)) * l4) / r4));
+				alpha_b = 180 - Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma_b)) * l4) / r4));
 				beta_b = 180 - alpha_b - gamma_b;
 				B_MAX = beta_b + beta_a;
 				break;
@@ -246,7 +250,7 @@ class SpiderLeg implements Runnable
                 //RM
                 beta = beta_a - sharedParams.b_turn;
                 laccent = Math.sqrt(r4 * r4 + l4 * l4 - 2 * l4 * r4 * Math.cos(Math.toRadians(beta)));
-                alpha = Math.toDegrees(Math.asin((l4 * Math.sin(Math.toRadians(beta))) / laccent);
+                alpha = Math.toDegrees(Math.asin((l4 * Math.sin(Math.toRadians(beta))) / laccent));
                 gamma = 180 - alpha - beta;
                 servoAngle = gamma - 135;
                 break;
@@ -280,7 +284,7 @@ class SpiderLeg implements Runnable
                 beta = beta_b - sharedParams.b_turn;
                 laccent = Math.sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.cos(beta*(Math.PI/180)));
                 if ((180 + Math.asin((Math.sin(beta*(Math.PI/180)) * l4) / laccent)*(180 / Math.PI)) > 180)                   
-                    alpha = -Math.toDegrees(180 + (Math.asin((Math.sin(Math.toRadians(beta) * l4) / laccent))) + 360;
+                    alpha = -Math.toDegrees(180 + (Math.asin((Math.sin(Math.toRadians(beta) * l4) / laccent)))) + 360;
                 else
                     alpha = (180 + Math.toDegrees(Math.asin((Math.sin(Math.toRadians(beta)) * l4) / laccent)));
                 gamma = 180 - alpha - Math.abs(beta);
@@ -298,6 +302,8 @@ class SpiderLeg implements Runnable
        //  t_femur += -40;
          //servoAngle = 0;
         servos[SpiderJoint.COXA].setAngle(Math.toRadians(servoAngle));
+        if (Double.isNaN(t_femur))
+        	System.err.println("we have issues");
         servos[SpiderJoint.FEMUR].setAngle(Math.toRadians(t_femur));
         servos[SpiderJoint.TIBIA].setAngle(Math.toRadians(t_tibia));
 
