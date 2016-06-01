@@ -35,7 +35,7 @@ string filename = "/dev/i2c-1";
 int main(int argc, char *argv[])
 {
 	//start I2C reading
-    thread t1 = thread(i2c);
+    //thread t1 = thread(i2c);
 
 	static boost::asio::io_service ios;
 	string device = "/dev/serial0";
@@ -212,11 +212,10 @@ vector<char> i2cReadADC(int &file)
 
 	/*
 		[0]register to read(0b000 00..)
-		[1]=7bit addr 0b1001000 with high read/write bit
 	*/
-	char writeBuf[2] = { 0x00, (char)0x91 };
+	char writeBuf[1] = { 0x00 };
 
-	if (write(file, writeBuf, 2) != 2)
+	if (write(file, writeBuf, 1) != 1)
 	{
 		cout << "register request failed" << endl;
 	}
