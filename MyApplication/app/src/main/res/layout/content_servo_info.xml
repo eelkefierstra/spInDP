@@ -9,19 +9,19 @@
     tools:context="com.example.aldert.spindpappandroidstudio22.ServoInfo"
     tools:showIn="@layout/activity_servo_info"
     tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="25dp">
+    tools:layout_editor_absoluteY="81dp">
 
     <TextView
         android:text="Servo Id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="28dp"
+        tools:layout_editor_absoluteX="9dp"
         tools:layout_editor_absoluteY="16dp"
-        android:id="@+id/textView"
+        android:id="@+id/Servo1"
         app:layout_constraintTop_toTopOf="@+id/content_servo_info"
         android:layout_marginTop="16dp"
         tools:layout_constraintTop_creator="0"
-        app:layout_constraintRight_toRightOf="@+id/textView2"
+        app:layout_constraintRight_toRightOf="@+id/Servo2"
         android:layout_marginEnd="4dp"
         tools:layout_constraintRight_creator="1" />
 
@@ -31,11 +31,11 @@
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="32dp"
         tools:layout_editor_absoluteY="40dp"
-        android:id="@+id/textView2"
-        app:layout_constraintLeft_toLeftOf="@+id/textView3"
+        android:id="@+id/Servo2"
+        app:layout_constraintLeft_toLeftOf="@+id/Servo3"
         android:layout_marginStart="2dp"
         tools:layout_constraintLeft_creator="1"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/Servo1"
         android:layout_marginTop="8dp"
         tools:layout_constraintTop_creator="0" />
 
@@ -45,11 +45,11 @@
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="30dp"
         tools:layout_editor_absoluteY="63dp"
-        android:id="@+id/textView3"
+        android:id="@+id/Servo3"
         app:layout_constraintLeft_toLeftOf="@+id/content_servo_info"
         android:layout_marginStart="30dp"
         tools:layout_constraintLeft_creator="1"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/Servo2"
         android:layout_marginTop="7dp"
         tools:layout_constraintTop_creator="1" />
 
@@ -57,10 +57,10 @@
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="111dp"
+        tools:layout_editor_absoluteX="134dp"
         tools:layout_editor_absoluteY="16dp"
-        android:id="@+id/textView4"
-        app:layout_constraintLeft_toRightOf="@+id/textView3"
+        android:id="@+id/Hoek1"
+        app:layout_constraintLeft_toRightOf="@+id/Servo3"
         android:layout_marginStart="24dp"
         tools:layout_constraintLeft_creator="0"
         app:layout_constraintTop_toTopOf="@+id/content_servo_info"
@@ -71,25 +71,55 @@
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="111dp"
+        tools:layout_editor_absoluteX="134dp"
         tools:layout_editor_absoluteY="40dp"
-        android:id="@+id/textView5"
-        app:layout_constraintTop_toTopOf="@+id/textView2"
+        android:id="@+id/Hoek2"
+        app:layout_constraintTop_toTopOf="@+id/Servo2"
         tools:layout_constraintTop_creator="0"
-        app:layout_constraintRight_toRightOf="@+id/textView4"
+        app:layout_constraintRight_toRightOf="@+id/Hoek1"
         tools:layout_constraintRight_creator="0" />
 
     <TextView
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="119dp"
-        tools:layout_editor_absoluteY="61dp"
-        android:id="@+id/textView6"
-        app:layout_constraintLeft_toLeftOf="@+id/textView5"
-        android:layout_marginStart="8dp"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintTop_toBottomOf="@+id/textView5"
-        android:layout_marginTop="5dp"
-        tools:layout_constraintTop_creator="1" />
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="64dp"
+        android:id="@+id/Hoek3" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="104dp"
+        android:id="@+id/Temperatuur1"
+        app:layout_constraintTop_toBottomOf="@+id/Hoek3"
+        android:layout_marginTop="24dp"
+        tools:layout_constraintTop_creator="0"
+        app:layout_constraintRight_toRightOf="@+id/Hoek3"
+        tools:layout_constraintRight_creator="0" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="238dp"
+        android:id="@+id/Temperatuur2"
+        app:layout_constraintRight_toRightOf="@+id/Temperatuur1"
+        tools:layout_constraintRight_creator="0" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="262dp"
+        android:id="@+id/Temperatuur3"
+        app:layout_constraintTop_toBottomOf="@+id/Temperatuur2"
+        android:layout_marginTop="8dp"
+        tools:layout_constraintTop_creator="0"
+        app:layout_constraintRight_toRightOf="@+id/Temperatuur2"
+        tools:layout_constraintRight_creator="0" />
 </android.support.constraint.ConstraintLayout>

@@ -2,7 +2,6 @@ package com.example.aldert.spindpappandroidstudio22;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -29,8 +28,7 @@ public class ServoInfo extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ServoInfoRecieved(conn.getAllServoInfo());
             }
         });
         ServoInfoRecieved(conn.getAllServoInfo());
@@ -38,14 +36,40 @@ public class ServoInfo extends AppCompatActivity {
     }
 
     public void ServoInfoRecieved(Servo[] servos){
+        int Id = 0;
+        int hoek = 0;
+        int Temperatuur = 0;
+        String Hoek = "Hoek1";
         for(Servo s : servos){
             if(s != null){
-                final TextView ChangeIDTextView = (TextView) findViewById(R.id.textView4);
-                ChangeIDTextView.setText(Integer.toString(s.getId()));
-                final TextView ChangeHoekTextView = (TextView) findViewById(R.id.textView5);
-                ChangeHoekTextView.setText(Integer.toString(s.getHoek()));
-                final TextView ChangeTemperatuuTextView = (TextView) findViewById(R.id.textView6);
-                ChangeTemperatuuTextView.setText(Integer.toString(s.getTemperatuur()));
+                Id = s.getId();
+                hoek = s.getHoek();
+                Temperatuur = s.getTemperatuur();
+                if(Id == 1){
+                    final TextView ChangeIDTextView = (TextView) findViewById(R.id.Servo1);
+                    ChangeIDTextView.setText(Integer.toString(Id));
+                    final TextView ChangeHoekTextView = (TextView) findViewById(R.id.Hoek1);
+                    ChangeHoekTextView.setText(Integer.toString(hoek));
+                    final TextView ChangeTemperatuuTextView = (TextView) findViewById(R.id.Temperatuur1);
+                    ChangeTemperatuuTextView.setText(Integer.toString(Temperatuur));
+                }
+                if(Id == 2){
+                    final TextView ChangeIDTextView = (TextView) findViewById(R.id.Servo2);
+                    ChangeIDTextView.setText(Integer.toString(Id));
+                    final TextView ChangeHoekTextView = (TextView) findViewById(R.id.Hoek2);
+                    ChangeHoekTextView.setText(Integer.toString(hoek));
+                    final TextView ChangeTemperatuuTextView = (TextView) findViewById(R.id.Temperatuur2);
+                    ChangeTemperatuuTextView.setText(Integer.toString(Temperatuur));
+                }
+                if(Id == 3){
+                    final TextView ChangeIDTextView = (TextView) findViewById(R.id.Servo3);
+                    ChangeIDTextView.setText(Integer.toString(Id));
+                    final TextView ChangeHoekTextView = (TextView) findViewById(R.id.Hoek3);
+                    ChangeHoekTextView.setText(Integer.toString(hoek));
+                    final TextView ChangeTemperatuuTextView = (TextView) findViewById(R.id.Temperatuur3);
+                    ChangeTemperatuuTextView.setText(Integer.toString(Temperatuur));
+                }
+
             }
         }
 
