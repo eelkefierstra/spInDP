@@ -19,6 +19,21 @@ public class SerialPort
 	private static final File serialInFile  = new File("/tmp/S_IN");
 	private static final File serialOutFile = new File("/tmp/S_OUT");
 	
+	SerialPort()
+	{
+		initPort("/dev/serial0");
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				cleanupPort();
+			}
+		}
+		);
+			
+	}
+	
 	/**
 	 * Writes message to serialOutFile
 	 * @param message The message to send
@@ -35,6 +50,14 @@ public class SerialPort
 		writer.close();
 		return true;
 	}
+	
+	native void initPort(String port);
+	
+	native void cleanupPort();
+	
+	native boolean nativeWrite(byte[] message);
+	
+	native byte[] nativeRead(int id);
 	
 	native boolean nativeWriteBytes(byte[] message);
 	

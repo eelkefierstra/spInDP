@@ -1,6 +1,8 @@
 package com.nhl.spindp.spin;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -11,14 +13,14 @@ public class SpiderBody
 {
 	ExecutorService executor;
 	SpiderLeg[] legs;
-	Future<?>[] futures;
+	Queue<Future<?>> futures;
 	SharedParams sharedParams;
 	
 	public SpiderBody(int startId)
 	{
 		executor = Executors.newFixedThreadPool(3);
 		legs     = new SpiderLeg[6];
-		futures  = new Future<?>[6];
+		futures  = new LinkedList<>();
 		sharedParams = new SharedParams();
 		
 		for (int i = 0; i < legs.length; i++)
@@ -35,7 +37,7 @@ public class SpiderBody
 		for (SpiderLeg leg : legs)
 		{
 			leg.walk(0, 0);
-			futures[i] = leg.getFuture();
+			futures.offer(leg.getFuture());
 			//leg.run();
 			i++;
 		}
@@ -55,14 +57,14 @@ public class SpiderBody
 		for (SpiderLeg leg : legs)
 		{
 			if (leg.walk(forward, right))
-				futures[i] = leg.getFuture();
+				futures.offer(leg.getFuture());
 			i++;
 		}
-		for (Future<?> f : futures)
+		while (!futures.isEmpty())
 		{
 			try
 			{
-				//f.get();
+				futures.poll().get();
 			}
 			catch (Exception e)
 			{

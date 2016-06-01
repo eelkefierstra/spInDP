@@ -70,8 +70,7 @@ int main(int argc, char *argv[])
 
 	while (!done)
 	{
-		for (int i = 0; i < 32; i++)
-				readBuff[i] = 0;
+		memset(readBuff, 0, sizeof readBuff);
 		//s_in.open(SERIAL_OUT);
 		pigs.open(PIGPIO);
 		pigs << "w " << signalPin << " 1" << endl;
