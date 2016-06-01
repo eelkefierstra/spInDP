@@ -62,7 +62,7 @@ public class SpiderBody
 		{
 			try
 			{
-				f.get();
+				//f.get();
 			}
 			catch (Exception e)
 			{
@@ -71,7 +71,7 @@ public class SpiderBody
 		}
 		for (SpiderLeg leg : legs)
 		{
-			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			Main.getInstance().driveServoInPython(leg.getIds(), leg.getAngles());
 			for (short s : Main.failedServos)
 				System.out.println(s);
 		}

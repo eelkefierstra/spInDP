@@ -74,7 +74,7 @@ public class Main
 		while (true)
 		{
 			Time.updateDeltaTime();
-			body.walk(0.0, 1.0);
+			body.walk(1.0, 1.0);
 		}
 	}
 	

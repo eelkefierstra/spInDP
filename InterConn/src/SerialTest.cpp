@@ -153,9 +153,9 @@ bool i2cSetupGyro(int &file)
 
     //wake up gyro
     char buff[2]={0x6B,0};
-    if (write(file,buff,2) != 1)
+    if (write(file,buff,2) < 0)
 	{
-		cout << "failed to wake device" << endl;
+		cout << "failed to wake device(gyro)" << endl;
 		return false;
 	}
     return true;
@@ -168,9 +168,9 @@ bool i2cSetupADC(int &file)
 
     //wake up adc
     char buff[3] = { 0x01, 0x04, (char)0x83 };
-    if (write(file,buff,3) != 3)
+    if (write(file,buff,3) < 0)
 	{
-		cout << "failed to wake device" << endl;
+		cout << "failed to wake device(adc)" << endl;
 		return false;
 	}
     return true;
