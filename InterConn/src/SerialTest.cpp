@@ -60,21 +60,25 @@ int main(int argc, char *argv[])
 	ifstream s_in;
 	char charBuff[32];
 	char readBuff[32];
-	for (int i = 0; i < 32; i++)
-		readBuff[i] = 0;
+
 	done = false;
 
 	//char test[6] = { 0xFF, 0xFF, 0x01, 0x02, 0x00, 0xFC };
 
+	s_in.open(SERIAL_OUT);
+	s_out.open(SERIAL_IN);
+
 	while (!done)
 	{
-		s_in.open(SERIAL_OUT);
+		for (int i = 0; i < 32; i++)
+				readBuff[i] = 0;
+		//s_in.open(SERIAL_OUT);
 		pigs.open(PIGPIO);
 		pigs << "w " << signalPin << " 1" << endl;
 	    //getline(s_in, line);
 		s_in.read(readBuff, 32);
 		memcpy(charBuff, readBuff, 4 + readBuff[3]);
-	    s_in.close();
+	    //s_in.close();
 		sp.write_some(boost::asio::buffer(string(charBuff, 4 + charBuff[3])));
 		this_thread::sleep_for(chrono::microseconds(1));
 		pigs << "w " << signalPin << " 0" << endl;
@@ -95,11 +99,11 @@ int main(int argc, char *argv[])
 			res.append(prefix);
 		}
 		//sp.read_some(boost::asio::buffer(tmp));
-		s_out.open(SERIAL_IN);
+		//s_out.open(SERIAL_IN);
 		cout << "received: " << res << endl;
 		s_out << res << endl;
 		s_out.flush();
-		s_out.close();
+		//s_out.close();
 		res = "";
 	}
 	sp.close();
