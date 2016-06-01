@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">SpinDPapp Android studio 2.2</string>
+    <string name="title_activity_servo_info">ServoInfo</string>
+    <string name="title_activity_live_stream">LiveStream</string>
+    <string name="title_activity_helling_info">HellingInfo</string>
+    <string name="ServoInfo">Servo informatie</string>
+    <string name="LiveStream">Live stream</string>
+    <string name="HellingInfo">Helling informatie</string>
+</resources>
