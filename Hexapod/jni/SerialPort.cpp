@@ -14,7 +14,7 @@
 #include <errno.h>
 #include <termios.h>
 #include <unistd.h>
-#include <asm-generic/fcntl.h>
+#include <fcntl.h>
 #include "com_nhl_spindp_serialconn_SerialPort.h"
 
 #define SERIAL_IN  "/tmp/S_IN"
@@ -65,7 +65,7 @@ int set_interface_attribs(int fd, int speed, int parity)
 
         if (tcsetattr (fd, TCSANOW, &tty) != 0)
         {
-                cout << "error %d from tcsetattr" << errno << endl;
+                cout << "error " << errno << " from tcsetattr" << endl;
                 return -1;
         }
         return 0;
@@ -77,7 +77,7 @@ void set_blocking (int fd, int should_block)
         memset(&tty, 0, sizeof tty);
         if (tcgetattr (fd, &tty) != 0)
         {
-                cout << "error %d from tggetattr" << errno << endl;
+                cout << "error " << errno <<" from tggetattr" << endl;
                 return;
         }
 
@@ -85,19 +85,22 @@ void set_blocking (int fd, int should_block)
         tty.c_cc[VTIME] = 1;            // 0.5 seconds read timeout
 
         if (tcsetattr (fd, TCSANOW, &tty) != 0)
-                cout << "error %d setting term attributes" << errno << endl;
+                cout << "error " << errno << " setting term attributes" << endl;
 }
 
 JNIEXPORT void JNICALL Java_com_nhl_spindp_serialconn_SerialPort_initPort
   (JNIEnv *env, jobject, jstring port)
 {
-	//if ((fd = open(env->GetStringUTFChars(port, NULL), O_RDWR | O_NOCTTY | O_SYNC)) < 0)
-	if ((fd += 5) != 1)
+	char* device = (char*)env->GetStringUTFChars(port, NULL);
+	if ((fd = open(device, O_RDWR | O_NOCTTY | O_SYNC)) < 0)
 	{
-
+		string clazz = "java/io/IOException";
+		string mess  = "Cant't open the device";
+		throw_java_exception(env, &clazz[0], &mess[0]);
+		return;
 	}
 	set_interface_attribs(fd, B1000000, 0);
-	set_blocking(fd, 1);
+	set_blocking(fd, 0);
 }
 
 JNIEXPORT void JNICALL Java_com_nhl_spindp_serialconn_SerialPort_cleanupPort
@@ -123,14 +126,15 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 		string mess  = "message can't be empty";
 		throw_java_exception(env, &clazz[0], &mess[0]);
 	}
-	jbyte *messPntr = env->GetByteArrayElements(message, NULL);
-	cout << "sending: " << messPntr << endl;
 	ofstream pigs;
 	int signalPin = 18;
 	pigs.open(PIGPIO);
 	pigs << "w " << signalPin << " 1" << endl;
+	this_thread::sleep_for(chrono::microseconds(10));
+	jbyte *messPntr = env->GetByteArrayElements(message, NULL);
+	cout << "sending: " << messPntr << endl;
 	write(fd, messPntr, length);
-	this_thread::sleep_for(chrono::microseconds(1));
+	this_thread::sleep_for(chrono::microseconds(20));
 	pigs << "w " << signalPin << " 0" << endl;
 	pigs.flush();
 	pigs.close();

@@ -74,10 +74,13 @@ class SpiderLeg implements Runnable
 		
 	SpiderLeg(ExecutorService executor ,SharedParams sharedParams,int startServoId)
 	{
-		coxaChange += 30 * (startServoId / 3);
+		//coxaChange += 30 * (startServoId / 3);
 		set = (startServoId % 2) == 0;
-		if (startServoId / 3 > 3)
+		if (startServoId % 2 == 0)
+		{
+			coxaChange = 85;
 			set = !set;
+		}
 		if (coxaChange > 90)
 		{
 			coxaChange -= 90;
@@ -102,14 +105,14 @@ class SpiderLeg implements Runnable
 		}
 		else if (right <= -.25 || .25 <= right)
 		{
-			if (!set) coxaChange += ((25.0 * Time.deltaTime) * forward);
-			if ( set) coxaChange -= ((25.0 * Time.deltaTime) * forward);
+			if (!set) coxaChange += ((35.0 * Time.deltaTime) * forward);
+			if ( set) coxaChange -= ((35.0 * Time.deltaTime) * forward);
 			turn(right);
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
-			if (!set) coxaChange += ((25.0 * Time.deltaTime) * forward);
-			if ( set) coxaChange -= ((25.0 * Time.deltaTime) * forward);
+			if (!set) coxaChange += ((35.0 * Time.deltaTime) * forward);
+			if ( set) coxaChange -= ((35.0 * Time.deltaTime) * forward);
 			future = executor.submit(this);
 			res = true;
 		}
@@ -124,15 +127,15 @@ class SpiderLeg implements Runnable
 	@Override
 	public void run()
 	{
-		if (coxaChange >= 85)
+		if (coxaChange >= 80)
 		{
 			set = true;
-			coxaChange = 85;
+			coxaChange = 80;
 		}
-		if (coxaChange <= 5)
+		if (coxaChange <= 10)
 		{
 			set = false;
-			coxaChange = 5;
+			coxaChange = 10;
 		}
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
 		double lAccent = LACCENT / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
@@ -377,6 +380,7 @@ class SpiderLeg implements Runnable
     /// <summary>
     /// Main method for turning around his Y axis
     /// </summary>
+	@SuppressWarnings("unused")
 	private void noscope360()
     {        
         int id = getFirstId() / 3;
@@ -462,6 +466,7 @@ class SpiderLeg implements Runnable
         servos[SpiderJoint.FEMUR].setAngle(Math.toRadians(t_femur));
         servos[SpiderJoint.TIBIA].setAngle(Math.toRadians(t_tibia));
     }
+	
 	int[] getIds()
 	{
 		return new int[] { servos[0].getId(), servos[1].getId(), servos[2].getId() };
@@ -471,6 +476,13 @@ class SpiderLeg implements Runnable
     {
         return servos[0].getId();
     }
+	
+	void moveToDegrees(double coxa, double femur, double tibia)
+	{
+		servos[SpiderJoint.COXA ].setAngle(Math.toRadians(coxa));
+        servos[SpiderJoint.FEMUR].setAngle(Math.toRadians(femur));
+        servos[SpiderJoint.TIBIA].setAngle(Math.toRadians(tibia));
+	}
 	
 	int[] getAngles()
 	{

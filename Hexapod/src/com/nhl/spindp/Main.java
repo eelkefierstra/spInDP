@@ -65,16 +65,14 @@ public class Main
 		/*
 		for (byte i = 1; i <= 18; i++)
 		{
-			for (short j = 0; j < 256; j++)
-			{
-				conn.moveServo(i, (short)(j * 4));
-			}
+			conn.moveServo(i, (short)(j * 4));
 		}*/
 		
 		while (true)
 		{
 			Time.updateDeltaTime();
-			body.walk(1.0, 1.0);
+			body.walk(1.0, 0.0);
+			Thread.sleep(1);
 		}
 	}
 	
@@ -102,6 +100,7 @@ public class Main
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
 				//System.out.println(conn.readPresentLocation((byte)i));
+				Thread.sleep(5);
 			}
 			catch (Exception ex)
 			{

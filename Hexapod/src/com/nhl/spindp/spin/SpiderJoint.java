@@ -62,6 +62,8 @@ public class SpiderJoint
 		if (Double.isNaN(val)) throw new IllegalArgumentException("angle must not be NaN");
 		else
 		{
+			//if (this.servoId == 10 || this.servoId == 13 || this.servoId == 16)
+            	//val = (85 + offset) - val;
 			if (val > upperRange)
             {
                 System.err.println("val of servo " + servoId + " clamped");

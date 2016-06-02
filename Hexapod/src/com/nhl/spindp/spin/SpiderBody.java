@@ -73,7 +73,7 @@ public class SpiderBody
 		}
 		for (SpiderLeg leg : legs)
 		{
-			Main.getInstance().driveServoInPython(leg.getIds(), leg.getAngles());
+			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 			for (short s : Main.failedServos)
 				System.out.println(s);
 		}
