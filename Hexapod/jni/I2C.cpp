@@ -3,8 +3,9 @@
 #include <fstream>
 #include <iomanip>
 #include <unistd.h>
-#include <linux/i2c-dev.h>
-#include <sys/ioctl.h>
+//#include <linux/i2c-dev.h>
+#include <I2Cdev>
+//#include <sys/ioctl.h>
 #include <vector>
 #include <iterator>
 #include <fcntl.h>
@@ -14,187 +15,50 @@
 
 using namespace std;
 
-int device = 0;
 bool gyro = false, adc = false;
 
-bool i2cSetup(int &file)
+short readWord(uint8_t addr, uint8_t reg)
 {
-	if ((file = open(DEVICE, O_RDWR)) < 0)
-	{
-        cout << "Failed to open the bus." << endl;
-        return false;
-	}
-    return true;
+	uint8_t buf[2] = { 0 };
+	if (I2C::readBytes(addr, reg, 2, buf) != 2)
+		return 0;
+	short result = (buf[0] << 8) | buf[1]);
+	return result;
 }
 
-bool setGyro(int &file)
+bool i2cSetupGyro()
 {
-	int addr = 0x68;
-
-	if (ioctl(file, I2C_SLAVE, addr) < 0)
-	{
-		cout << "Failed to acquire bus access and/or talk to gyro." << endl;
-		return false;
-	}
-	return true;
-}
-
-bool setADC(int &file)
-{
-	int addr = 0x44;
-
-	if (ioctl(file, I2C_SLAVE, addr) < 0)
-	{
-		cout << "Failed to acquire bus access and/or talk to adc." << endl;
-		return false;
-	}
-	return true;
-}
-
-bool i2cSetupGyro(int &file)
-{
-	if (!setGyro(file))
-		return false;
-
     //wake up gyro
-    char buff[2]={0x6B,0};
-    if (write(file,buff,2) < 0)
-	{
-		cout << "failed to wake device(gyro)" << endl;
-		return false;
-	}
-    return true;
+	return I2Cdev::writeBit( 0x68, 0x6b, 6, 0b0);
 }
 
-bool i2cSetupADC(int &file)
+bool i2cSetupADC()
 {
-	if (!setADC(file))
-		return false;
-
     //wake up adc
-    char buff[3] = { 0x01, 0x04, (char)0x83 };
-    if (write(file,buff,3) < 0)
-	{
-		cout << "failed to wake device(adc)" << endl;
-		return false;
-	}
-    return true;
+    uint8_t buff[2] = { 0x04, 0x83 };
+    return I2Cdev::writeBytes( 0x44, 0x01,buff,2);
 }
 
-vector<char> i2cReadGyro(int &file)
+bool i2cCleanGyro()
 {
-	if (!setGyro(file))
-		return vector<char>();
-
-	char buf[28] = { 0 };
-
-	buf[0] = 0x3B;
-	if (write(file, buf, 1) < 0)
-	{
-		cout << "register request failed(gyro)" << endl;
-	}
-	else
-	{
-		// Using I2C Read
-		if (read(file, buf, 14) != 14)
-		{
-			/* More data expected*/
-			cout << "Failed to read correctly from the i2c bus." << endl;
-		}
-		else
-		{
-			vector<char> data(begin(buf), end(buf));
-			return data;
-		}
-	}
-	return vector<char>();
-}
-
-vector<char> i2cReadADC(int &file)
-{
-	if (!setADC(file))
-		return vector<char>();
-
-	/*
-		[0]register to read(0b000 00..)
-	*/
-	char buf[2] = { 0x00 };
-
-	if (write(file, buf, 1) < 0)
-	{
-		cout << "register request failed(ADC)" << endl;
-	}
-	else
-	{
-		// Using I2C Read
-		if (read(file, buf, 2) != 2)
-		{
-			/* More data expected*/
-			cout << "Failed to read correctly from the i2c bus. (ADC)" << endl;
-		}
-		else
-		{
-			vector<char> data(begin(buf), end(buf));
-			return data;
-		}
-	}
-	return vector<char>();
-}
-
-bool i2cCleanGyro(int &file)
-{
-	if (!setGyro(file))
-		return false;
-
 	//knock down gyro
-	char buff[2] = { 0x6B, 1 };
-	if (write(file, buff, 2) < 0)
-	{
-		cout << "Failed to put gyro to sleep" << endl;
-		return false;
-	}
-	return true;
+	return I2Cdev::writeBit( 0x68, 0x6b, 6, 1);
 }
 
-bool i2cCleanADC(int &file)
+bool i2cCleanADC()
 {
-	if (!setADC(file))
-		return false;
-
 	//knock down adc
-	char buff[4] = { 0x01, 0x04, 0x03 };
-	if (write(file, buff, 4) != 4 < 0)
-	{
-		cout << "failed to put ADC to sleep" << endl;
-	}
-	return true;
-}
-
-bool i2cClean(int &file)
-{
-	if (close(file) < 0)
-	{
-		cout << "Failed to close the file." << endl;
-		return false;
-	}
-	return true;
+	uint8_t buff[2] = { 0x04, 0x03 };
+    return I2Cdev::writeBytes( 0x44, 0x01,buff,2);
 }
 
 JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
   (JNIEnv *, jobject)
 {
 	int err = 0;
-	while (!i2cSetup(device) && err < 5)
-	{
-		err++;
-		if (err == 5) return false;
-	}
-
-	err = 0;
 	while (err < 3)
 	{
-		bool working = i2cSetupGyro(device);
-		if (working)
+		if (i2cSetupGyro())
 		{
 			gyro = true;
 			break;
@@ -202,12 +66,11 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
 		gyro = false;
 		err++;
 	}
-
 	err = 0;
+
 	while (err < 3)
 	{
-		bool working = i2cSetupADC(device);
-		if (working)
+		if (i2cSetupADC())
 		{
 			adc = true;
 			break;
@@ -219,7 +82,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
 	return true;
 }
 
-JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_i2cLoop
+JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
   (JNIEnv *env, jobject thisObj)
 {
 	jclass dataCls = env->FindClass("com/nhl/spindp/i2c/I2C$I2CData");
@@ -228,37 +91,34 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_i2cLoop
 	if (env->ExceptionCheck()) return;
 	jobject dataObj = env->GetObjectField(thisObj, dataField);
 	if (env->ExceptionCheck()) return;
+
 	if(adc)
 	{
-		vector<char> result = i2cReadADC(device);
-		//TODO set data in file
 		jfieldID adcValField = env->GetFieldID(dataCls, "adcVal", "S");
 		if (env->ExceptionCheck()) return;
-		env->SetShortField(dataObj, adcValField, (result[0] << 8) | result[1]);
+		env->SetShortField(dataObj, adcValField, readWord(0x44,0x00);
 		if (env->ExceptionCheck()) return;
 	}
+
 	if(gyro)
 	{
-		vector<char> result = i2cReadGyro(device);
-		//TODO set data in file
 		jfieldID accDataXField = env->GetFieldID(dataCls, "accDataX", "S");
 		jfieldID accDataYField = env->GetFieldID(dataCls, "accDataY", "S");
 		jfieldID accDataZField = env->GetFieldID(dataCls, "accDataZ", "S");
-		jfieldID tmpField      = env->GetFieldID(dataCls, "tmp", "S");
+		//jfieldID tmpField      = env->GetFieldID(dataCls, "tmp", "S");
 		jfieldID gyroXField    = env->GetFieldID(dataCls, "gyroX", "S");
 		jfieldID gyroYField    = env->GetFieldID(dataCls, "gyroY", "S");
 		jfieldID gyroZField    = env->GetFieldID(dataCls, "gyroZ", "S");
 		if (env->ExceptionCheck()) return;
-		env->SetShortField(dataObj, accDataXField, (result[ 0] << 8) | result[ 1]);
-		env->SetShortField(dataObj, accDataYField, (result[ 2] << 8) | result[ 3]);
-		env->SetShortField(dataObj, accDataZField, (result[ 4] << 8) | result[ 5]);
-		env->SetShortField(dataObj,      tmpField, (result[ 6] << 8) | result[ 7]);
-		env->SetShortField(dataObj,    gyroXField, (result[ 8] << 8) | result[ 9]);
-		env->SetShortField(dataObj,    gyroYField, (result[10] << 8) | result[11]);
-		env->SetShortField(dataObj,    gyroZField, (result[12] << 8) | result[13]);
+		env->SetShortField(dataObj, accDataXField, readWord(0x68,0x3B);
+		env->SetShortField(dataObj, accDataYField, readWord(0x68,0x3D);
+		env->SetShortField(dataObj, accDataZField, readWord(0x68,0x3F);
+		//env->SetShortField(dataObj,      tmpField, (result[ 6] << 8) | result[ 7]);
+		env->SetShortField(dataObj,    gyroXField, readWord(0x68,0x43);
+		env->SetShortField(dataObj,    gyroYField, readWord(0x68,0x45);
+		env->SetShortField(dataObj,    gyroZField, readWord(0x68,0x47);
 		if (env->ExceptionCheck()) return;
 	}
-	//TODO: add read for gyro, but since it is not connected it can wait
 }
 
 JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_cleanupI2c
@@ -267,16 +127,11 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_cleanupI2c
 	int err = 0;
 	//cleanup your mess afterwards
 	//stop gyro
-	while (!i2cCleanGyro(device) && err<3)
+	while (!i2cCleanGyro() && err<3)
 		++err;
 	err = 0;
 
 	//stop ADC
-	while (!i2cCleanADC(device) && err<3)
-		++err;
-	err = 0;
-
-	//Kill everything(just I2C bus occupation)
-	while (!i2cClean(device) && err<5)
+	while (!i2cCleanADC() && err<3)
 		++err;
 }
