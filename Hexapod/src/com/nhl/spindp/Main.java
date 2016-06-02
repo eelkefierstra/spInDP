@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.nhl.spindp.i2c.I2C;
+import com.nhl.spindp.netcon.AppConnection;
 import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
@@ -38,10 +40,20 @@ public class Main
 	 */
 	public static void main(String[] args) throws Exception
 	{
-		
 		//WebSocket sock = new WebSocket(8000);
 		//sock.start();
 		
+		AppConnection appConn = new AppConnection(1337);
+		
+		I2C i2c = new I2C();
+		i2c.i2cLoop();
+		i2c.getData();
+		//while (true)
+		{
+			//appConn.mainLoop();
+		}
+		
+		/*
 		failedServos = new ArrayList<>();
 		instance = new Main();
 		Time.updateDeltaTime();
@@ -66,14 +78,14 @@ public class Main
 		for (byte i = 1; i <= 18; i++)
 		{
 			conn.moveServo(i, (short)(j * 4));
-		}*/
+		}*//*
 		
 		while (true)
 		{
 			Time.updateDeltaTime();
 			body.walk(1.0, 0.0);
 			Thread.sleep(1);
-		}
+		}*/
 	}
 	
 	public static void servoFailed(short id)

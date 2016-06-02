@@ -13,7 +13,7 @@ class SpiderLeg implements Runnable
 	private static final double A_MAX    =  90.0;
 	private static final double A_RAD    = Math.toRadians(A_MAX / 2.0);
 	private static final double C        = 160.0;
-	private static final double E        =  90.0;
+	private static final double E        =  90.0 * 1.25;
 	private static final double F        =  35.0;
 	private static final double L        = 127.0;
 	private static final double LACCENT  = Math.cos(A_RAD) * L;
@@ -32,7 +32,7 @@ class SpiderLeg implements Runnable
 	private double EPSILON = Math.toRadians(Math.atan(E / D));
 	private double DELTA   = Math.toRadians(Math.atan(D / E));
 	private double step    = 0.0;
-	private boolean set     = false;
+	private boolean set    = false;
 	
 	private double coxaChange = 0.0;
 	
@@ -89,8 +89,8 @@ class SpiderLeg implements Runnable
 		this.executor = executor;
 		this.sharedParams = sharedParams;
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
-		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma);
-		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 25);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, -10);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 20);
 	}
 	
 	public boolean walk(double forward, double right)
@@ -144,6 +144,7 @@ class SpiderLeg implements Runnable
 		step = Math.abs(Math.sqrt(Math.pow(lAccent, 2.0) - Math.pow(LACCENT, 2.0)));
 		if (coxaChange < 45) step *= -1;
 		if (!set) h = (PAR_Y * -1) * Math.pow(step, 2.0) + PAR_X;
+		h *= 5;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E + h, 2.0));
 		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
 		servos[SpiderJoint.FEMUR].setAngle(gamma = test4);//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
@@ -155,7 +156,7 @@ class SpiderLeg implements Runnable
 	private void turn(double right)
 	{
 		int id = getFirstId() / 3;
-        double r = 500.0;
+        double r = 800.0;
         
         // check if turn is right
        if(right > 0)
@@ -299,8 +300,8 @@ class SpiderLeg implements Runnable
         }
         // set right COXA, FEMUR and TIBIA
         turn2();
-        if (id%2 != 0)
-            servoAngle = 90 - servoAngle;
+        //if (id%2 != 0)
+            //servoAngle = 90 - servoAngle;
         // t_tibia += 145;
        //  t_femur += -40;
          //servoAngle = 0;

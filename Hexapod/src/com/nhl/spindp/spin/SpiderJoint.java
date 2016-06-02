@@ -58,7 +58,10 @@ public class SpiderJoint
 	
 	void setAngle(double angle)
 	{
-		double val = Math.toDegrees(angle) + offset;
+		double val = Math.toDegrees(angle);// + offset;
+		if (servoId == 10 || servoId == 13 || servoId == 16)
+			val = 85 -  val;
+		val += offset;
 		if (Double.isNaN(val)) throw new IllegalArgumentException("angle must not be NaN");
 		else
 		{

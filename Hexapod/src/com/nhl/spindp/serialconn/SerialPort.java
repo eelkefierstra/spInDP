@@ -29,9 +29,7 @@ public class SerialPort
 			{
 				cleanupPort();
 			}
-		}
-		);
-			
+		});
 	}
 	
 	/**

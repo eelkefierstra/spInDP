@@ -181,13 +181,14 @@ bool i2cSetupADC(int &file)
 
 vector<char> i2cReadGyro(int &file)
 {
+	/*
 	if (!setGyro(file))
 		return vector<char>();
-
+	*/
 	char buf[28] = { 0 };
 
 	buf[0] = 0x3B;
-	if (write(file, buf, 1) != 0)
+	if (write(file, buf, 1) < 0)
 	{
 		cout << "register request failed(gyro)" << endl;
 	}
@@ -197,7 +198,7 @@ vector<char> i2cReadGyro(int &file)
 		if (read(file, buf, 14) != 14)
 		{
 			/* More data expected*/
-			cout << "Failed to read correctly from the i2c bus." << endl;
+			cout << "Failed to read correctly from the i2c bus. (gyro)" << endl;
 		}
 		else
 		{
@@ -213,9 +214,8 @@ vector<char> i2cReadADC(int &file)
 	if (!setADC(file))
 		return vector<char>();
 
-	/*
-		[0]register to read(0b000 00..)
-	*/
+	//	[0]register to read(0b000 00..)
+
 	char buf[2] = { 0x00 };
 
 	if (write(file, buf, 1) < 0)
@@ -241,9 +241,10 @@ vector<char> i2cReadADC(int &file)
 
 bool i2cCleanGyro(int &file)
 {
+	/*
 	if (!setGyro(file))
 		return false;
-
+	*/
 	//knock down gyro
 	char buff[2] = { 0x6B, 1 };
 	if (write(file, buff, 2) != 1)
@@ -288,7 +289,7 @@ void i2c()
 	while (!i2cSetup(file) && err < 5)
 	{
 		++err;
-		if(err==5)
+		if(err == 5)
 		{
 			return;
 		}
@@ -303,14 +304,14 @@ void i2c()
 		if(working)
 		{
 			gyro = true;
+			cout << "Succesfully woke up gyro after " << err << endl;
 			break;
 		}
-
 		gyro = false;
 		++err;
 	}
 	err = 0;
-
+/*
 	//start continues scan ADC
 	while (err < 3)
 	{
@@ -318,17 +319,18 @@ void i2c()
 		if(working)
 		{
 			adc = true;
+			cout << "Succesfully woke up adc" << endl;
 			break;
 		}
-
 		adc = false;
 		++err;
 	}
 	err = 0;
-
+*/
 
 	while (!done)
 	{
+		/*
 		if(adc)
 		{
 			vector<char> result = i2cReadADC(file);
@@ -338,7 +340,7 @@ void i2c()
 				cout << c;
 			}
 			cout << endl;
-		}
+		}*/
 		if(gyro)
 		{
 			vector<char> result = i2cReadGyro(file);
@@ -347,7 +349,8 @@ void i2c()
 			{
 				cout << c;
 			}
-			cout << endl;
+			if(result.size()>0)
+				cout << endl;
 		}
 		//TODO: add read for gyro, but since it is not connected it can wait
 	}
