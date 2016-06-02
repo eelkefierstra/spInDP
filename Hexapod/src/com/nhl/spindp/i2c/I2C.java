@@ -31,13 +31,13 @@ public class I2C
 	
 	public class I2CData
 	{
-		private short adcVal;
-		private short accDataX;
-		private short accDataY;
-		private short accDataZ;
-		private short tmp;
-		private short gyroX;
-		private short gyroY;
-		private short gyroZ;
+		private short adcVal   = -1;
+		private short accDataX = -1;
+		private short accDataY = -1;
+		private short accDataZ = -1;
+		private short tmp      = -1;
+		private short gyroX    = -1;
+		private short gyroY    = -1;
+		private short gyroZ    = -1;
 	}
 }

@@ -38,7 +38,12 @@ public class SerialPort
 	 * @return True when no Exceptions occur
 	 * @throws IOException
 	 */
-	boolean writeBytes(byte[] message) throws IOException
+	synchronized boolean writeBytes(byte[] message) throws IOException
+	{
+		return nativeWrite(message);
+	}
+	
+	private boolean writeBits(byte[] message) throws IOException
 	{
 		//System.out.print("Sent: ");
 		FileOutputStream writer = new FileOutputStream(serialOutFile);
@@ -49,24 +54,19 @@ public class SerialPort
 		return true;
 	}
 	
-	native void initPort(String port);
+	private native void initPort(String port);
 	
-	native void cleanupPort();
+	private native void cleanupPort();
 	
-	native boolean nativeWrite(byte[] message);
+	private native boolean nativeWrite(byte[] message) throws IOException;
 	
-	native byte[] nativeRead(int id);
+	private native byte[] nativeRead() throws IOException;
 	
-	native boolean nativeWriteBytes(byte[] message);
+	private native boolean nativeWriteBytes(byte[] message) throws IOException;
 	
-	native byte[] nativeReadBytes(int id);
+	private native byte[] nativeReadBytes() throws IOException;
 	
-	/**
-	 * Reads the data in serialInFile
-	 * @return The data from serialInFile
-	 * @throws IOException
-	 */
-	byte[] readBytes(int id) throws IOException
+	private byte[] readBits() throws IOException
 	{
 		//System.out.print("Received: ");
 		byte[] buffer = new byte[32];
@@ -76,20 +76,13 @@ public class SerialPort
 		reader.close();
 		if (read < 0)
 		{
-			Main.servoFailed((byte) id);
 			//throw new IOException("No reaction from servo" + String.valueOf(id) + '!');
-			System.err.println("No reaction from servo" + String.valueOf(id) + '!');
+			System.err.println("No reaction from servo!");
 		}
 		return Arrays.copyOf(buffer, read);
 	}
 	
-	/**
-	 * Reads the serialInFile for an given length
-	 * @param len The length to read the serialInFile
-	 * @return A byte array with the data from serialInFile 
-	 * @throws IOException
-	 */
-	byte[] readBytes(int id, int len) throws IOException
+	private byte[] readBits(int len) throws IOException
 	{
 		byte[] buffer = new byte[len];
 		Arrays.fill(buffer, (byte)-1);
@@ -104,5 +97,26 @@ public class SerialPort
 		}
 		reader.close();
 		return Arrays.copyOf(buffer, i);
+	}
+	
+	/**
+	 * Reads the data in serialInFile
+	 * @return The data from serialInFile
+	 * @throws IOException
+	 */
+	synchronized byte[] readBytes() throws IOException
+	{
+		return nativeRead();
+	}
+	
+	/**
+	 * Reads the serialInFile for an given length
+	 * @param len The length to read the serialInFile
+	 * @return A byte array with the data from serialInFile 
+	 * @throws IOException
+	 */
+	synchronized byte[] readBytes(int len) throws IOException
+	{
+		return nativeRead();
 	}
 }

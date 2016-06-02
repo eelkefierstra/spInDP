@@ -16,12 +16,21 @@ public class SpiderBody
 	Queue<Future<?>> futures;
 	SharedParams sharedParams;
 	
-	public SpiderBody(int startId)
+	public SpiderBody(byte startId)
 	{
 		executor = Executors.newFixedThreadPool(3);
 		legs     = new SpiderLeg[6];
 		futures  = new LinkedList<>();
 		sharedParams = new SharedParams();
+		
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				executor.shutdown();
+			}
+		});
 		
 		for (int i = 0; i < legs.length; i++)
 		{
@@ -38,7 +47,6 @@ public class SpiderBody
 		{
 			leg.walk(0, 0);
 			futures.offer(leg.getFuture());
-			//leg.run();
 			i++;
 		}
 		System.out.println("Calculated in: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
@@ -53,12 +61,10 @@ public class SpiderBody
 	 */
 	public void walk(double forward, double right) throws IOException, InterruptedException
 	{
-		int i = 0;
 		for (SpiderLeg leg : legs)
 		{
 			if (leg.walk(forward, right))
 				futures.offer(leg.getFuture());
-			i++;
 		}
 		while (!futures.isEmpty())
 		{
@@ -71,11 +77,13 @@ public class SpiderBody
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void moveToAngle(double coxa, double femur, double tibia)
+	{
 		for (SpiderLeg leg : legs)
 		{
-			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
-			for (short s : Main.failedServos)
-				System.out.println(s);
+			leg.moveToDegrees(coxa, femur, tibia);
 		}
 	}
 	

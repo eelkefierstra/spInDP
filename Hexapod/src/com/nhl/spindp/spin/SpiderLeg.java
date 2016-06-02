@@ -3,7 +3,9 @@ package com.nhl.spindp.spin;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import com.nhl.spindp.Main;
 import com.nhl.spindp.Time;
+import com.nhl.spindp.serialconn.Servo;
 import com.nhl.spindp.spin.SpiderBody.SharedParams;
 
 class SpiderLeg implements Runnable
@@ -72,7 +74,7 @@ class SpiderLeg implements Runnable
 	
 	SpiderJoint[] servos = new SpiderJoint[3];
 		
-	SpiderLeg(ExecutorService executor ,SharedParams sharedParams,int startServoId)
+	SpiderLeg(ExecutorService executor ,SharedParams sharedParams, byte startServoId)
 	{
 		//coxaChange += 30 * (startServoId / 3);
 		set = (startServoId % 2) == 0;
@@ -108,6 +110,10 @@ class SpiderLeg implements Runnable
 			if (!set) coxaChange += ((35.0 * Time.deltaTime) * forward);
 			if ( set) coxaChange -= ((35.0 * Time.deltaTime) * forward);
 			turn(right);
+			for (SpiderJoint joint : servos)
+			{
+				Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
+			}
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
@@ -149,6 +155,10 @@ class SpiderLeg implements Runnable
 		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
 		servos[SpiderJoint.FEMUR].setAngle(gamma = test4);//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
+		for (SpiderJoint joint : servos)
+		{
+			Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
+		}
 	}
 	/// <summary>
     /// Main method for making a turn
@@ -483,6 +493,10 @@ class SpiderLeg implements Runnable
 		servos[SpiderJoint.COXA ].setAngle(Math.toRadians(coxa));
         servos[SpiderJoint.FEMUR].setAngle(Math.toRadians(femur));
         servos[SpiderJoint.TIBIA].setAngle(Math.toRadians(tibia));
+        for (SpiderJoint joint : servos)
+		{
+			Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
+		}
 	}
 	
 	int[] getAngles()

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import com.nhl.spindp.i2c.I2C;
 import com.nhl.spindp.netcon.AppConnection;
@@ -98,11 +99,17 @@ public class Main
 		failedServos.sort(null);
 	}
 	
+	public static Future<byte[]> submitInstruction(byte[] message)
+	{
+		return conn.submitInstruction(message);
+	}
+	
 	/**
 	 * Sends instructions to connection to drive servo's
 	 * @param ids The id's of the servo's to be moved
 	 * @param angles The angles to move to
 	 */
+	@Deprecated
 	public void driveServo(int[] ids, int[] angles)
 	{
 		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");

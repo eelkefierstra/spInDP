@@ -11,28 +11,28 @@ public class SpiderJoint
 	public static final int FEMUR = 1;
 	public static final int TIBIA = 2;
 	
-	private int servoId;
+	private byte servoId;
 	private double angle;
 	private final int offset;
 	private final int lowerRange;
 	private final int upperRange;
 	
-	SpiderJoint(int servoId)
+	SpiderJoint(byte servoId)
 	{
 		this(servoId, 0.0);
 	}
 	
-	SpiderJoint(int servoId, double angle)
+	SpiderJoint(byte servoId, double angle)
 	{
 		this(servoId, angle, 0);
 	}
 	
-	SpiderJoint(int servoId, double angle, int offset)
+	SpiderJoint(byte servoId, double angle, int offset)
 	{
 		this(servoId, angle, offset, 0, 300);
 	}
 	
-	SpiderJoint(int servoId, double angle, int offset, int lowerRange, int upperRange)
+	SpiderJoint(byte servoId, double angle, int offset, int lowerRange, int upperRange)
 	{
 		this.servoId    = servoId;
 		this.angle      = angle;
@@ -41,12 +41,12 @@ public class SpiderJoint
 		this.upperRange = upperRange;
 	}
 	
-	public int getId()
+	public byte getId()
 	{
 		return servoId;
 	}
 	
-	public int getServoAngle()
+	public short getServoAngle()
 	{
 		return mapPosition(angle, MIN_ANGLE, MAX_ANGLE, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE);
 	}
@@ -65,8 +65,6 @@ public class SpiderJoint
 		if (Double.isNaN(val)) throw new IllegalArgumentException("angle must not be NaN");
 		else
 		{
-			//if (this.servoId == 10 || this.servoId == 13 || this.servoId == 16)
-            	//val = (85 + offset) - val;
 			if (val > upperRange)
             {
                 System.err.println("val of servo " + servoId + " clamped");
@@ -81,10 +79,10 @@ public class SpiderJoint
 		}
 	}
 	
-	private int mapPosition(double x, double in_min, double in_max, double out_min, double out_max)
+	private short mapPosition(double x, double in_min, double in_max, double out_min, double out_max)
 	{
 		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");
-		return (int)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+		return (short)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 	}
 	
 	@Override
