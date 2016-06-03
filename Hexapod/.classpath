@@ -4,6 +4,6 @@
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/opencv-3.1.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-HttpCore"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
