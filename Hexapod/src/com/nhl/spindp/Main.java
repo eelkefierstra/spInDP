@@ -41,24 +41,28 @@ public class Main
 	 */
 	public static void main(String[] args) throws Exception
 	{
+		instance = new Main();
 		//WebSocket sock = new WebSocket(8000);
 		//sock.start();
 		
-		AppConnection appConn = new AppConnection(1337);
+		AppConnection appConn = new AppConnection(1338);
 		
 		I2C i2c = new I2C();
-		i2c.loopI2c();
-		i2c.getData();
+		//i2c.loopI2c();
+		//i2c.getData();
+		for (double d : i2c.runOnceAndGetGyroInfo())
+		{
+			System.out.println(d);
+		}
 		//while (true)
 		{
 			//appConn.mainLoop();
 		}
 		
-		/*
+		
 		failedServos = new ArrayList<>();
-		instance = new Main();
 		Time.updateDeltaTime();
-		SpiderBody body = new SpiderBody(1);
+		SpiderBody body = new SpiderBody((byte) 1);
 		//body.testCalcs();
 				
 		conn = new ServoConnection();
@@ -79,14 +83,14 @@ public class Main
 		for (byte i = 1; i <= 18; i++)
 		{
 			conn.moveServo(i, (short)(j * 4));
-		}*//*
+		}*/
 		
 		while (true)
 		{
 			Time.updateDeltaTime();
 			body.walk(1.0, 0.0);
-			Thread.sleep(1);
-		}*/
+			Thread.sleep(50);
+		}
 	}
 	
 	public static void servoFailed(short id)

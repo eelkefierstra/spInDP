@@ -11,18 +11,20 @@ import com.nhl.spindp.spin.SpiderBody.SharedParams;
 @SuppressWarnings("unused")
 class SpiderLeg implements Runnable
 {
-	private static final double Weigth   = 24.525;
+	private static final double Weigth   =  24.525;
 	private static final double A        =  80.0;
 	private static final double A_MAX    =  90.0;
 	private static final double A_RAD    = Math.toRadians(A_MAX / 2.0);
 	private static final double C        = 160.0;
-	private static final double E        =  90.0 * 1.25;
+	private static final double E        =  90.0;
 	private static final double F        =  35.0;
 	private static final double L        = 127.0;
 	private static final double LACCENT  = Math.cos(A_RAD) * L;
 	private static final double D        = F - LACCENT;
 	private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
-	private static volatile double PAR_X = 25;
+	private static final double coxalimL = 10.0;
+	private static final double coxalimH = 80.0;
+	private static volatile double PAR_X = 25.0;
 	private static volatile double PAR_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0)) * 2, 2.0);
 	
 	private ExecutorService executor;
@@ -37,7 +39,7 @@ class SpiderLeg implements Runnable
 	private double step    = 0.0;
 	private boolean set    = false;
 	
-	private double coxaChange = 0.0;
+	private double coxaChange = coxalimL;
 	
 	private double t_femur;
     private double t_tibia;
@@ -75,25 +77,25 @@ class SpiderLeg implements Runnable
 	
 	SpiderJoint[] servos = new SpiderJoint[3];
 		
-	SpiderLeg(ExecutorService executor ,SharedParams sharedParams, byte startServoId)
+	SpiderLeg(ExecutorService executor, SharedParams sharedParams, byte startServoId)
 	{
 		//coxaChange += 30 * (startServoId / 3);
 		set = (startServoId % 2) == 0;
 		if (startServoId % 2 == 0)
 		{
-			coxaChange = 85;
+			coxaChange = coxalimH;
 			set = !set;
 		}
-		if (coxaChange > 90)
+		if (coxaChange > coxalimH)
 		{
-			coxaChange -= 90;
+			coxaChange -= coxalimH;
 		}
 		// 200, 75, 175
 		this.executor = executor;
 		this.sharedParams = sharedParams;
-		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 100);
-		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, -10);
-		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta, 20);
+		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 95);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 240);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
 	}
 	
 	public boolean walk(double forward, double right)
@@ -108,18 +110,18 @@ class SpiderLeg implements Runnable
 		}
 		else if (right <= -.25 || .25 <= right)
 		{
-			if (!set) coxaChange += ((35.0 * Time.deltaTime) * forward);
-			if ( set) coxaChange -= ((35.0 * Time.deltaTime) * forward);
+			if ( set) coxaChange += ((35.0 * Time.deltaTime) * forward);
+			if (!set) coxaChange -= ((35.0 * Time.deltaTime) * forward);
 			turn(right);
 			for (SpiderJoint joint : servos)
 			{
-				Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
+				future = Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
 			}
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
-			if (!set) coxaChange += ((35.0 * Time.deltaTime) * forward);
-			if ( set) coxaChange -= ((35.0 * Time.deltaTime) * forward);
+			if ( set) coxaChange += ((35.0 * Time.deltaTime) * forward);
+			if (!set) coxaChange -= ((35.0 * Time.deltaTime) * forward);
 			future = executor.submit(this);
 			res = true;
 		}
@@ -134,15 +136,15 @@ class SpiderLeg implements Runnable
 	@Override
 	public void run()
 	{
-		if (coxaChange >= 80)
-		{
-			set = true;
-			coxaChange = 80;
-		}
-		if (coxaChange <= 10)
+		if (coxaChange >= coxalimH)
 		{
 			set = false;
-			coxaChange = 10;
+			coxaChange = coxalimH;
+		}
+		if (coxaChange <= coxalimL)
+		{
+			set = true;
+			coxaChange = coxalimL;
 		}
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
 		double lAccent = LACCENT / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
@@ -151,7 +153,7 @@ class SpiderLeg implements Runnable
 		step = Math.abs(Math.sqrt(Math.pow(lAccent, 2.0) - Math.pow(LACCENT, 2.0)));
 		if (coxaChange < 45) step *= -1;
 		if (!set) h = (PAR_Y * -1) * Math.pow(step, 2.0) + PAR_X;
-		h *= 5;
+		//h *= 5;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E + h, 2.0));
 		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
 		servos[SpiderJoint.FEMUR].setAngle(gamma = test4);//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
@@ -237,18 +239,6 @@ class SpiderLeg implements Runnable
 			default:
 				throw new IllegalArgumentException();
 		}
-
-        if (servoAngle >= 85)
-		{
-			set = true;
-            servoAngle = 85;
-		}
-		else if (servoAngle <= 5)
-		{
-			set = false;
-            servoAngle = 5;
-		}
-
         switch (id)
         {
             case 0:
@@ -309,6 +299,16 @@ class SpiderLeg implements Runnable
                     servoAngle = gamma_b - gamma;
                 break;
         }
+        if (servoAngle >= coxalimH)
+		{
+			set = true;
+            servoAngle = coxalimH;
+		}
+		else if (servoAngle <= coxalimL)
+		{
+			set = false;
+            servoAngle = coxalimL;
+		}
         // set right COXA, FEMUR and TIBIA
         turn2();
         //if (id%2 != 0)
@@ -457,16 +457,16 @@ class SpiderLeg implements Runnable
                 servoAngle = gamma - test1;
                 break;
         }
-        if (servoAngle >= 85)
-        {
-            set = true;
-            servoAngle = 85;
-        }
-        else if (servoAngle <= 5)
-        {
-            set = false;
-            servoAngle = 5;
-        }
+        if (servoAngle >= coxalimH)
+		{
+			set = true;
+            servoAngle = coxalimH;
+		}
+		else if (servoAngle <= coxalimL)
+		{
+			set = false;
+            servoAngle = coxalimL;
+		}
         turn2();
         /*
         if (id == 5)

@@ -2,6 +2,7 @@ package com.nhl.spindp.i2c;
 
 public class I2C
 {
+	private Object locker;
 	private I2CData data;
 	private double arx, ary, arz; //acc angles
 	private double grx, gry, grz; //gyro angles
@@ -10,7 +11,6 @@ public class I2C
 	private double timeStep, time, timePrev;
 	private boolean init = true, done = true;
 	private Thread t1;
-	private Object locker;
 	
 	public I2C()
 	{
@@ -87,8 +87,8 @@ public class I2C
 		
 		scale();
 		//calc acc angles
-		arx = Math.toDegrees(Math.atan((double) data.accDataX / Math.sqrt(Math.pow(data.accDataY,2) + Math.pow(data.accDataZ, 2))));
-		ary = Math.toDegrees(Math.atan((double) data.accDataY / Math.sqrt(Math.pow(data.accDataX,2) + Math.pow(data.accDataZ, 2))));
+		arx = Math.toDegrees(Math.atan((double) (data.accDataX) / Math.sqrt(Math.pow(data.accDataY,2) + Math.pow(data.accDataZ, 2))));
+ 		ary = Math.toDegrees(Math.atan((double) data.accDataY / Math.sqrt(Math.pow(data.accDataX,2) + Math.pow(data.accDataZ, 2))));
 		arz = Math.toDegrees(Math.atan(Math.sqrt(Math.pow(data.accDataY, 2) + Math.pow(data.accDataX, 2)) / (double) data.accDataZ));
 		
 		if (init)
@@ -134,12 +134,9 @@ public class I2C
 		cleanupI2c();
 		
 		double[] res = { -1, -1, -1};
-		synchronized (locker)
-		{
-			res[0] = rx;
-			res[1] = ry;
-			res[2] = rz;
-		}
+		res[0] = rx;
+		res[1] = ry;
+		res[2] = rz;
 		return res;
 	}
 	
@@ -150,7 +147,7 @@ public class I2C
 
 	public class I2CData
 	{
-		//private short adcVal   = -1;
+		private short adcVal   = -1;
 		private short accDataX = -1;
 		private short accDataY = -1;
 		private short accDataZ = -1;

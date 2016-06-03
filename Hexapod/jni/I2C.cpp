@@ -119,6 +119,8 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
 		env->SetShortField(dataObj,    gyroZField, readWord(0x68,0x47));
 		if (env->ExceptionCheck()) return;
 	}
+	env->SetObjectField(thisObj, dataField, dataObj);
+	if (env->ExceptionCheck()) return;
 }
 
 JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_cleanupI2c
