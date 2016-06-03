@@ -34,10 +34,10 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 /*
  * Class:     com_nhl_spindp_serialconn_SerialPort
  * Method:    nativeRead
- * Signature: (I)[B
+ * Signature: ()[B
  */
 JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeRead
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject);
 
 /*
  * Class:     com_nhl_spindp_serialconn_SerialPort
@@ -50,10 +50,10 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 /*
  * Class:     com_nhl_spindp_serialconn_SerialPort
  * Method:    nativeReadBytes
- * Signature: (I)[B
+ * Signature: ()[B
  */
 JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeReadBytes
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }

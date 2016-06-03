@@ -20,7 +20,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
  * Method:    i2cLoop
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_i2cLoop
+JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
   (JNIEnv *, jobject);
 
 /*

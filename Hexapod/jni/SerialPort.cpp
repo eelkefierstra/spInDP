@@ -132,7 +132,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 	pigs << "w " << signalPin << " 1" << endl;
 	this_thread::sleep_for(chrono::microseconds(20));
 	jbyte *messPntr = env->GetByteArrayElements(message, NULL);
-	cout << "sending: " << messPntr << endl;
+	//cout << "sending: " << messPntr << endl;
 	int res = write(serialPort, messPntr, length);
 	this_thread::sleep_for(chrono::microseconds(20));
 	pigs << "w " << signalPin << " 0" << endl;
