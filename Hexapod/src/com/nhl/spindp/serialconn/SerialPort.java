@@ -6,9 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import com.nhl.spindp.Main;
-
-
 /**
  * A class to facilitate the serialport connection
  * @author dudeCake

@@ -8,7 +8,8 @@ public class I2C
 	private double gsx, gsy, gsz; //scaled gyro data
 	private double rx, ry, rz;    //filtered info
 	private double timeStep, time, timePrev;
-	private boolean init = true;
+	private boolean init = true, done = true;
+	private Thread t1;
 	private Object locker;
 	
 	public I2C()
@@ -23,7 +24,6 @@ public class I2C
 				cleanupI2c();
 			}
 		});
-		time = System.currentTimeMillis();
 	}
 	
 	public native boolean initI2c();
@@ -32,15 +32,42 @@ public class I2C
 	
 	private native void cleanupI2c();
 	
-	public void loop()
+	private void loop()
 	{
 		initI2c();
+		time = System.currentTimeMillis();
 		while (!done)
 		{
 			loopI2c();
 			filter();
 		}
 		cleanupI2c();
+	}
+	
+	public void start()
+	{
+		done = false;
+		t1 = new Thread(){
+
+			@Override
+			public void run()
+			{
+				loop();
+			}
+		};
+	}
+	
+	public void stop()
+	{
+		done = true;
+		try
+		{
+			t1.join();
+		}
+		catch (InterruptedException e)
+		{
+			
+		}
 	}
 	
 	private void scale()
@@ -99,6 +126,23 @@ public class I2C
 		return res;
 	}
 	
+	public double[] runOnceAndGetGyroInfo()
+	{
+		initI2c();
+		loopI2c();
+		filter();
+		cleanupI2c();
+		
+		double[] res = { -1, -1, -1};
+		synchronized (locker)
+		{
+			res[0] = rx;
+			res[1] = ry;
+			res[2] = rz;
+		}
+		return res;
+	}
+	
 	public I2CData getData()
 	{
 		return data;
@@ -106,11 +150,11 @@ public class I2C
 
 	public class I2CData
 	{
-		private short adcVal   = -1;
+		//private short adcVal   = -1;
 		private short accDataX = -1;
 		private short accDataY = -1;
 		private short accDataZ = -1;
-		private short tmp      = -1;
+		//private short tmp      = -1;
 		private short gyroX    = -1;
 		private short gyroY    = -1;
 		private short gyroZ    = -1;

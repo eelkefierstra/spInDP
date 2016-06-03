@@ -2,14 +2,10 @@ package com.nhl.spindp.serialconn;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import javax.xml.bind.DatatypeConverter;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -23,7 +19,6 @@ public class ServoConnection
 	//private Queue<byte[]> instructions;
 	private ExecutorService serialWorker;
 	private SerialPort serialPort;
-	private Servo[] servos;
 	private byte error;
 	
 	/**
@@ -34,7 +29,6 @@ public class ServoConnection
 		//instructions = new LinkedList<>();
 		serialWorker = Executors.newSingleThreadExecutor();
 		serialPort = new SerialPort();
-		servos = new Servo[18];
 		Runtime.getRuntime().addShutdownHook(new Thread()
 		{
 			@Override

@@ -1,12 +1,8 @@
 package com.nhl.spindp.netcon;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -23,7 +19,6 @@ import com.nhl.spindp.Main;
 
 import org.apache.http.*;
 import org.apache.http.config.SocketConfig;
-import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;

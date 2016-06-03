@@ -7,8 +7,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.nhl.spindp.Main;
-
 public class SpiderBody
 {
 	ExecutorService executor;
@@ -41,13 +39,11 @@ public class SpiderBody
 	
 	public void testCalcs()
 	{
-		int i = 0;
 		long start = System.currentTimeMillis();
 		for (SpiderLeg leg : legs)
 		{
 			leg.walk(0, 0);
 			futures.offer(leg.getFuture());
-			i++;
 		}
 		System.out.println("Calculated in: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
 	}

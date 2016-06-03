@@ -47,7 +47,7 @@ public class Main
 		AppConnection appConn = new AppConnection(1337);
 		
 		I2C i2c = new I2C();
-		i2c.i2cLoop();
+		i2c.loopI2c();
 		i2c.getData();
 		//while (true)
 		{

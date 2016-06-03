@@ -8,6 +8,7 @@ import com.nhl.spindp.Time;
 import com.nhl.spindp.serialconn.Servo;
 import com.nhl.spindp.spin.SpiderBody.SharedParams;
 
+@SuppressWarnings("unused")
 class SpiderLeg implements Runnable
 {
 	private static final double Weigth   = 24.525;
@@ -66,7 +67,7 @@ class SpiderLeg implements Runnable
     //private static double b_turn;
     //private static double servoAngle_rv;
     private double betaD1;
-    private double betaD2;
+	private double betaD2;
     private double test1; //TODO: need name still
     private double B_MAX;
 
@@ -391,7 +392,6 @@ class SpiderLeg implements Runnable
     /// <summary>
     /// Main method for turning around his Y axis
     /// </summary>
-	@SuppressWarnings("unused")
 	private void noscope360()
     {        
         int id = getFirstId() / 3;
