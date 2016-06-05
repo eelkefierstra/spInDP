@@ -21,6 +21,8 @@ public class Main
 	private static Main instance;
 	private static ServoConnection conn;
 	public static List<Short> failedServos;
+	private volatile double forward = 1.0;
+	private volatile double right   = 0.0;
 	
 	static
 	{
@@ -42,9 +44,9 @@ public class Main
 	public static void main(String[] args) throws Exception
 	{
 		instance = new Main();
-		//WebSocket sock = new WebSocket(8000);
-		//sock.start();
-		
+		WebSocket sock = new WebSocket(8000);
+		sock.start();
+		/*
 		AppConnection appConn = new AppConnection(1338);
 		
 		I2C i2c = new I2C();
@@ -83,14 +85,14 @@ public class Main
 		for (byte i = 1; i <= 18; i++)
 		{
 			conn.moveServo(i, (short)(j * 4));
-		}*/
+		}*//*
 		
 		while (true)
 		{
 			Time.updateDeltaTime();
-			body.walk(1.0, 0.0);
+			body.walk(forward, right);
 			Thread.sleep(50);
-		}
+		}*/
 	}
 	
 	public static void servoFailed(short id)
@@ -101,6 +103,12 @@ public class Main
 		}
 		failedServos.add(id);
 		failedServos.sort(null);
+	}
+	
+	public void setDirection(int id, double forward, double right)
+	{
+		this.forward = forward;
+		this.right   = right;
 	}
 	
 	public static Future<byte[]> submitInstruction(byte[] message)

@@ -131,14 +131,12 @@ public class WebSocket
 
 	        // For some reason, just putting the incoming entity into
 	        // the response will not work. We have to buffer the message.
-	        byte[] data;
-	        if (entity == null) {
-	            data = new byte [0];
-	        } else {
-	            data = EntityUtils.toByteArray(entity);
+	        String data = "";
+	        if (entity != null) {
+	            data = EntityUtils.toString(entity);
 	        }
 
-	        System.out.println(new String(data));
+	        System.out.println(data);
 	        /*
 	        File file = new File(Main.class.getResource("/www/index.html").getPath());
 			BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -181,7 +179,14 @@ public class WebSocket
 	        }
 	        else if (requestLine.getMethod().compareTo("POST") == 0)
 	        {
-	        	System.out.println("ik heb een post gekregen");
+	        	int id;
+	        	double forward, right;
+	        	String[] arr = data.split("&");
+	        	id = Integer.valueOf(arr[0].substring(arr[0].lastIndexOf("=")+1));
+	        	forward = map(Double.valueOf(arr[1].substring(arr[1].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
+	        	right = map(Double.valueOf(arr[2].substring(arr[2].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
+	        	Main.getInstance().setDirection(id, forward, right);
+	        	response.setEntity(new StringEntity(data));
 	        }
 	        else
 	        {
@@ -210,6 +215,12 @@ public class WebSocket
 			outputStream.close();
 		}
 		*/
+	}
+	
+	private static double map(double x, double in_min, double in_max, double out_min, double out_max)
+	{
+		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");
+		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	}
 	
 	static class StdErrorExceptionLogger implements ExceptionLogger {
