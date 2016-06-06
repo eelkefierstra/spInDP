@@ -20,6 +20,8 @@ public class Main
 {
 	private static Main instance;
 	private static ServoConnection conn;
+	private static WebSocket sock;
+	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
 	private volatile double right   = 0.0;
@@ -44,21 +46,41 @@ public class Main
 	public static void main(String[] args) throws Exception
 	{
 		instance = new Main();
-		WebSocket sock = new WebSocket(8000);
-		sock.start();
-		/*
+		Thread webWorker = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				System.out.println("webWorker started");
+				try
+				{
+					sock = new WebSocket(8000);
+					sock.start();
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
+					//System.exit(-1);
+				}
+			}
+		};
+		webWorker.start();
+		Thread.sleep(1);
 		AppConnection appConn = new AppConnection(1338);
 		
 		I2C i2c = new I2C();
+		i2c.start();
 		//i2c.loopI2c();
 		//i2c.getData();
-		for (double d : i2c.runOnceAndGetGyroInfo())
+		for (int i = 0;i < Integer.MAX_VALUE; i++)// (double d : i2c.getGyroInfo())
 		{
-			System.out.println(d);
+			for (double d : i2c.getGyroInfo())
+				System.out.println(d);
 		}
-		//while (true)
+		i2c.stop();
+		while (running)
 		{
-			//appConn.mainLoop();
+			appConn.mainLoop();
 		}
 		
 		
@@ -85,14 +107,20 @@ public class Main
 		for (byte i = 1; i <= 18; i++)
 		{
 			conn.moveServo(i, (short)(j * 4));
-		}*//*
+		}*/
+		body.moveToAngle(0.0, 0.0, 0.0);
 		
 		while (true)
 		{
 			Time.updateDeltaTime();
-			body.walk(forward, right);
-			Thread.sleep(50);
-		}*/
+			body.walk(instance.forward, instance.right);
+			//Thread.sleep(50);
+		}/*
+		if (sock != null)
+		{
+			sock.stop();
+		}
+		webWorker.join();*/
 	}
 	
 	public static void servoFailed(short id)

@@ -1,5 +1,10 @@
 package com.nhl.spindp.spin;
 
+import java.util.concurrent.Future;
+
+import com.nhl.spindp.Main;
+import com.nhl.spindp.serialconn.Servo;
+
 public class SpiderJoint
 {
 	private static final double MIN_ANGLE       =    0.0;
@@ -13,6 +18,7 @@ public class SpiderJoint
 	
 	private byte servoId;
 	private double angle;
+	private Future<byte[]> future;
 	private final int offset;
 	private final int lowerRange;
 	private final int upperRange;
@@ -56,6 +62,11 @@ public class SpiderJoint
 		return angle;
 	}
 	
+	public Future<byte[]> getFuture()
+	{
+		return future;
+	}
+	
 	void setAngle(double angle)
 	{
 		double val = Math.toDegrees(angle);// + offset;
@@ -84,6 +95,7 @@ public class SpiderJoint
             }
 			this.angle = val;
 		}
+		future = Main.submitInstruction(Servo.createMoveServoInstruction(getId(), getServoAngle()));
 	}
 	
 	private short mapPosition(double x, double in_min, double in_max, double out_min, double out_max)

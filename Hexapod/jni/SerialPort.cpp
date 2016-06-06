@@ -30,7 +30,6 @@ void throw_java_exception(JNIEnv *env, char *classname, char *message)
 	jclass ex = env->FindClass(classname);
 	env->ThrowNew(ex, message);
 }
-
 int set_interface_attribs(int fd, int speed, int parity)
 {
 	struct termios tty;
