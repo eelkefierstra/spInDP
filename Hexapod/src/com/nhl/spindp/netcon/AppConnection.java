@@ -16,7 +16,7 @@ public class AppConnection {
 	private ServerSocket serverSocket;
 	public AppConnection() throws IOException
 	{
-		serverSocket = new ServerSocket(1337);
+		serverSocket = new ServerSocket(1338);
 	}
 	
 	public AppConnection(int port) throws IOException
@@ -28,13 +28,12 @@ public class AppConnection {
 	{
 		while (true){
 			Socket clientSocket = serverSocket.accept();
+			
 			InputStreamReader iStream = new InputStreamReader(clientSocket.getInputStream());
 			BufferedReader BR = new BufferedReader(iStream);
-			
-			String MESSAGE = BR.readLine();
-			System.out.println(MESSAGE);
-			while (true)
-			{
+			while (true){
+				String MESSAGE = BR.readLine();
+				System.out.println(MESSAGE);
 				try{
 					if(iStream != null){
 						System.out.println(iStream);
@@ -48,7 +47,6 @@ public class AppConnection {
 				}
 				catch(Exception e){
 					e.printStackTrace();
-					
 					clientSocket.close();
 					break;
 				}
@@ -58,10 +56,19 @@ public class AppConnection {
 	
 	public String CreateDataToWrite(String input){
 		String Result = "";
-		//if(input.equals("Servo Info"))
-		Result = CreateRandomXML();
+		switch(input){
+			case "Heey":
+				break;
+			case "ServoInfo":
+				Result = CreateServoXML();
+				break;
+			case "HellingHoek":
+				break;
+			case "LiveStream":
+				break;
+		}
 		return Result;
-	}
+	} 
 	
 	public String CreateRandomXML(){
 		String result = "";
@@ -75,17 +82,18 @@ public class AppConnection {
 	
 	public String CreateServoXML(){
 		String result = "";
-		try {
-			for(int i = 1; i <= 18; i++){
+		
+		for(int i = 1; i <= 18; i++){
+			try {
 				int Id = i;
 				int Hoek = Main.getInstance().readCurrentAngle((byte) i);
 				int Temperatuur = Main.getInstance().readCurrentTemperature((byte) i);
 				result += "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				result +=  "<Servo><Id>"+ Integer.toString(i) + "</Id><Hoek>" +"-1"+ "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";
 			}
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return result;
 	}
