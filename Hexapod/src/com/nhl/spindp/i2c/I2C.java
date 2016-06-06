@@ -7,7 +7,7 @@ public class I2C
 	private double arx, ary, arz; //acc angles
 	private double grx, gry, grz; //gyro angles
 	private double gsx, gsy, gsz; //scaled gyro data
-	private double rx, ry, rz;    //filtered info
+	private double rx = -1.0, ry = -1.0, rz = -1.0;    //filtered info
 	private double timeStep, time, timePrev;
 	private boolean init = true, done = true;
 	private Thread t1;
@@ -73,18 +73,33 @@ public class I2C
 	private void scale()
 	{
 		//scale gyro values
-		gsx = (double) data.gyroX / 16384;
-		gsy = (double) data.gyroY / 16384;
-		gsz = (double) data.gyroZ / 16384;
+		gsx = (double) data.gyroX / 131;
+		gsy = (double) data.gyroY / 131;
+		gsz = (double) data.gyroZ / 131;
+	}
+	
+	private double dist(double a, double b)
+	{
+		return Math.sqrt((a*a)+(b*b));
 	}
 	
 	//loop this method to continuesly refresh gyro values
 	private void filter()
 	{
-		timePrev = time;
-		time = System.currentTimeMillis();
-		timeStep = (time / timePrev) / 1000; //timestep in seconds
+		scale();
 		
+		double accXscale = (double)data.accDataX / 16384.0;
+		double accYscale = (double)data.accDataY / 16384.0;
+		double accZscale = (double)data.accDataZ / 16384.0;
+		rx = Math.toDegrees(Math.atan2(accYscale, dist(accXscale, accZscale)));
+		ry = Math.toDegrees(Math.atan2(accXscale, dist(accYscale, accZscale)));
+		
+		System.out.println("Gyro out   = X: "+data.gyroX+" Y: "+data.gyroY+" Z: "+data.gyroZ);
+		System.out.println("Gyro scale = X: "+gsx+" Y: "+gsy+" Z: "+gsz);
+		System.out.println("Acc out    = X: "+data.accDataX+" Y: "+data.accDataY+" Z: "+data.accDataZ);
+		System.out.println("Acc scale  = X: "+accXscale+" Y: "+accYscale+" Z: "+accZscale);
+		
+		/*
 		scale();
 		//calc acc angles
 		arx = Math.toDegrees(Math.atan((double) (data.accDataX) / Math.sqrt(Math.pow(data.accDataY,2) + Math.pow(data.accDataZ, 2))));
@@ -112,6 +127,7 @@ public class I2C
 		rx = (0.96 * arx) + (0.04 * grx);
 		ry = (0.96 * ary) + (0.04 * gry);
 		rz = (0.96 * arz) + (0.04 * grz);
+		*/
 	}
 	
 	public double[] getGyroInfo()
