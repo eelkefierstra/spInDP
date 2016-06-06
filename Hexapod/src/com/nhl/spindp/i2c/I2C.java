@@ -1,8 +1,9 @@
 package com.nhl.spindp.i2c;
 
+
 public class I2C
 {
-	private Object locker;
+	private Object locker = new Object();
 	private I2CData data;
 	private double arx, ary, arz; //acc angles
 	private double grx, gry, grz; //gyro angles

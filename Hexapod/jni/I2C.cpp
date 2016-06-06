@@ -18,6 +18,12 @@ using namespace std;
 
 bool gyro = false, adc = false;
 MPU6050 gyroscope;
+/*
+void throw_java_exception(JNIEnv *env, char *classname, char *message)
+{
+	jclass ex = env->FindClass(classname);
+	env->ThrowNew(ex, message);
+}*/
 
 short readWord(uint8_t addr, uint8_t reg)
 {
@@ -57,7 +63,7 @@ bool i2cCleanADC()
 }
 
 JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
-  (JNIEnv *, jobject)
+  (JNIEnv *env, jobject)
 {
 	int err = 0;
 	while (err < 3)
@@ -83,6 +89,15 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
 		err++;
 	}
 	err = 0;
+	if (!gyro && !adc)
+	{
+		string clazz = "java/io/IOException";
+		string mess  = "Cant't open the device";
+		jclass ex = env->FindClass(&clazz[0]);
+		env->ThrowNew(ex, &mess[0]);
+		return false;
+	}
+	cout<< "bools= adc: "<<adc<<" gyro: "<<gyro<<endl;
 	return true;
 }
 

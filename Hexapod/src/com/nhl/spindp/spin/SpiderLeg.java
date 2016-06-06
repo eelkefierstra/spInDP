@@ -1,5 +1,8 @@
 package com.nhl.spindp.spin;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -18,7 +21,7 @@ class SpiderLeg implements Runnable
 	private static final double C        = 160.0;
 	private static final double E        =  90.0;
 	private static final double F        =  35.0;
-	private static final double L        = 127.0;
+	private static final double L        = 127.0 * 1.25;
 	private static final double LACCENT  = Math.cos(A_RAD) * L;
 	private static final double D        = F - LACCENT;
 	private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
@@ -110,18 +113,14 @@ class SpiderLeg implements Runnable
 		}
 		else if (right <= -.25 || .25 <= right)
 		{
-			if ( set) coxaChange += ((35.0 * Time.deltaTime) * forward);
-			if (!set) coxaChange -= ((35.0 * Time.deltaTime) * forward);
+			if ( set && forward > 0) coxaChange += ((35.0 * Time.deltaTime) * forward);
+			if (!set && forward > 0) coxaChange -= ((35.0 * Time.deltaTime) * forward);
 			turn(right);
-			for (SpiderJoint joint : servos)
-			{
-				future = Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
-			}
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
-			if ( set) coxaChange += ((35.0 * Time.deltaTime) * forward);
-			if (!set) coxaChange -= ((35.0 * Time.deltaTime) * forward);
+			if ( set && forward > 0) coxaChange += ((35.0 * Time.deltaTime) * forward);
+			if (!set && forward > 0) coxaChange -= ((35.0 * Time.deltaTime) * forward);
 			future = executor.submit(this);
 			res = true;
 		}
@@ -131,6 +130,16 @@ class SpiderLeg implements Runnable
 	public Future<?> getFuture()
 	{
 		return future;
+	}
+	
+	public byte[][] getAll() throws InterruptedException, ExecutionException
+	{
+		byte[][] res = new byte[servos.length][];
+		for (int i = 0; i < res.length; i++)
+		{
+			res[i] = servos[i].getFuture().get();
+		}
+		return res;
 	}
 	
 	@Override
@@ -154,14 +163,10 @@ class SpiderLeg implements Runnable
 		if (coxaChange < 45) step *= -1;
 		if (!set) h = (PAR_Y * -1) * Math.pow(step, 2.0) + PAR_X;
 		//h *= 5;
-		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E + h, 2.0));
+		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E - h, 2.0));
 		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
 		servos[SpiderJoint.FEMUR].setAngle(gamma = test4);//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
-		for (SpiderJoint joint : servos)
-		{
-			Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
-		}
 	}
 	/// <summary>
     /// Main method for making a turn
@@ -495,7 +500,7 @@ class SpiderLeg implements Runnable
         servos[SpiderJoint.TIBIA].setAngle(Math.toRadians(tibia));
         for (SpiderJoint joint : servos)
 		{
-			Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
+			future = Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
 		}
 	}
 	

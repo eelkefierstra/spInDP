@@ -77,8 +77,8 @@ public class SpiderBody
 	
 	public void moveToAngle(double coxa, double femur, double tibia)
 	{
-		SpiderLeg leg = legs[0];
-		//for (SpiderLeg leg : legs)
+		//SpiderLeg leg = legs[0];
+		for (SpiderLeg leg : legs)
 		{
 			leg.moveToDegrees(coxa, femur, tibia);
 		}
