@@ -58,6 +58,7 @@ public class AppConnection {
 		String Result = "";
 		switch(input){
 			case "Heey":
+				Result = "Heey Terug";
 				break;
 			case "ServoInfo":
 				Result = CreateServoXML();

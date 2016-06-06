@@ -5,12 +5,13 @@
  *      Author: pi
  */
 
+#include <unistd.h>
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
 #include "com_nhl_spindp_Main.h"
 
-#define PIDFILE "/run/Hexapod.pid"
+#define PIDFILE "/tmp/Hexapod.pid"
 
 using namespace std;
 

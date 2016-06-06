@@ -33,9 +33,9 @@ public class Main
 		System.load(lib.getAbsolutePath());
 	}
 	
-	//private static native boolean isAlreadyRunning();
+	private static native boolean isAlreadyRunning();
 	
-	//private static native void cleanup();
+	private static native void cleanup();
 	
 	public int readCurrentAngle(byte id) throws IOException{
 		return conn.readPresentLocation(id);
@@ -62,8 +62,16 @@ public class Main
 		{
 			System.out.println("Hexapod is already running");
 			System.exit(1);
-		}*/
-		instance = new Main();
+		}
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				cleanup();
+			}
+		});*/
+		instance = new Main();/*
 		Thread webWorker = new Thread()
 		{
 			@Override
@@ -82,31 +90,18 @@ public class Main
 				}
 			}
 		};
-		webWorker.start();
-		Thread.sleep(1);
-		conn = new ServoConnection();
-		appConn = new AppConnection(1338);
-		
-		I2C i2c = new I2C();
-		i2c.start();
-		//i2c.loopI2c();
-		//i2c.getData();
-		for (int i = 0;i < Integer.MAX_VALUE; i++)// (double d : i2c.getGyroInfo())
-		{
-			for (double d : i2c.getGyroInfo())
-				System.out.println(d);
-		}
-		i2c.stop();
+		webWorker.start();*/
 		Thread appConnection = new Thread()
 		{
 			@Override
 			public void run()
 			{
-				System.out.println("App Server started");
+				
 				try
 				{
-					appConn = new AppConnection(1338);
+					appConn = new AppConnection(1337);
 					appConn.mainLoop();
+					System.out.println("App Server started");
 				}
 				catch (Exception ex)
 				{
@@ -115,6 +110,18 @@ public class Main
 			}
 		};
 		appConnection.start();
+		conn = new ServoConnection();
+		//I2C i2c = new I2C();
+		//i2c.start();
+		//i2c.loopI2c();
+		//i2c.getData();
+		//for (int i = 0;i < Integer.MAX_VALUE; i++)// (double d : i2c.getGyroInfo())
+		//{
+			//for (double d : i2c.getGyroInfo())
+				//System.out.println(d);
+		//}
+		//i2c.stop();
+		
 		
 		
 		failedServos = new ArrayList<>();
@@ -151,7 +158,7 @@ public class Main
 		{
 			sock.stop();
 		}
-		webWorker.join();
+		//webWorker.join();
 		if(appConn != null){
 			appConn.stop();
 		}
