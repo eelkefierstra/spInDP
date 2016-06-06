@@ -1,6 +1,8 @@
 package com.example.aldert.spindpappandroidstudio22;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,31 +15,13 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
-    static final ServerConnection conn = new ServerConnection("141.252.231.29", 1337);
-    boolean connected = false;
+    static final ServerConnection conn = new ServerConnection("10.42.1.1", 1338);
+    Activity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new Thread(new Runnable(){
-            public void run(){
-                try{
-                    conn.connect();
-                    conn.readResponse();
-
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        try {
-            Thread.sleep(500);
-            conn.sendString("Heey");
-        }
-        catch(Exception b){
-            b.printStackTrace();
-        }
+        Connect();
 
         Button ServoInfoBtn = (Button) findViewById(R.id.ServoInfoBtn);
         ServoInfoBtn.setOnClickListener(new View.OnClickListener(){
@@ -46,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ServoInfo.class));
             }
         });
-        final Button LiveStreamBtn = (Button) findViewById(R.id.LiveStreamBtn);
+        Button LiveStreamBtn = (Button) findViewById(R.id.LiveStreamBtn);
         LiveStreamBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -60,13 +44,38 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, HellingInfo.class));
             }
         });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.RefreshButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Connect();
+            }
+        });
     }
 
-    public void Connect(){
-
-
+    public void showToast(final String toast)
+    {
+        runOnUiThread(new Runnable() {
+            public void run()
+            {
+                Toast.makeText(MainActivity.this, toast, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-    public void buttonOnClick(View v){
+    public void Connect() {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    conn.connect();
+                    showToast("Connected");
+                    conn.sendString("Heey");
+                    conn.readResponse();
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showToast("Niet connected");
+                }
+            }
+        }).start();
     }
 }

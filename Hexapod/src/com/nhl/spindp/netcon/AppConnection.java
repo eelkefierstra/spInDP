@@ -12,12 +12,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 
+import com.nhl.spindp.Main;
+
 public class AppConnection {
 
 	private ServerSocket serverSocket;
 	public AppConnection() throws IOException
 	{
-		serverSocket = new ServerSocket(1338);
+		serverSocket = new ServerSocket(1337);
 	}
 	
 	public AppConnection(int port) throws IOException
@@ -60,7 +62,7 @@ public class AppConnection {
 	public String CreateDataToWrite(String input){
 		String Result = "";
 		//if(input.equals("Servo Info"))
-			Result = CreateRandomXML();
+		Result = CreateRandomXML();
 		return Result;
 	}
 	
@@ -71,6 +73,23 @@ public class AppConnection {
 		 int Hoek = randomGenerator.nextInt(90);
 		 int Temperatuur = randomGenerator.nextInt(90);
 		 result = "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";
+		return result;
+	}
+	
+	public String CreateServoXML(){
+		String result = "";
+		try {
+			for(int i = 1; i <= 18; i++){
+				int Id = i;
+				int Hoek = Main.getInstance().readCurrentAngle((byte) i);
+				int Temperatuur = Main.getInstance().readCurrentTemperature((byte) i);
+				result += "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return result;
 	}
 }

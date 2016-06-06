@@ -19,10 +19,21 @@ public class Main
 	private static ServoConnection conn;
 	public static List<Short> failedServos;
 	
+	
+	
 	static
 	{
 		File lib = new File(Main.class.getResource("/libs/").getPath(), "libHexapod.so");
 		System.load(lib.getAbsolutePath());
+	}
+	
+	public int readCurrentAngle(byte id) throws IOException{
+		return conn.readPresentLocation(id);
+		
+	}
+	
+	public int readCurrentTemperature(byte id) throws IOException{
+		return conn.readTemperature(id);
 	}
 	
 	public static Main getInstance()

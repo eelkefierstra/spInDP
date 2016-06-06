@@ -17,10 +17,11 @@ import static java.lang.System.in;
  */
 
 public class XMLreader{
-    Servo servo;
+    Servo servo[] = new Servo[18];
     int id;
     int hoek;
     int temperatuur;
+    int count = 0;
     public XMLreader(String input){
         String woord = "";
         String tag = "";
@@ -37,6 +38,10 @@ public class XMLreader{
                         }
                         else if(tag.equals("Temperatuur")){
                             temperatuur = Integer.parseInt(woord);
+                        }
+                        else if(tag.equals("Servo")){
+                            servo[count] = new Servo(id, hoek, temperatuur);
+                            count++;
                         }
                     }
                     woord = "";
@@ -56,10 +61,9 @@ public class XMLreader{
                     break;
             }
         }
-        servo = new Servo(id, hoek, temperatuur);
     }
 
-    Servo getServo(){
+    Servo[] getServo(){
         return this.servo;
     }/**/
 

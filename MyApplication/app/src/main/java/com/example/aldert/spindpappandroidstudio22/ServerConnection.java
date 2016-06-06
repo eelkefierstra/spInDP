@@ -44,9 +44,7 @@ public class ServerConnection {
                 //simulation.containerReceived(record);
             //}
             if(userInput.length() > 10){
-                Servo servo = new XMLreader(userInput).getServo();
-                mServos[servo.getId()] = servo;
-                System.out.println(servo);
+                mServos = new XMLreader(userInput).getServo();
             }
             System.out.println(userInput);
         }
@@ -55,10 +53,16 @@ public class ServerConnection {
     }
 
     public Servo[] getAllServoInfo(){return this.mServos;}
-    public void sendString(String data) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
-        writer.write(data);
-        writer.newLine();
-        writer.flush();
+
+    public void sendString(String data) {
+        try{
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
+            writer.write(data);
+            writer.newLine();
+            writer.flush();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }
