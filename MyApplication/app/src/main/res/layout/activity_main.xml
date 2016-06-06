@@ -53,4 +53,17 @@
         app:layout_constraintRight_toRightOf="@+id/activity_main"
         tools:layout_constraintRight_creator="1" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:src="@android:drawable/ic_menu_revert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:fabSize="mini"
+        tools:layout_editor_absoluteX="317dp"
+        tools:layout_editor_absoluteY="444dp"
+        android:id="@+id/RefreshButton"
+        app:layout_constraintTop_toBottomOf="@+id/HellingInfoBtn"
+        android:layout_marginTop="16dp"
+        tools:layout_constraintTop_creator="0" />
+
 </android.support.constraint.ConstraintLayout>

@@ -32,6 +32,14 @@ public class Main
 		System.load(lib.getAbsolutePath());
 	}
 	
+	public int readCurrentAngle(byte id) throws IOException{
+		return conn.readPresentLocation(id);
+	}
+	
+	public int readCurrentTemperature(byte id) throws IOException{
+		return conn.readTemperature(id);
+	}
+	
 	public static Main getInstance()
 	{
 		return instance;
