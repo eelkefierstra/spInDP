@@ -21,6 +21,7 @@ public class Main
 	private static Main instance;
 	private static ServoConnection conn;
 	private static WebSocket sock;
+	private static AppConnection appConn;
 	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
@@ -74,7 +75,6 @@ public class Main
 		};
 		webWorker.start();
 		Thread.sleep(1);
-		AppConnection appConn = new AppConnection(1338);
 		
 		I2C i2c = new I2C();
 		i2c.start();
@@ -86,10 +86,24 @@ public class Main
 				System.out.println(d);
 		}
 		i2c.stop();
-		while (running)
+		Thread appConnection = new Thread()
 		{
-			appConn.mainLoop();
-		}
+			@Override
+			public void run()
+			{
+				System.out.println("App Server started");
+				try
+				{
+					appConn = new AppConnection(1338);
+					appConn.mainLoop();
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		};
+		appConnection.start();
 		
 		
 		failedServos = new ArrayList<>();
@@ -118,17 +132,21 @@ public class Main
 		}*/
 		body.moveToAngle(0.0, 0.0, 0.0);
 		
-		while (true)
+		while (running)
 		{
 			Time.updateDeltaTime();
 			body.walk(instance.forward, instance.right);
 			//Thread.sleep(50);
-		}/*
+		}
 		if (sock != null)
 		{
 			sock.stop();
 		}
-		webWorker.join();*/
+		webWorker.join();
+		if(appConn != null){
+			appConn.stop();
+		}
+		appConnection.join();
 	}
 	
 	public static void servoFailed(short id)
