@@ -1,25 +1,34 @@
 package com.nhl.spindp.spin;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import com.nhl.spindp.Main;
 
 public class SpiderBody
 {
 	ExecutorService executor;
 	SpiderLeg[] legs;
-	Future<?>[] futures;
+	Queue<Future<?>> futures;
 	SharedParams sharedParams;
 	
-	public SpiderBody(int startId)
+	public SpiderBody(byte startId)
 	{
 		executor = Executors.newFixedThreadPool(3);
 		legs     = new SpiderLeg[6];
-		futures  = new Future<?>[6];
+		futures  = new LinkedList<>();
 		sharedParams = new SharedParams();
+		
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				executor.shutdown();
+			}
+		});
 		
 		for (int i = 0; i < legs.length; i++)
 		{
@@ -30,14 +39,11 @@ public class SpiderBody
 	
 	public void testCalcs()
 	{
-		int i = 0;
 		long start = System.currentTimeMillis();
 		for (SpiderLeg leg : legs)
 		{
 			leg.walk(0, 0);
-			futures[i] = leg.getFuture();
-			//leg.run();
-			i++;
+			futures.offer(leg.getFuture());
 		}
 		System.out.println("Calculated in: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
 	}
@@ -51,29 +57,30 @@ public class SpiderBody
 	 */
 	public void walk(double forward, double right) throws IOException, InterruptedException
 	{
-		int i = 0;
 		for (SpiderLeg leg : legs)
 		{
 			if (leg.walk(forward, right))
-				futures[i] = leg.getFuture();
-			i++;
+				futures.offer(leg.getFuture());
 		}
-		for (Future<?> f : futures)
+		while (!futures.isEmpty())
 		{
 			try
 			{
-				//f.get();
+				futures.poll().get();
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
 		}
-		for (SpiderLeg leg : legs)
+	}
+	
+	public void moveToAngle(double coxa, double femur, double tibia)
+	{
+		SpiderLeg leg = legs[0];
+		//for (SpiderLeg leg : legs)
 		{
-			Main.getInstance().driveServoInPython(leg.getIds(), leg.getAngles());
-			for (short s : Main.failedServos)
-				System.out.println(s);
+			leg.moveToDegrees(coxa, femur, tibia);
 		}
 	}
 	

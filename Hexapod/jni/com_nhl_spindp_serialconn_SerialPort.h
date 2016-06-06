@@ -9,6 +9,38 @@ extern "C" {
 #endif
 /*
  * Class:     com_nhl_spindp_serialconn_SerialPort
+ * Method:    initPort
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_com_nhl_spindp_serialconn_SerialPort_initPort
+  (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     com_nhl_spindp_serialconn_SerialPort
+ * Method:    cleanupPort
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_nhl_spindp_serialconn_SerialPort_cleanupPort
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_nhl_spindp_serialconn_SerialPort
+ * Method:    nativeWrite
+ * Signature: ([B)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
+  (JNIEnv *, jobject, jbyteArray);
+
+/*
+ * Class:     com_nhl_spindp_serialconn_SerialPort
+ * Method:    nativeRead
+ * Signature: ()[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeRead
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_nhl_spindp_serialconn_SerialPort
  * Method:    nativeWriteBytes
  * Signature: ([B)Z
  */
@@ -18,10 +50,10 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 /*
  * Class:     com_nhl_spindp_serialconn_SerialPort
  * Method:    nativeReadBytes
- * Signature: (I)[B
+ * Signature: ()[B
  */
 JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeReadBytes
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }

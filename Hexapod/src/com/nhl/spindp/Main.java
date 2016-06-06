@@ -7,7 +7,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import com.nhl.spindp.i2c.I2C;
+import com.nhl.spindp.netcon.AppConnection;
 import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
@@ -18,8 +21,8 @@ public class Main
 	private static Main instance;
 	private static ServoConnection conn;
 	public static List<Short> failedServos;
-	
-	
+	private volatile double forward = 1.0;
+	private volatile double right   = 0.0;
 	
 	static
 	{
@@ -29,7 +32,6 @@ public class Main
 	
 	public int readCurrentAngle(byte id) throws IOException{
 		return conn.readPresentLocation(id);
-		
 	}
 	
 	public int readCurrentTemperature(byte id) throws IOException{
@@ -49,14 +51,28 @@ public class Main
 	 */
 	public static void main(String[] args) throws Exception
 	{
+		instance = new Main();
+		WebSocket sock = new WebSocket(8000);
+		sock.start();
+		/*
+		AppConnection appConn = new AppConnection(1338);
 		
-		//WebSocket sock = new WebSocket(8000);
-		//sock.start();
+		I2C i2c = new I2C();
+		//i2c.loopI2c();
+		//i2c.getData();
+		for (double d : i2c.runOnceAndGetGyroInfo())
+		{
+			System.out.println(d);
+		}
+		//while (true)
+		{
+			//appConn.mainLoop();
+		}
+		
 		
 		failedServos = new ArrayList<>();
-		instance = new Main();
 		Time.updateDeltaTime();
-		SpiderBody body = new SpiderBody(1);
+		SpiderBody body = new SpiderBody((byte) 1);
 		//body.testCalcs();
 				
 		conn = new ServoConnection();
@@ -76,17 +92,15 @@ public class Main
 		/*
 		for (byte i = 1; i <= 18; i++)
 		{
-			for (short j = 0; j < 256; j++)
-			{
-				conn.moveServo(i, (short)(j * 4));
-			}
-		}*/
+			conn.moveServo(i, (short)(j * 4));
+		}*//*
 		
 		while (true)
 		{
 			Time.updateDeltaTime();
-			body.walk(1.0, 1.0);
-		}
+			body.walk(forward, right);
+			Thread.sleep(50);
+		}*/
 	}
 	
 	public static void servoFailed(short id)
@@ -99,11 +113,23 @@ public class Main
 		failedServos.sort(null);
 	}
 	
+	public void setDirection(int id, double forward, double right)
+	{
+		this.forward = forward;
+		this.right   = right;
+	}
+	
+	public static Future<byte[]> submitInstruction(byte[] message)
+	{
+		return conn.submitInstruction(message);
+	}
+	
 	/**
 	 * Sends instructions to connection to drive servo's
 	 * @param ids The id's of the servo's to be moved
 	 * @param angles The angles to move to
 	 */
+	@Deprecated
 	public void driveServo(int[] ids, int[] angles)
 	{
 		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");
@@ -113,6 +139,7 @@ public class Main
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
 				//System.out.println(conn.readPresentLocation((byte)i));
+				Thread.sleep(5);
 			}
 			catch (Exception ex)
 			{

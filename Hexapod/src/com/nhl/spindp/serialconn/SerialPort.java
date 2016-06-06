@@ -6,9 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import com.nhl.spindp.Main;
-
-
 /**
  * A class to facilitate the serialport connection
  * @author dudeCake
@@ -19,13 +16,31 @@ public class SerialPort
 	private static final File serialInFile  = new File("/tmp/S_IN");
 	private static final File serialOutFile = new File("/tmp/S_OUT");
 	
+	SerialPort()
+	{
+		initPort("/dev/serial0");
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				cleanupPort();
+			}
+		});
+	}
+	
 	/**
 	 * Writes message to serialOutFile
 	 * @param message The message to send
 	 * @return True when no Exceptions occur
 	 * @throws IOException
 	 */
-	boolean writeBytes(byte[] message) throws IOException
+	synchronized boolean writeBytes(byte[] message) throws IOException
+	{
+		return nativeWrite(message);
+	}
+	
+	private boolean writeBits(byte[] message) throws IOException
 	{
 		//System.out.print("Sent: ");
 		FileOutputStream writer = new FileOutputStream(serialOutFile);
@@ -36,16 +51,19 @@ public class SerialPort
 		return true;
 	}
 	
-	native boolean nativeWriteBytes(byte[] message);
+	private native void initPort(String port);
 	
-	native byte[] nativeReadBytes(int id);
+	private native void cleanupPort();
 	
-	/**
-	 * Reads the data in serialInFile
-	 * @return The data from serialInFile
-	 * @throws IOException
-	 */
-	byte[] readBytes(int id) throws IOException
+	private native boolean nativeWrite(byte[] message) throws IOException;
+	
+	private native byte[] nativeRead() throws IOException;
+	
+	private native boolean nativeWriteBytes(byte[] message) throws IOException;
+	
+	private native byte[] nativeReadBytes() throws IOException;
+	
+	private byte[] readBits() throws IOException
 	{
 		//System.out.print("Received: ");
 		byte[] buffer = new byte[32];
@@ -55,20 +73,13 @@ public class SerialPort
 		reader.close();
 		if (read < 0)
 		{
-			Main.servoFailed((byte) id);
 			//throw new IOException("No reaction from servo" + String.valueOf(id) + '!');
-			System.err.println("No reaction from servo" + String.valueOf(id) + '!');
+			System.err.println("No reaction from servo!");
 		}
 		return Arrays.copyOf(buffer, read);
 	}
 	
-	/**
-	 * Reads the serialInFile for an given length
-	 * @param len The length to read the serialInFile
-	 * @return A byte array with the data from serialInFile 
-	 * @throws IOException
-	 */
-	byte[] readBytes(int id, int len) throws IOException
+	private byte[] readBits(int len) throws IOException
 	{
 		byte[] buffer = new byte[len];
 		Arrays.fill(buffer, (byte)-1);
@@ -83,5 +94,26 @@ public class SerialPort
 		}
 		reader.close();
 		return Arrays.copyOf(buffer, i);
+	}
+	
+	/**
+	 * Reads the data in serialInFile
+	 * @return The data from serialInFile
+	 * @throws IOException
+	 */
+	synchronized byte[] readBytes() throws IOException
+	{
+		return nativeRead();
+	}
+	
+	/**
+	 * Reads the serialInFile for an given length
+	 * @param len The length to read the serialInFile
+	 * @return A byte array with the data from serialInFile 
+	 * @throws IOException
+	 */
+	synchronized byte[] readBytes(int len) throws IOException
+	{
+		return nativeRead();
 	}
 }

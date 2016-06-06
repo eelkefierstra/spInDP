@@ -11,9 +11,11 @@ id=1
 while(id<=endID):
 	servo.move(id,stand)
 	print('moved '+str(id))
+	sleep(0.4)
 	servo.move(id+1,stand2)
+	sleep(0.4)
 	print('moved '+str(id+1))
 	servo.move(id+2,stand3)
 	print('moved '+str(id+2))
-	#sleep(0.5)
+	sleep(0.04)
 	id=id+3
