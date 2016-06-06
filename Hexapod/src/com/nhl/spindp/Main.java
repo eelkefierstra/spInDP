@@ -21,6 +21,7 @@ public class Main
 	private static Main instance;
 	private static ServoConnection conn;
 	private static WebSocket sock;
+	private static AppConnection appConn;
 	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
@@ -31,6 +32,10 @@ public class Main
 		File lib = new File(Main.class.getResource("/libs/").getPath(), "libHexapod.so");
 		System.load(lib.getAbsolutePath());
 	}
+	
+	//private static native boolean isAlreadyRunning();
+	
+	//private static native void cleanup();
 	
 	public int readCurrentAngle(byte id) throws IOException{
 		return conn.readPresentLocation(id);
@@ -52,7 +57,12 @@ public class Main
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception
-	{
+	{/*
+		if (isAlreadyRunning())
+		{
+			System.out.println("Hexapod is already running");
+			System.exit(1);
+		}*/
 		instance = new Main();
 		Thread webWorker = new Thread()
 		{
@@ -74,7 +84,8 @@ public class Main
 		};
 		webWorker.start();
 		Thread.sleep(1);
-		AppConnection appConn = new AppConnection(1338);
+		conn = new ServoConnection();
+		appConn = new AppConnection(1338);
 		
 		I2C i2c = new I2C();
 		i2c.start();
@@ -96,8 +107,6 @@ public class Main
 		Time.updateDeltaTime();
 		SpiderBody body = new SpiderBody((byte) 1);
 		//body.testCalcs();
-				
-		conn = new ServoConnection();
 		/*System.out.print("Sending reset... ");
 		conn.sendResetToAll();
 		System.out.println("Reset send.");
