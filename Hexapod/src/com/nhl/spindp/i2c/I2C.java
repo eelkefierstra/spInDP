@@ -73,9 +73,9 @@ public class I2C
 	private void scale()
 	{
 		//scale gyro values
-		gsx = (double) data.gyroX / 131;
-		gsy = (double) data.gyroY / 131;
-		gsz = (double) data.gyroZ / 131;
+		gsx = (double) data.gyroX / 16384;
+		gsy = (double) data.gyroY / 16384;
+		gsz = (double) data.gyroZ / 16384;
 	}
 	
 	//loop this method to continuesly refresh gyro values

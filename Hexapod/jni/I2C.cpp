@@ -5,6 +5,7 @@
 #include <unistd.h>
 //#include <linux/i2c-dev.h>
 #include "I2Cdev.h"
+#include "MPU6050.h"
 //#include <sys/ioctl.h>
 #include <vector>
 #include <iterator>
@@ -16,6 +17,7 @@
 using namespace std;
 
 bool gyro = false, adc = false;
+MPU6050 gyroscope;
 
 short readWord(uint8_t addr, uint8_t reg)
 {
@@ -29,7 +31,9 @@ short readWord(uint8_t addr, uint8_t reg)
 bool i2cSetupGyro()
 {
     //wake up gyro
-	return I2Cdev::writeBit( 0x68, 0x6b, 6, 0b0);
+	//return I2Cdev::writeBit( 0x68, 0x6b, 6, 0b0);
+	gyroscope.initialize();
+	return gyroscope.testConnection();
 }
 
 bool i2cSetupADC()
@@ -102,21 +106,27 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
 
 	if(gyro)
 	{
-		jfieldID accDataXField = env->GetFieldID(dataCls, "accDataX", "S");
-		jfieldID accDataYField = env->GetFieldID(dataCls, "accDataY", "S");
-		jfieldID accDataZField = env->GetFieldID(dataCls, "accDataZ", "S");
-		//jfieldID tmpField      = env->GetFieldID(dataCls, "tmp", "S");
-		jfieldID gyroXField    = env->GetFieldID(dataCls, "gyroX", "S");
-		jfieldID gyroYField    = env->GetFieldID(dataCls, "gyroY", "S");
-		jfieldID gyroZField    = env->GetFieldID(dataCls, "gyroZ", "S");
+		jfieldID accDataXField = env->GetFieldID(dataCls, "accDataX", "D");
+		jfieldID accDataYField = env->GetFieldID(dataCls, "accDataY", "D");
+		jfieldID accDataZField = env->GetFieldID(dataCls, "accDataZ", "D");
+		//jfieldID tmpField      = env->GetFieldID(dataCls, "tmp", "D");
+		jfieldID gyroXField    = env->GetFieldID(dataCls, "gyroX", "D");
+		jfieldID gyroYField    = env->GetFieldID(dataCls, "gyroY", "D");
+		jfieldID gyroZField    = env->GetFieldID(dataCls, "gyroZ", "D");
 		if (env->ExceptionCheck()) return;
-		env->SetShortField(dataObj, accDataXField, readWord(0x68,0x3B));
-		env->SetShortField(dataObj, accDataYField, readWord(0x68,0x3D));
-		env->SetShortField(dataObj, accDataZField, readWord(0x68,0x3F));
+		
+		int16_t gx, gy, gz, ax, ay, az;
+
+		gyroscope.getMotion6( &ax, &ay, &az, &gx, &gy, &gz);
+		
+
+		env->SetShortField(dataObj, accDataXField, (short) ax);//readWord(0x68,0x3B)
+		env->SetShortField(dataObj, accDataYField, (short) ay);//readWord(0x68,0x3D)
+		env->SetShortField(dataObj, accDataZField, (short) az);//readWord(0x68,0x3F)
 		//env->SetShortField(dataObj,      tmpField, (result[ 6] << 8) | result[ 7]);
-		env->SetShortField(dataObj,    gyroXField, readWord(0x68,0x43));
-		env->SetShortField(dataObj,    gyroYField, readWord(0x68,0x45));
-		env->SetShortField(dataObj,    gyroZField, readWord(0x68,0x47));
+		env->SetShortField(dataObj,    gyroXField, (short) gx);//readWord(0x68,0x43)
+		env->SetShortField(dataObj,    gyroYField, (short) gy);//readWord(0x68,0x45)
+		env->SetShortField(dataObj,    gyroZField, (short) gz);//readWord(0x68,0x47)
 		if (env->ExceptionCheck()) return;
 	}
 	env->SetObjectField(thisObj, dataField, dataObj);
