@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import javax.xml.bind.DatatypeConverter;
+
 import com.nhl.spindp.Main;
 import com.nhl.spindp.Time;
 import com.nhl.spindp.serialconn.Servo;
@@ -21,7 +23,7 @@ class SpiderLeg implements Runnable
 	private static final double C        = 160.0;
 	private static final double E        =  90.0;
 	private static final double F        =  35.0;
-	private static final double L        = 127.0 * 1.25;
+	private static final double L        = 127.0;
 	private static final double LACCENT  = Math.cos(A_RAD) * L;
 	private static final double D        = F - LACCENT;
 	private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
@@ -96,7 +98,7 @@ class SpiderLeg implements Runnable
 		// 200, 75, 175
 		this.executor = executor;
 		this.sharedParams = sharedParams;
-		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 95);
+		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 105);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 240);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
 	}
@@ -138,6 +140,7 @@ class SpiderLeg implements Runnable
 		for (int i = 0; i < res.length; i++)
 		{
 			res[i] = servos[i].getFuture().get();
+			System.out.println(DatatypeConverter.printHexBinary(res[i]));
 		}
 		return res;
 	}
@@ -163,7 +166,7 @@ class SpiderLeg implements Runnable
 		if (coxaChange < 45) step *= -1;
 		if (!set) h = (PAR_Y * -1) * Math.pow(step, 2.0) + PAR_X;
 		//h *= 5;
-		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E - h, 2.0));
+		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(E + h, 2.0));
 		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
 		servos[SpiderJoint.FEMUR].setAngle(gamma = test4);//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
@@ -498,10 +501,6 @@ class SpiderLeg implements Runnable
 		servos[SpiderJoint.COXA ].setAngle(Math.toRadians(coxa));
         servos[SpiderJoint.FEMUR].setAngle(Math.toRadians(femur));
         servos[SpiderJoint.TIBIA].setAngle(Math.toRadians(tibia));
-        for (SpiderJoint joint : servos)
-		{
-			future = Main.submitInstruction(Servo.createMoveServoInstruction(joint.getId(), joint.getServoAngle()));
-		}
 	}
 	
 	int[] getAngles()

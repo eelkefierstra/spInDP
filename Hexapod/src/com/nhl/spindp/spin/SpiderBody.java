@@ -3,6 +3,7 @@ package com.nhl.spindp.spin;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -54,8 +55,9 @@ public class SpiderBody
 	 * @param right left, right direction of the spider
 	 * @throws InterruptedException 
 	 * @throws IOException 
+	 * @throws ExecutionException 
 	 */
-	public void walk(double forward, double right) throws IOException, InterruptedException
+	public void walk(double forward, double right) throws IOException, InterruptedException, ExecutionException
 	{
 		for (SpiderLeg leg : legs)
 		{
@@ -73,14 +75,22 @@ public class SpiderBody
 				e.printStackTrace();
 			}
 		}
+		for (SpiderLeg leg : legs)
+		{
+			leg.getAll();
+		}
 	}
 	
-	public void moveToAngle(double coxa, double femur, double tibia)
+	public void moveToAngle(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException
 	{
 		//SpiderLeg leg = legs[0];
 		for (SpiderLeg leg : legs)
 		{
 			leg.moveToDegrees(coxa, femur, tibia);
+		}
+		for (SpiderLeg leg : legs)
+		{
+			leg.getAll();
 		}
 	}
 	
