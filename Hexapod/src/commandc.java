@@ -1,3 +1,5 @@
+import com.nhl.spindp.Main;
+
 
 
 public class commandc {
@@ -87,7 +89,7 @@ public class commandc {
 		//b is ingedrukt dus de spin wordt gestart
 		if (a == "high")
 		{
-		
+			//Main.
 		}
 		
 		//b is ingedrukt dus de kill switch wordt geactiveerd

@@ -93,6 +93,18 @@ public class Main
 			}
 		};
 		webWorker.start();*/
+
+		I2C i2c = new I2C();
+		i2c.start();
+		//i2c.loopI2c();
+		//i2c.getData();
+		for (int i = 0;i < Integer.MAX_VALUE; i++)// (double d : i2c.getGyroInfo())
+		{
+			double[] da = i2c.getGyroInfo();
+			System.out.println("x: "+da[0]+" y: "+da[1]);
+		}
+		i2c.stop();
+		
 		Thread appConnection = new Thread()
 		{
 			@Override
@@ -113,19 +125,6 @@ public class Main
 		};
 		appConnection.start();
 		conn = new ServoConnection();
-		
-		I2C i2c = new I2C();
-		i2c.start();
-		//i2c.loopI2c();
-		//i2c.getData();
-		for (int i = 0;i < Integer.MAX_VALUE; i++)// (double d : i2c.getGyroInfo())
-		{
-			double[] da = i2c.getGyroInfo();
-			System.out.println("x: "+da[0]+" y: "+da[1]);
-		}
-		i2c.stop();
-		
-		
 		
 		failedServos = new ArrayList<>();
 		Time.updateDeltaTime();
