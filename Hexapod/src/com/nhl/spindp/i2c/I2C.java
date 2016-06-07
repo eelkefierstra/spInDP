@@ -9,7 +9,6 @@ public class I2C
 	private double grx, gry, grz; //gyro angles
 	private double gsx, gsy, gsz; //scaled gyro data
 	private double rx = -1.0, ry = -1.0, rz = -1.0;    //filtered info
-	private double timeStep, time, timePrev;
 	private boolean init = true, done = true;
 	private Thread t1;
 	
@@ -36,7 +35,6 @@ public class I2C
 	private void loop()
 	{
 		initI2c();
-		time = System.currentTimeMillis();
 		while (!done)
 		{
 			loopI2c();
@@ -56,6 +54,7 @@ public class I2C
 				loop();
 			}
 		};
+		t1.start();
 	}
 	
 	public void stop()
@@ -95,10 +94,10 @@ public class I2C
 		rx = Math.toDegrees(Math.atan2(accYscale, dist(accXscale, accZscale)));
 		ry = Math.toDegrees(Math.atan2(accXscale, dist(accYscale, accZscale)));
 		
-		System.out.println("Gyro out   = X: "+data.gyroX+" Y: "+data.gyroY+" Z: "+data.gyroZ);
-		System.out.println("Gyro scale = X: "+gsx+" Y: "+gsy+" Z: "+gsz);
-		System.out.println("Acc out    = X: "+data.accDataX+" Y: "+data.accDataY+" Z: "+data.accDataZ);
-		System.out.println("Acc scale  = X: "+accXscale+" Y: "+accYscale+" Z: "+accZscale);
+		//System.out.println("Gyro out   = X: "+data.gyroX+" Y: "+data.gyroY+" Z: "+data.gyroZ);
+		//System.out.println("Gyro scale = X: "+gsx+" Y: "+gsy+" Z: "+gsz);
+		//System.out.println("Acc out    = X: "+data.accDataX+" Y: "+data.accDataY+" Z: "+data.accDataZ);
+		//System.out.println("Acc scale  = X: "+accXscale+" Y: "+accYscale+" Z: "+accZscale);
 		
 		/*
 		scale();

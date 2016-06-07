@@ -121,13 +121,13 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
 
 	if(gyro)
 	{
-		jfieldID accDataXField = env->GetFieldID(dataCls, "accDataX", "D");
-		jfieldID accDataYField = env->GetFieldID(dataCls, "accDataY", "D");
-		jfieldID accDataZField = env->GetFieldID(dataCls, "accDataZ", "D");
-		//jfieldID tmpField      = env->GetFieldID(dataCls, "tmp", "D");
-		jfieldID gyroXField    = env->GetFieldID(dataCls, "gyroX", "D");
-		jfieldID gyroYField    = env->GetFieldID(dataCls, "gyroY", "D");
-		jfieldID gyroZField    = env->GetFieldID(dataCls, "gyroZ", "D");
+		jfieldID accDataXField = env->GetFieldID(dataCls, "accDataX", "S");
+		jfieldID accDataYField = env->GetFieldID(dataCls, "accDataY", "S");
+		jfieldID accDataZField = env->GetFieldID(dataCls, "accDataZ", "S");
+		//jfieldID tmpField      = env->GetFieldID(dataCls, "tmp", "S");
+		jfieldID gyroXField    = env->GetFieldID(dataCls, "gyroX", "S");
+		jfieldID gyroYField    = env->GetFieldID(dataCls, "gyroY", "S");
+		jfieldID gyroZField    = env->GetFieldID(dataCls, "gyroZ", "S");
 		if (env->ExceptionCheck()) return;
 		
 		int16_t gx, gy, gz, ax, ay, az;
