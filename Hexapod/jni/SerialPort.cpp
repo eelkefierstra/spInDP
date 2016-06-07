@@ -150,7 +150,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 }
 
 JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeRead
-  (JNIEnv *env, jobject, jint)
+  (JNIEnv *env, jobject)
 {
 	char buff[32];
 	memset(&buff, 0, sizeof buff);
@@ -164,7 +164,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeRea
 		throw_java_exception(env, &clazz[0], &mess[0]);
 		return env->NewByteArray(0);
 	}
-	cout << "received: " << buff << endl;
+	//cout << "received: " << buff << endl;
 	jsize size = 4 + buff[3];
 	jbyte res[size];
 	for (int i = 0; i < size; i++)
@@ -197,13 +197,13 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 }
 
 JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeReadBytes
-  (JNIEnv *env, jobject, jint)
+  (JNIEnv *env, jobject)
 {
 	char buff[32];
 	char readBuff[32];
 	memset(readBuff, 0, sizeof readBuff);
 
-	cout << "reading from s_in" << endl;
+	//cout << "reading from s_in" << endl;
 	ifstream s_in;
 	s_in.open(SERIAL_IN);
 	s_in.read(readBuff, 32);

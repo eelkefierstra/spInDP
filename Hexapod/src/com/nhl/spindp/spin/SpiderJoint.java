@@ -70,11 +70,11 @@ public class SpiderJoint
 	void setAngle(double angle)
 	{
 		double val = Math.toDegrees(angle);// + offset;
-		if (servoId == 10 || servoId == 13 || servoId == 16)
+		if (servoId >= 10 && servoId % 3 == 1)
 		{
-			val = 180 -  val;
+			val = 200 - val;
 		}
-		else if (servoId == 2 || servoId == 5 || servoId == 8 || servoId == 11 || servoId == 14 || servoId == 17)
+		else if (servoId % 3 == 2)
 		{
 			val = offset - val;
 		}
@@ -107,6 +107,9 @@ public class SpiderJoint
 	@Override
 	public String toString()
 	{
-		return "Id: " + String.valueOf(servoId) + " angle: " + String.valueOf(angle) + " offset: " + String.valueOf(lowerRange) + " range: " + String.valueOf(upperRange);
+		return "Id: " + String.valueOf(servoId) + 
+				" angle: " + String.valueOf(angle) + 
+				" offset: " + String.valueOf(lowerRange) + 
+				" range: " + String.valueOf(upperRange);
 	}
 }

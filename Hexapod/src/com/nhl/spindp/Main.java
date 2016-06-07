@@ -71,7 +71,9 @@ public class Main
 				cleanup();
 			}
 		});*/
-		instance = new Main();/*
+		instance = new Main();
+		
+		/*
 		Thread webWorker = new Thread()
 		{
 			@Override
@@ -96,10 +98,10 @@ public class Main
 			@Override
 			public void run()
 			{
-				
+				System.out.println("App Server started123");
 				try
 				{
-					appConn = new AppConnection(1337);
+					appConn = new AppConnection(1338);
 					appConn.mainLoop();
 					System.out.println("App Server started");
 				}
@@ -146,14 +148,15 @@ public class Main
 		{
 			conn.moveServo(i, (short)(j * 4));
 		}*/
-		body.moveToAngle(0.0, 0.0, 0.0);
+		//body.moveToAngle(45.0, 45.0, 45.0);
 		
 		while (running)
 		{
 			Time.updateDeltaTime();
 			body.walk(instance.forward, instance.right);
-			//Thread.sleep(50);
+			Thread.sleep(50);
 		}
+		
 		if (sock != null)
 		{
 			sock.stop();

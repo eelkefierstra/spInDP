@@ -657,11 +657,6 @@ public class ServoConnection
 		return result;
 	}
 	
-	private int mapPosition(double x, double in_min, double in_max, double out_min, double out_max)
-	{
-		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");
-		return (int)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-	}
 	public class ServoInstruction implements Callable<byte[]>
 	{
 		byte[] message;
@@ -674,8 +669,16 @@ public class ServoConnection
 		@Override
 		public byte[] call() throws Exception
 		{
-			serialPort.writeBytes(message);
-			return serialPort.readBytes();
+			byte[] res = { 0, 0 };
+			byte counter = 0;
+			while (res[0] != (byte)0xFF && res[1] != (byte)0xFF)
+			{
+				serialPort.writeBytes(message);
+				res = serialPort.readBytes();
+				if (counter++ > 2)
+					break;
+			}
+			return res;
 		}
 		
 	}
