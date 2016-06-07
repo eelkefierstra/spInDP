@@ -5,18 +5,18 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-/*
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.videoio.VideoCapture;*/
+import org.opencv.videoio.VideoCapture;
 
 @SuppressWarnings("unused")
 public class ObjectRecognition
-{/*
+{
 	private Object locker;
 	private int x = 0;
 	private String type = "balloon";
@@ -113,7 +113,7 @@ public class ObjectRecognition
 	 * Get a frame from the opened video stream (if any)
 	 * 
 	 * @return the {@link Image} to show
-	 *//*
+	 */
 	private void grabFrame()
 	{
 		// init everything
@@ -218,7 +218,7 @@ public class ObjectRecognition
 	 *            the original {@link Mat} image to be used for drawing the
 	 *            objects contours
 	 * @return the {@link Mat} image with the objects contours framed
-	 *//*
+	 */
 	private Mat findAndDraw(Mat maskedImage, Mat frame)
 	{
 		// init
@@ -243,12 +243,12 @@ public class ObjectRecognition
 					richting = "Rechts";
 				else
 					richting = "Midden";
-				*//*
+				*/
 				
 				Imgproc.drawContours(frame, contours, idx, new Scalar(250, 0, 0));
 			}
 		}
 		
 		return frame;
-	}*/
+	}
 }
