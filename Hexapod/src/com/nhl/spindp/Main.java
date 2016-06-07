@@ -94,14 +94,6 @@ public class Main
 
 		I2C i2c = new I2C();
 		i2c.start();
-		//i2c.loopI2c();
-		//i2c.getData();
-		for (int i = 0;i < Integer.MAX_VALUE; i++)// (double d : i2c.getGyroInfo())
-		{
-			double[] da = i2c.getGyroInfo();
-			System.out.println("x: "+da[0]+" y: "+da[1]);
-		}
-		i2c.stop();
 		
 		Thread appConnection = new Thread()
 		{
@@ -148,13 +140,16 @@ public class Main
 		}*/
 		//body.moveToAngle(45.0, 45.0, 45.0);
 		
+		body.moveToAngle(45, 40.0, 10.0);
+		
 		while (running)
 		{
 			Time.updateDeltaTime();
 			body.walk(instance.forward, instance.right);
 			Thread.sleep(50);
 		}
-		
+
+		i2c.stop();
 		if (sock != null)
 		{
 			sock.stop();
