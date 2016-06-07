@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -15,7 +14,6 @@ import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
 
-@SuppressWarnings("unused")
 public class Main
 {
 	private static Main instance;
@@ -162,7 +160,8 @@ public class Main
 			sock.stop();
 		}
 		//webWorker.join();
-		if(appConn != null){
+		if(appConn != null)
+		{
 			appConn.stop();
 		}
 		appConnection.join();

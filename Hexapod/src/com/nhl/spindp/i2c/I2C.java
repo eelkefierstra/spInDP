@@ -163,6 +163,7 @@ public class I2C
 
 	public class I2CData
 	{
+		@SuppressWarnings("unused")
 		private short adcVal   = -1;
 		private short accDataX = -1;
 		private short accDataY = -1;

@@ -133,7 +133,6 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
 		int16_t gx, gy, gz, ax, ay, az;
 
 		gyroscope.getMotion6( &ax, &ay, &az, &gx, &gy, &gz);
-		
 
 		env->SetShortField(dataObj, accDataXField, (short) ax);//readWord(0x68,0x3B)
 		env->SetShortField(dataObj, accDataYField, (short) ay);//readWord(0x68,0x3D)
