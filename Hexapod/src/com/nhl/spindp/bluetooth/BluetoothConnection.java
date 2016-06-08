@@ -1,8 +1,7 @@
 package com.nhl.spindp.bluetooth;
 
 import java.util.Scanner;
-
-import com.nhl.spindp.serialconn.SerialPort;
+import com.fazecast.jSerialComm.*;
 
 public class BluetoothConnection
 {

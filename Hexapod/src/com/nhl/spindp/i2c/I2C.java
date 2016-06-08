@@ -156,9 +156,9 @@ public class I2C
 		return res;
 	}
 	
-	public double getADCInfo()
+	public short getADCInfo()
 	{
-		double res = -1;
+		short res = -1;
 		synchronized (locker)
 		{
 			res = data.adcVal;

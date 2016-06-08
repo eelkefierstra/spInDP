@@ -25,15 +25,6 @@ void throw_java_exception(JNIEnv *env, char *classname, char *message)
 	env->ThrowNew(ex, message);
 }*/
 
-short readWord(uint8_t addr, uint8_t reg)
-{
-	uint8_t buf[2] = { 0 };
-	if (I2Cdev::readBytes(addr, reg, 2, buf) != 2)
-		return 0;
-	short result = (buf[0] << 8) | buf[1];
-	return result;
-}
-
 bool i2cSetupGyro()
 {
     //wake up gyro
@@ -45,8 +36,8 @@ bool i2cSetupGyro()
 bool i2cSetupADC()
 {
     //wake up adc
-    uint8_t buff[2] = { 0x04, 0x83 };
-    return I2Cdev::writeBytes( 0x44, 0x01, 2, buff);
+    uint16_t buff = 0x0482;
+    return I2Cdev::writeWord( 0x44, 0x01, buff);
 }
 
 bool i2cCleanGyro()
@@ -58,8 +49,8 @@ bool i2cCleanGyro()
 bool i2cCleanADC()
 {
 	//knock down adc
-	uint8_t buff[2] = { 0x04, 0x03 };
-    return I2Cdev::writeBytes( 0x44, 0x01, 2, buff);
+	uint16_t buff = 0x0403 ;
+    return I2Cdev::writeWord( 0x44, 0x01, buff);
 }
 
 JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
@@ -115,7 +106,9 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
 	{
 		jfieldID adcValField = env->GetFieldID(dataCls, "adcVal", "S");
 		if (env->ExceptionCheck()) return;
-		env->SetShortField(dataObj, adcValField, readWord(0x44,0x00));
+		uint16_t res;
+		I2Cdev::readWord( 0x44, 0x00, &res);
+		env->SetShortField(dataObj, adcValField, res);
 		if (env->ExceptionCheck()) return;
 	}
 
