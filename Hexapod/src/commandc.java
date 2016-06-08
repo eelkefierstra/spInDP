@@ -1,7 +1,7 @@
 import com.nhl.spindp.Main;
 
 
-
+//This code works with the information provided by the controller
 public class commandc {
 
 	public static void main(String [] args) throws Exception
@@ -11,20 +11,21 @@ public class commandc {
 	
 	public static void controller()
 	{
-		//voor elke waarde van de controller een object
+		//for each value an object
 		String commando = "a:1,b:0,c:0,x:1000,y:200,s:5";
-		String a = "low";
-		String b = "low";
-		String c = "low";
-		int x = 0;
-		int y = 0;
-		int s = -1;
+		String a = "low"; //button a
+		String b = "low"; //button b
+		String c = "low"; //button c
+		int x = 0;        //horizontal value joystick
+		int y = 0;        //vertical value joystick
+		int s = 0;        //value lcd
+		int ss = 0;       //switch value lcd
 		
 		//loopt door string commando
 		for (int i = 0; i < commando.length(); i++)
 		{
 			
-			//zoekt naar de eerste 'a' in commando, skipt de ':' en kijkt of de waarde 1 is, indien 1 veranderd object a naar "high"
+			//searches for 'a' in "commando", skips to the value and then changes object a to high if the value is 1
 			if (commando.charAt(i) == 'a')
 			{
 				i+=2;
@@ -34,7 +35,7 @@ public class commandc {
 				}
 			}
 						
-			//zoekt naar de eerste 'b' in commando, skipt de ':' en kijkt of de waarde 1 is, indien 1 veranderd object b naar "high"
+			//searches for 'b' in "commando", skips to the value and then changes object b to high if the value is 1
 			else if (commando.charAt(i) == 'b')
 			{
 				i+=2;
@@ -44,7 +45,7 @@ public class commandc {
 				}
 			}
 			
-			//zoekt naar de eerste 'c' in commando, skipt de ':' en kijkt of de waarde 1 is, indien 1 veranderd object c naar "high"
+			//searches for 'c' in "commando", skips to the value and then changes object c to high if the value is 1
 			else if (commando.charAt(i) == 'c')
 			{
 				i+=2;
@@ -54,7 +55,7 @@ public class commandc {
 				}
 			}
 			
-			//zoekt naar de eerste 'x' in commando, skipt de ':' en kijkt wat de waarde is, veranderd object 'x' naar deze waarde
+			//searches for 'x' in "commando", skips to the value and then changes object x to an integer between 0 and 1023
 			else if (commando.charAt(i) == 'x')
 			{
 				i+=2;
@@ -66,7 +67,7 @@ public class commandc {
 				}
 			}
 			
-			//zoekt naar de eerste 'y' in commando, skipt de ':' en kijkt wat de waarde is, veranderd object 'y' naar deze waarde
+			//searches for 'y' in "commando", skips to the value and then changes object y to an integer between 0 and 1023
 			else if (commando.charAt(i) == 'y')
 			{
 				i+=2;
@@ -78,7 +79,7 @@ public class commandc {
 				}
 			}
 			
-			//zoekt naar de eerste 's' in commando, skipt de ':' en kijkt wat de waarde is, veranderd object 's' naar deze waarde
+			//searches for 's' in "commando", skips to the value and then changes object s to an integer between -1 and 9 (this is a mode)
 			else if (commando.charAt(i) == 's')
 			{
 					i+=2;			
@@ -86,49 +87,51 @@ public class commandc {
 			}
 		}
 		
-		//b is ingedrukt dus de spin wordt gestart
-		if (a == "high")
+		//b is pressed, selected mode will start
+		if (b == "high")
 		{
-			//Main.
+			ss = 0;
 		}
 		
-		//b is ingedrukt dus de kill switch wordt geactiveerd
-		else if (b == "high")
+		//a is pressed, which kills all actions "killswitch"
+		else if (a == "high")
 		{
-			
+            ss = s;
 		}
+
 		
-		//c is ingedrukt dus de spin gaat de ballon prikken
+		//c is pressed, the spider tries to destroy a balloon
 		else if (c == "high")
 		{
 			
 		}
+		else if(s == -1)
+		{
+			s = 0;
+		}
 		
-		//bocht maken
+		//make a turn
 		map(x, 0, 1023, -1.0, 1.0);
 		
 		
-		//rechtuit lopen
+		//walk straight
 		map(y, 0, 1023, -1.0, 1.0);
 		
 		
-		//opties van het schermpje van de controller (dans, race, ballondetectie etc.)
-		switch (s) {
+		//modes of the lcd screen (for example: dance, race mode etc.)
+		//the switch case calls the methods for each mode
+		switch (ss) {		
 		
-		case -1:
-			
-			break;
-		
-		case 0:
-		
+		case 0:			
+			Main.getInstance().setDirection(0, 0, 0);
 			break;
         
 		case 1:
-			
+			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		case 2:
-			
+			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		case 3:
