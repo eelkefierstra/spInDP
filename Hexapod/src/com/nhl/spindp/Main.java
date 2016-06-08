@@ -95,6 +95,15 @@ public class Main
 		I2C i2c = new I2C();
 		i2c.start();
 		
+		for (int i = 0; i < Short.MAX_VALUE; i++)
+		{
+			double adc = i2c.getADCInfo();
+			System.out.println(adc);
+			double[] res = i2c.getGyroInfo();
+			System.out.println("x: "+res[0]+" y: "+res[1]);
+			System.out.println();
+		}
+		
 		Thread appConnection = new Thread()
 		{
 			@Override
