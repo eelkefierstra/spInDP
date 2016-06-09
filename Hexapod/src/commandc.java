@@ -8,7 +8,7 @@ public class commandc {
 
 	public static void main(String [] args) throws Exception
 	{
-	     controller(args[0]);     
+	     controller("");     
 	}
 	
 	public static void controller(String commando)
@@ -65,6 +65,7 @@ public class commandc {
 					x *= 10;
 					x += Character.getNumericValue(commando.charAt(i));
 					i++;
+					System.out.println(x);
 				}
 			}
 			
@@ -76,32 +77,35 @@ public class commandc {
 				{					
 					y *= 10;
 					y += Character.getNumericValue(commando.charAt(i));
-					i++;					
+					i++;
+					System.out.println(y);
 				}
 			}
 			
 			//searches for 's' in "commando", skips to the value and then changes object s to an integer between 0 and 10 (this is a mode)
 			else if (commando.charAt(i) == 's')
 			{
+				i+=2;
 				while (i < commando.length() && Character.isDigit(commando.charAt(i)))
 				{					
 					s *= 10;
 					s += Character.getNumericValue(commando.charAt(i));
-					i++;					
+					i++;
+					System.out.println(s);
 				}
 			}
 		}
 		
-		//b is pressed, selected mode will start
-		if (b == "high")
+		//b is pressed, which kills all actions "killswitch"
+				if (b == "high")
 		{
 			ss = 0;
 		}
 		
-		//a is pressed, which kills all actions "killswitch"
+		//a is pressed, selected mode will start
 		else if (a == "high")
 		{
-            ss = s;
+            ss = s;           
 		}
 
 		//c is pressed, the spider tries to destroy a balloon
@@ -154,7 +158,7 @@ public class commandc {
 			break;
 			
 		case 7:
-			
+
 			break;
 			
 		case 8:
