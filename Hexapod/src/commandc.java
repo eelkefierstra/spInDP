@@ -1,30 +1,32 @@
 import com.nhl.spindp.Main;
+//import com.nhl.spindp.vision.*;
 
 
 //this code works with the information provided by the controller
+
 public class commandc {
 
 	public static void main(String [] args) throws Exception
 	{
-	     controller();     
+	     controller(args[0]);     
 	}
 	
-	public static void controller()
-	{
-		//for each value a object
-		String commando = "a:1,b:0,c:0,x:1000,y:200,s:5";
-		String a = "low";
-		String b = "low";
-		String c = "low";
-		int x = 0;
-		int y = 0;
-		int s = -1;
+	public static void controller(String commando)
+	{		
+		//for each value an object
+		String a = "low"; //button a
+		String b = "low"; //button b
+		String c = "low"; //button c
+		int x = 0;        //horizontal value joystick
+		int y = 0;        //vertical value joystick
+		int s = 0;        //value lcd
+		int ss = 0;       //switch value lcd
 		
 		//loops through string commando
 		for (int i = 0; i < commando.length(); i++)
 		{
 			
-			//searches for 'a' in "commando", skips to the value and then changes a to high if the value is 1
+			//searches for 'a' in "commando", skips to the value and then changes object a to high if the value is 1
 			if (commando.charAt(i) == 'a')
 			{
 				i+=2;
@@ -34,7 +36,7 @@ public class commandc {
 				}
 			}
 						
-			//searches for 'b' in "commando", skips to the value and then changes b to high if the value is 1
+		//searches for 'b' in "commando", skips to the value and then changes object b to high if the value is 1
 			else if (commando.charAt(i) == 'b')
 			{
 				i+=2;
@@ -44,7 +46,7 @@ public class commandc {
 				}
 			}
 			
-			//searches for 'c' in "commando", skips to the value and then changes c to high if the value is 1
+			//searches for 'c' in "commando", skips to the value and then changes object c to high if the value is 1
 			else if (commando.charAt(i) == 'c')
 			{
 				i+=2;
@@ -54,7 +56,7 @@ public class commandc {
 				}
 			}
 			
-			//searches for 'x' in "commando", skips to the value and then changes x to an integer between 0 and 1023
+			//searches for 'x' in "commando", skips to the value and then changes object x to an integer between 0 and 1023
 			else if (commando.charAt(i) == 'x')
 			{
 				i+=2;
@@ -66,7 +68,7 @@ public class commandc {
 				}
 			}
 			
-			//searches for 'y' in "commando", skips to the value and then changes y to an integer between 0 and 1023
+			//searches for 'y' in "commando", skips to the value and then changes object y to an integer between 0 and 1023
 			else if (commando.charAt(i) == 'y')
 			{
 				i+=2;
@@ -78,30 +80,38 @@ public class commandc {
 				}
 			}
 			
-			//searches for 's' in "commando", skips to the value and then changes s to an integer between -1 and 9 (this is a mode)
+			//searches for 's' in "commando", skips to the value and then changes object s to an integer between 0 and 10 (this is a mode)
 			else if (commando.charAt(i) == 's')
 			{
-					i+=2;			
+				while (i < commando.length() && Character.isDigit(commando.charAt(i)))
+				{					
+					s *= 10;
 					s += Character.getNumericValue(commando.charAt(i));
+					i++;					
+				}
 			}
 		}
 		
-		//a is pressed, selected mode will start
-		if (a == "high")
+		//b is pressed, selected mode will start
+		if (b == "high")
 		{
-			//Main.
+			ss = 0;
 		}
 		
-		//b is pressed, which kills all actions "killswitch"
-		else if (b == "high")
+		//a is pressed, which kills all actions "killswitch"
+		else if (a == "high")
 		{
-			
+            ss = s;
 		}
-		
-		//c is pressed, the spider tries to destroy the balloon
+
+		//c is pressed, the spider tries to destroy a balloon
 		else if (c == "high")
 		{
 			
+		}
+		else if(s == -1)
+		{
+			s = 0;
 		}
 		
 		//make a turn
@@ -111,36 +121,32 @@ public class commandc {
 		//walk straight
 		map(y, 0, 1023, -1.0, 1.0);
 		
+		//modes of the lcd screen (for example: dance, race mode etc.)
+		//the switch case calls the methods for each mode
+		switch (ss) {		
 		
-		//modes on the controller screen, when a is pressed it switches
-		switch (s) {
-		
-		case -1:
-			
-			break;
-		
-		case 0:
-		
+		case 0:			
+			Main.getInstance().setDirection(0, 0, 0);
 			break;
         
 		case 1:
-			
+			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		case 2:
-			
+			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		case 3:
-			
+			Main.getInstance().vision.start("line");
 			break;
 			
 		case 4:
-			
+			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		case 5:
-			
+			Main.getInstance().vision.start("balloon");
 			break;
 			
 		case 6:
@@ -152,7 +158,7 @@ public class commandc {
 			break;
 			
 		case 8:
-			
+			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		default:
@@ -161,6 +167,7 @@ public class commandc {
 		
 			}
 	
+	//sets to the x and y value to -1 or 1
 	private static double map(double x, double in_min, double in_max, double out_min, double out_max)
 	{
 		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");

@@ -669,13 +669,15 @@ public class ServoConnection
 		@Override
 		public byte[] call() throws Exception
 		{
-			byte[] res = { 0, 0 };
+			byte[] res = { 0, 0 , 0, 0 };
 			byte counter = 0;
-			while (res[0] != (byte)0xFF && res[1] != (byte)0xFF)
+			//boolean success = true;
+			while (res[0] != (byte)0xFF && res[1] != (byte)0xFF && res[3] + 4 == res.length)// && !success)
 			{
 				serialPort.writeBytes(message);
 				res = serialPort.readBytes();
-				if (counter++ > 2)
+				//success = Servo.compareChecksum(Arrays.copyOf(res, res.length - 1), res[res.length - 1]);
+				if (counter++ > 4)
 					break;
 			}
 			return res;

@@ -1,9 +1,15 @@
 package com.nhl.spindp.bluetooth;
 
-import java.io.IOException;
+import java.util.Scanner;
+import com.fazecast.jSerialComm.*;
 
 public class BluetoothConnection
 {
+	SerialPort port;
+	Scanner data;
+	boolean done = false;
+	Thread t2;
+	
 	public BluetoothConnection()
 	{
 		Runtime.getRuntime().addShutdownHook(new Thread()
@@ -16,9 +22,36 @@ public class BluetoothConnection
 		});
 	}
 	
-	public native boolean setupBluetooth();
+	public boolean setupBluetooth()
+	{
+		port = SerialPort.getCommPort("/dev/rfcomm1");
+		if (port.openPort())
+		{
+			port.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
+			data = new Scanner(port.getInputStream());
+			
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	
-	public native void connectionLoop() throws IOException;
+	public void cleanupBluetooth()
+	{
+		data.close();
+	}
 	
-	private native void cleanupBluetooth();
+	public void scanner()
+	{
+		while (!done)
+		{
+			while (data.hasNextLine())
+			{
+				String mes = data.nextLine();
+				System.out.println(mes);
+			}
+		}
+	}
 }

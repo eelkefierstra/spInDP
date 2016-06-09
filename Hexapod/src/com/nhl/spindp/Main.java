@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -14,14 +13,15 @@ import com.nhl.spindp.netcon.AppConnection;
 import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
+import com.nhl.spindp.vision.ObjectRecognition;
 
-@SuppressWarnings("unused")
 public class Main
 {
 	private static Main instance;
 	private static ServoConnection conn;
 	private static WebSocket sock;
 	private static AppConnection appConn;
+	public ObjectRecognition vision;
 	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
@@ -93,37 +93,38 @@ public class Main
 			}
 		};
 		webWorker.start();*/
-
+		//instance.vision = new ObjectRecognition();
 		I2C i2c = new I2C();
 		i2c.start();
-		//i2c.loopI2c();
-		//i2c.getData();
-		for (int i = 0;i < Integer.MAX_VALUE; i++)// (double d : i2c.getGyroInfo())
+		Thread.sleep(10);
+		for (int i = 0; i < Short.MAX_VALUE; i++)
 		{
-			double[] da = i2c.getGyroInfo();
-			System.out.println("x: "+da[0]+" y: "+da[1]);
+			short adc = i2c.getADCInfo();
+			System.out.println(adc);
+			double[] res = i2c.getGyroInfo();
+			System.out.println("x: "+res[0]+" y: "+res[1]);
+			System.out.println();
 		}
-		i2c.stop();
 		
-		Thread appConnection = new Thread()
-		{
-			@Override
-			public void run()
-			{
-				System.out.println("App Server started123");
-				try
-				{
-					appConn = new AppConnection(1338);
-					appConn.mainLoop();
-					System.out.println("App Server started");
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-				}
-			}
-		};
-		appConnection.start();
+//		Thread appConnection = new Thread()
+//		{
+//			@Override
+//			public void run()
+//			{
+//				System.out.println("App Server started123");
+//				try
+//				{
+//					appConn = new AppConnection(1338);
+//					appConn.mainLoop();
+//					System.out.println("App Server started");
+//				}
+//				catch (Exception ex)
+//				{
+//					ex.printStackTrace();
+//				}
+//			}
+//		};
+//		appConnection.start();
 		conn = new ServoConnection();
 		
 		failedServos = new ArrayList<>();
@@ -148,24 +149,33 @@ public class Main
 		{
 			conn.moveServo(i, (short)(j * 4));
 		}*/
-		//body.moveToAngle(45.0, 45.0, 45.0);
+		//byte[] ids    = new byte[]  { 1  , 4  , 2  , 5  , 3 , 6 };
+		//short[] stand = new short[] { 512, 512, 650, 650, 50, 50};
+		//conn.moveMultiple(ids, stand);
+		//Thread.sleep(1000);
+		//body.moveToAngle(45.0, 45.0, 30.0);
+		//Thread.sleep(1000);
+		
+		body.moveToAngle(45, 40.0, 10.0);
 		
 		while (running)
 		{
 			Time.updateDeltaTime();
 			body.walk(instance.forward, instance.right);
-			Thread.sleep(50);
+			//Thread.sleep(50);
 		}
-		
+
+		i2c.stop();
 		if (sock != null)
 		{
 			sock.stop();
 		}
 		//webWorker.join();
-		if(appConn != null){
+		if(appConn != null)
+		{
 			appConn.stop();
 		}
-		appConnection.join();
+		//appConnection.join();
 	}
 	
 	public static void servoFailed(short id)
@@ -194,7 +204,6 @@ public class Main
 	 * @param ids The id's of the servo's to be moved
 	 * @param angles The angles to move to
 	 */
-	@Deprecated
 	public void driveServo(int[] ids, int[] angles)
 	{
 		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");

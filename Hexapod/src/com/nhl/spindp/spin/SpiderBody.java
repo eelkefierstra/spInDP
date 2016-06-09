@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.nhl.spindp.Main;
+
 public class SpiderBody
 {
 	ExecutorService executor;
@@ -77,7 +79,8 @@ public class SpiderBody
 		}
 		for (SpiderLeg leg : legs)
 		{
-			leg.getAll();
+			//leg.getAll();
+			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
 	}
 	
@@ -90,7 +93,8 @@ public class SpiderBody
 		}
 		for (SpiderLeg leg : legs)
 		{
-			leg.getAll();
+			//leg.getAll();
+			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
 	}
 	

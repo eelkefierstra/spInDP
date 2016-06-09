@@ -156,6 +156,16 @@ public class I2C
 		return res;
 	}
 	
+	public short getADCInfo()
+	{
+		short res = -1;
+		synchronized (locker)
+		{
+			res = data.adcVal;
+		}
+		return res;
+	}
+	
 	public I2CData getData()
 	{
 		return data;
@@ -163,6 +173,7 @@ public class I2C
 
 	public class I2CData
 	{
+		@SuppressWarnings("unused")
 		private short adcVal   = -1;
 		private short accDataX = -1;
 		private short accDataY = -1;

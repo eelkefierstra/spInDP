@@ -11,7 +11,8 @@ import java.util.Random;
 
 import com.nhl.spindp.Main;
 
-public class AppConnection {
+public class AppConnection
+{
 
 	private ServerSocket serverSocket;
 	public AppConnection() throws IOException
@@ -26,16 +27,20 @@ public class AppConnection {
 	
 	public void mainLoop() throws IOException
 	{
-		while (true){
+		while (true)
+		{
 			Socket clientSocket = serverSocket.accept();
 			
 			InputStreamReader iStream = new InputStreamReader(clientSocket.getInputStream());
 			BufferedReader BR = new BufferedReader(iStream);
-			while (true){
+			while (true)
+			{
 				String MESSAGE = BR.readLine();
 				System.out.println(MESSAGE);
-				try{
-					if(iStream != null){
+				try
+				{
+					if(iStream != null)
+					{
 						System.out.println(iStream);
 						//SendDataToApp();
 						OutputStream out = clientSocket.getOutputStream();
@@ -45,7 +50,8 @@ public class AppConnection {
 						writer.flush();
 					}
 				}
-				catch(Exception e){
+				catch(Exception e)
+				{
 					e.printStackTrace();
 					clientSocket.close();
 					break;
@@ -54,9 +60,11 @@ public class AppConnection {
 		}
 	}
 	
-	public String CreateDataToWrite(String input){
+	public String CreateDataToWrite(String input)
+	{
 		String Result = "";
-		switch(input){
+		switch(input)
+		{
 			case "Heey":
 				Result = "Heey Terug";
 				break;
@@ -71,27 +79,35 @@ public class AppConnection {
 		return Result;
 	} 
 	
-	public String CreateRandomXML(){
+	public String CreateRandomXML()
+	{
 		String result = "";
 		 Random randomGenerator = new Random();
-		 int Id = randomGenerator.nextInt(18);
-		 int Hoek = randomGenerator.nextInt(90);
-		 int Temperatuur = randomGenerator.nextInt(90);
-		 result = "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";
+		 for(int i = 1; i <= 18; i++)
+			{
+				 int Id = i;
+				 int Hoek = randomGenerator.nextInt(90);
+				 int Temperatuur = randomGenerator.nextInt(90);
+				 result = "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";					
+			}
 		return result;
 	}
 	
-	public String CreateServoXML(){
+	public String CreateServoXML()
+	{
 		String result = "";
 		
-		for(int i = 1; i <= 18; i++){
-			try {
+		for(int i = 1; i <= 18; i++)
+		{
+			try
+			{
 				int Id = i;
 				int Hoek = Main.getInstance().readCurrentAngle((byte) i);
 				int Temperatuur = Main.getInstance().readCurrentTemperature((byte) i);
 				result += "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			}
+			catch (IOException e)
+			{
 				//e.printStackTrace();
 				result +=  "<Servo><Id>"+ Integer.toString(i) + "</Id><Hoek>" +"-1"+ "</Hoek><Temperatuur>" + "-1"+ "</Temperatuur></Servo>";
 			}
@@ -99,11 +115,14 @@ public class AppConnection {
 		return result;
 	}
 	
-	public void stop(){
-		try {
+	public void stop()
+	{
+		try
+		{
 			serverSocket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}	
 	}
