@@ -6,12 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.Future;
 
-import org.opencv.core.Core;
-
-import com.nhl.spindp.bluetooth.BluetoothConnection;
 import com.nhl.spindp.i2c.I2C;
 import com.nhl.spindp.netcon.AppConnection;
 import com.nhl.spindp.netcon.WebSocket;
@@ -26,7 +22,6 @@ public class Main
 	private static WebSocket sock;
 	private static AppConnection appConn;
 	public ObjectRecognition vision;
-	private static BluetoothConnection blue;
 	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
@@ -36,20 +31,17 @@ public class Main
 	{
 		File lib = new File(Main.class.getResource("/libs/").getPath(), "libHexapod.so");
 		System.load(lib.getAbsolutePath());
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
 	
 	private static native boolean isAlreadyRunning();
 	
 	private static native void cleanup();
 	
-	public int readCurrentAngle(byte id) throws IOException
-	{
+	public int readCurrentAngle(byte id) throws IOException{
 		return conn.readPresentLocation(id);
 	}
 	
-	public int readCurrentTemperature(byte id) throws IOException
-	{
+	public int readCurrentTemperature(byte id) throws IOException{
 		return conn.readTemperature(id);
 	}
 	
@@ -65,11 +57,11 @@ public class Main
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception
-	{
+	{/*
 		if (isAlreadyRunning())
 		{
 			System.out.println("Hexapod is already running");
-			//System.exit(1);
+			System.exit(1);
 		}
 		Runtime.getRuntime().addShutdownHook(new Thread()
 		{
@@ -78,8 +70,9 @@ public class Main
 			{
 				cleanup();
 			}
-		});
+		});*/
 		instance = new Main();
+		
 		/*
 		Thread webWorker = new Thread()
 		{
@@ -100,42 +93,38 @@ public class Main
 			}
 		};
 		webWorker.start();*/
-		instance.vision = new ObjectRecognition();
-		
+		//instance.vision = new ObjectRecognition();
 		I2C i2c = new I2C();
-		/*i2c.start();
+		i2c.start();
 		Thread.sleep(10);
-		for (int i = 0; i < Byte.MAX_VALUE; i++)
+		for (int i = 0; i < Short.MAX_VALUE; i++)
 		{
 			short adc = i2c.getADCInfo();
 			System.out.println(adc);
 			double[] res = i2c.getGyroInfo();
 			System.out.println("x: "+res[0]+" y: "+res[1]);
 			System.out.println();
-		}*/
+		}
 		
-		blue = new BluetoothConnection();
-		blue.setupBluetooth();
-		
-		Thread appConnection = new Thread()
-		{
-			@Override
-			public void run()
-			{
-				System.out.println("App Server started");
-				try
-				{
-					appConn = new AppConnection(1338);
-					appConn.mainLoop();
-					System.out.println("App Server stopped");
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-				}
-			}
-		};
-		appConnection.start();
+//		Thread appConnection = new Thread()
+//		{
+//			@Override
+//			public void run()
+//			{
+//				System.out.println("App Server started123");
+//				try
+//				{
+//					appConn = new AppConnection(1338);
+//					appConn.mainLoop();
+//					System.out.println("App Server started");
+//				}
+//				catch (Exception ex)
+//				{
+//					ex.printStackTrace();
+//				}
+//			}
+//		};
+//		appConnection.start();
 		conn = new ServoConnection();
 		
 		failedServos = new ArrayList<>();
@@ -167,30 +156,16 @@ public class Main
 		//body.moveToAngle(45.0, 45.0, 30.0);
 		//Thread.sleep(1000);
 		
-		//body.moveToAngle(45, 40.0, 10.0);
-		Scanner scan = new Scanner(System.in);
-		String input;
-		body.stabbyStab();
+		body.moveToAngle(45, 40.0, 10.0);
+		
 		while (running)
 		{
 			Time.updateDeltaTime();
-			//body.walk(instance.forward, instance.right);
-			Thread.sleep(1);
-
-			if(scan.hasNext())
-			{
-				if((input = scan.next().toLowerCase()).equals("exit"))
-				{
-	        		running = false;
-				}
-				else
-				{
-					System.out.println(input);
-				}
-			}
+			body.walk(instance.forward, instance.right);
+			//Thread.sleep(50);
 		}
-        scan.close();
 
+		i2c.stop();
 		if (sock != null)
 		{
 			sock.stop();
@@ -219,7 +194,6 @@ public class Main
 		this.right   = right;
 	}
 	
-	@Deprecated
 	public static Future<byte[]> submitInstruction(byte[] message)
 	{
 		return conn.submitInstruction(message);
@@ -239,7 +213,7 @@ public class Main
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
 				//System.out.println(conn.readPresentLocation((byte)i));
-				//Thread.sleep(5);
+				Thread.sleep(5);
 			}
 			catch (Exception ex)
 			{

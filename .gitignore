@@ -16,7 +16,6 @@ hs_err_pid*
 /.project
 */bin/*
 */Debug/*
-/.metadata
 
 /IDP-Model/[Ll]ibrary/
 /IDP-Model/[Tt]emp/

@@ -46,8 +46,8 @@ public class I2C
 	public void start()
 	{
 		done = false;
-		t1 = new Thread()
-		{
+		t1 = new Thread(){
+
 			@Override
 			public void run()
 			{
@@ -62,8 +62,7 @@ public class I2C
 		done = true;
 		try
 		{
-			if(t1 != null)
-			    t1.join();
+			t1.join();
 		}
 		catch (InterruptedException e)
 		{
@@ -87,11 +86,48 @@ public class I2C
 	//loop this method to continuesly refresh gyro values
 	private void filter()
 	{
+		scale();
+		
 		double accXscale = (double)data.accDataX / 16384.0;
 		double accYscale = (double)data.accDataY / 16384.0;
 		double accZscale = (double)data.accDataZ / 16384.0;
 		rx = Math.toDegrees(Math.atan2(accYscale, dist(accXscale, accZscale)));
 		ry = Math.toDegrees(Math.atan2(accXscale, dist(accYscale, accZscale)));
+		
+		//System.out.println("Gyro out   = X: "+data.gyroX+" Y: "+data.gyroY+" Z: "+data.gyroZ);
+		//System.out.println("Gyro scale = X: "+gsx+" Y: "+gsy+" Z: "+gsz);
+		//System.out.println("Acc out    = X: "+data.accDataX+" Y: "+data.accDataY+" Z: "+data.accDataZ);
+		//System.out.println("Acc scale  = X: "+accXscale+" Y: "+accYscale+" Z: "+accZscale);
+		
+		/*
+		scale();
+		//calc acc angles
+		arx = Math.toDegrees(Math.atan((double) (data.accDataX) / Math.sqrt(Math.pow(data.accDataY,2) + Math.pow(data.accDataZ, 2))));
+ 		ary = Math.toDegrees(Math.atan((double) data.accDataY / Math.sqrt(Math.pow(data.accDataX,2) + Math.pow(data.accDataZ, 2))));
+		arz = Math.toDegrees(Math.atan(Math.sqrt(Math.pow(data.accDataY, 2) + Math.pow(data.accDataX, 2)) / (double) data.accDataZ));
+		
+		if (init)
+		{
+			//set initial val equal to gyro values
+			grx = arx;
+			gry = ary;
+			grz = arz;
+			
+			init = !init;
+		}
+		//integrate to get gyro angle
+		else
+		{
+			grx = grx + (timeStep * gsx);
+			gry = gry + (timeStep * gsy);
+			grz = grz + (timeStep * gsz);
+		}
+		
+		//apply filter
+		rx = (0.96 * arx) + (0.04 * grx);
+		ry = (0.96 * ary) + (0.04 * gry);
+		rz = (0.96 * arz) + (0.04 * grz);
+		*/
 	}
 	
 	public double[] getGyroInfo()
@@ -137,6 +173,7 @@ public class I2C
 
 	public class I2CData
 	{
+		@SuppressWarnings("unused")
 		private short adcVal   = -1;
 		private short accDataX = -1;
 		private short accDataY = -1;
