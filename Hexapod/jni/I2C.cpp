@@ -18,6 +18,7 @@ using namespace std;
 
 bool gyro = false, adc = false;
 MPU6050 gyroscope;
+uint8_t gyroAddr = 0x68, adcAddr = 0x48;
 /*
 void throw_java_exception(JNIEnv *env, char *classname, char *message)
 {
@@ -28,7 +29,7 @@ void throw_java_exception(JNIEnv *env, char *classname, char *message)
 bool i2cSetupGyro()
 {
     //wake up gyro
-	//return I2Cdev::writeBit( 0x68, 0x6b, 6, 0b0);
+	//return I2Cdev::writeBit( gyroAddr, 0x6b, 6, 0b0);
 	gyroscope.initialize();
 	return gyroscope.testConnection();
 }
@@ -37,20 +38,20 @@ bool i2cSetupADC()
 {
     //wake up adc
     uint16_t buff = 0x0482;
-    return I2Cdev::writeWord( 0x44, 0x01, buff);
+    return I2Cdev::writeWord( adcAddr, 0x01, buff);
 }
 
 bool i2cCleanGyro()
 {
 	//knock down gyro
-	return I2Cdev::writeBit( 0x68, 0x6b, 6, 1);
+	return I2Cdev::writeBit( gyroAddr, 0x6b, 6, 1);
 }
 
 bool i2cCleanADC()
 {
 	//knock down adc
 	uint16_t buff = 0x0403 ;
-    return I2Cdev::writeWord( 0x44, 0x01, buff);
+    return I2Cdev::writeWord( adcAddr, 0x01, buff);
 }
 
 JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
@@ -106,9 +107,9 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
 	{
 		jfieldID adcValField = env->GetFieldID(dataCls, "adcVal", "S");
 		if (env->ExceptionCheck()) return;
-		uint16_t res;
-		I2Cdev::readWord( 0x44, 0x00, &res);
-		env->SetShortField(dataObj, adcValField, res);
+		uint8_t res[2] = { -1, -1};
+		I2Cdev::readBytes( adcAddr, 0x00, 2, res);
+		env->SetShortField(dataObj, adcValField, (res[ 0] << 8) | res[ 1]);
 		if (env->ExceptionCheck()) return;
 	}
 

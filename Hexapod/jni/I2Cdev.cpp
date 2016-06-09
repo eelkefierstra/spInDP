@@ -392,7 +392,8 @@ bool I2Cdev::writeWords(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint16
     }
 
     fd = open("/dev/i2c-1", O_RDWR);
-    if (fd < 0) {
+    if (fd < 0)
+    {
         fprintf(stderr, "Failed to open device: %s\n", strerror(errno));
         return(FALSE);
     }
