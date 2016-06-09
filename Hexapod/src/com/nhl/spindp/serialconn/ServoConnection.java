@@ -39,37 +39,20 @@ public class ServoConnection
 		});
 	}
 	
+	@Deprecated
 	public synchronized Future<byte[]> submitInstruction(byte[] message)
 	{
 		//return instructions.offer(message);
 		return serialWorker.submit(new ServoInstruction(message));
 	}
-	
-	public void sendQueuedInstructions()
-	{/*
-		while (!instructions.isEmpty())
-		{
-			try
-			{
-				serialPort.writeBytes(instructions.poll());
-				serialPort.readBytes();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}*/
-	}
-	
+		
 	/**
 	 * Sends tests instructions
 	 * @throws IOException
 	 */
 	public void sendTestingInstruction() throws IOException
 	{
-		setDirectionPin(true);
 		serialPort.writeBytes(new byte[] { (byte)0xFF, (byte)0xFF, 0x01, 0x02, 0x01, (byte)0xFB });
-		setDirectionPin(false);
 		serialPort.readBytes();
 	}
 	
@@ -80,12 +63,10 @@ public class ServoConnection
 	 */
 	public void sendResetToAll() throws IOException
 	{
-		for (int i = 0; i < Servo.BCASTID; i++)
+		synchronized (this)
 		{
-			byte[] buffer = Servo.createResetInstruction((byte)i);
-			setDirectionPin(true);
+			byte[] buffer = Servo.createResetInstruction((Servo.BCASTID));
 			serialPort.writeBytes(buffer);
-			setDirectionPin(false);
 		}
 	}
 	
@@ -101,13 +82,15 @@ public class ServoConnection
 	public boolean writeData(byte id, byte address, byte data) throws IOException
 	{
 		byte[] buffer = Servo.createWriteDataInstruction(id, address, data);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -121,8 +104,6 @@ public class ServoConnection
 	 */
 	public void sendAsyncInstruction() throws IOException
 	{
-		setDirectionPin(true);
-		setDirectionPin(false);
 		throw new NotImplementedException();
 	}
 	
@@ -136,13 +117,15 @@ public class ServoConnection
 	public boolean pingServo(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createPingInstruction(id);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -160,9 +143,7 @@ public class ServoConnection
 	public boolean resetServo(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createResetInstruction(id);
-		setDirectionPin(true);
 		serialPort.writeBytes(buffer);
-		setDirectionPin(false);
 		byte[] res = readData();
 		for (byte b : res)
 		{
@@ -181,13 +162,15 @@ public class ServoConnection
 	public boolean setServoId(byte id, byte newId) throws IOException
 	{
 		byte[] buffer = Servo.createWriteDataInstruction(id, Servo.ADDRESS_ID, newId);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -208,14 +191,15 @@ public class ServoConnection
 	{
 		byte[] buffer = Servo.createMoveServoInstruction(id, position);
 		//System.out.println(DatatypeConverter.printHexBinary(buffer));
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		//Thread.sleep(1000);
-		byte[] res = readData();
 		/*for (byte b : res)
 		{
 			System.out.println(b);
@@ -236,13 +220,15 @@ public class ServoConnection
 	public boolean moveServo(byte id, short position, short speed) throws IOException, InterruptedException
 	{
 		byte[] buffer = Servo.createMoveServoInstruction(id, position, speed);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		/*for (byte b : res)
 		{
 			System.out.println(b);
@@ -261,13 +247,15 @@ public class ServoConnection
 	public boolean writeMoveServo(byte id, short position) throws IOException
 	{
 		byte[] buffer = Servo.createWriteMoveServoInstruction(id, position);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -286,13 +274,15 @@ public class ServoConnection
 	public boolean writeMoveServo(byte id, short position, short speed) throws IOException
 	{
 		byte[] buffer = Servo.createWriteMoveServoInstruction(id, position, speed);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -307,12 +297,10 @@ public class ServoConnection
 	public void sendAction() throws IOException
 	{
 		byte[] buffer = Servo.createActionInstruction();
-		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setDirectionPin(false);
 	}
 	
 	/**
@@ -335,12 +323,10 @@ public class ServoConnection
 			parameters[i+2] = (byte)((positions[i/3] >> 8) &0xFF);
 		}
 		byte[] buffer = Servo.createSyncWriteDataInstruction(Servo.ADDRESS_GOAL_POSITION, parameters);
-		setDirectionPin(true);
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
 		}
-		setDirectionPin(false);
 	}
 	
 
@@ -355,13 +341,15 @@ public class ServoConnection
 	public boolean setAngleLimit(byte id, short cwLimit, short ccwLimit) throws IOException
 	{
 		byte[] buffer = Servo.createSetAngleLimitInstruction(id, cwLimit, ccwLimit);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -380,13 +368,15 @@ public class ServoConnection
 	public boolean setTorqueLimit(byte id, short limit) throws IOException
 	{
 		byte[] buffer = Servo.createSetTorqueLimitInstruction(id, limit);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -405,13 +395,15 @@ public class ServoConnection
 	public boolean setPunchLimit(byte id, short limit) throws IOException
 	{
 		byte[] buffer = Servo.createSetPunchLimit(id, limit);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -432,13 +424,15 @@ public class ServoConnection
 	public boolean setCompliance(byte id, byte cwMargin, byte ccwMargin, byte cwSlope, byte ccwSlope) throws IOException
 	{
 		byte[] buffer = Servo.createSetComplianceInstruction(id, cwMargin, ccwMargin, cwSlope, ccwSlope);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -455,13 +449,15 @@ public class ServoConnection
 	public int readTemperature(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_TEMP);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -478,13 +474,15 @@ public class ServoConnection
 	public int readPresentLocation(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_POS);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -502,13 +500,15 @@ public class ServoConnection
 	public int readVoltage(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_VOLTAGE); 
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -526,13 +526,15 @@ public class ServoConnection
 	public int readSpeed(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_SPEED); 
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -550,13 +552,15 @@ public class ServoConnection
 	public int readLoad(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_LOAD);
-		setDirectionPin(true);
-		if (!serialPort.writeBytes(buffer))
+		byte[] res;
+		synchronized (this)
 		{
-			System.out.println("Send instruction failed");
+			if (!serialPort.writeBytes(buffer))
+			{
+				System.out.println("Send instruction failed");
+			}
+			res = readData();
 		}
-		setDirectionPin(false);
-		byte[] res = readData();
 		for (byte b : res)
 		{
 			System.out.println(b);
@@ -575,13 +579,13 @@ public class ServoConnection
 		byte[] buffer = serialPort.readBytes();//(5, 100);
 		byte[] data = new byte[0];
 		//if prefix incorrect
-		if((buffer[0] != 0xFF) || (buffer[1] != 0xFF)) return data;
+		if((buffer[0] != (byte)0xFF) || (buffer[1] != (byte)0xFF) || buffer.length < 4) return data;
 		error = buffer[4];
 		if (buffer[3] != 0)
 		{
 			//data = serialPort.readBytes(buffer[3] - 1);//, 10);
-			data = Arrays.copyOfRange(buffer, 5, buffer.length);
-			boolean checksum = Servo.compareChecksum(concat(buffer, data), data[data.length - 1]);
+			data = Arrays.copyOfRange(buffer, 0, buffer.length);
+			boolean checksum = Servo.compareChecksum(data, data[data.length - 1]);
 			//System.out.println("Recieved " + String.valueOf(buffer.length) + " bytes");
 			/*for (byte b : data)
 			{
@@ -621,20 +625,6 @@ public class ServoConnection
 	}
 	
 	/**
-	 * Sets the direction pin with the specified value
-	 * @param val The value to set the pin to
-	 * @throws IOException
-	 */
-	@Deprecated
-	private void setDirectionPin(boolean val)
-	{/*
-		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
-		writer.write(String.format("w %s %s\n", signalPin, val ? 1 : 0));
-		writer.flush();
-		writer.close();*/
-	}
-	
-	/**
 	 * Combines a list of arrays into one byte array
 	 * @param first the first array
 	 * @param rest the rest of the arrays
@@ -657,6 +647,7 @@ public class ServoConnection
 		return result;
 	}
 	
+	@Deprecated
 	public class ServoInstruction implements Callable<byte[]>
 	{
 		byte[] message;

@@ -21,7 +21,7 @@ public class ObjectRecognition
 	// a timer for acquiring the video stream
 	private ScheduledExecutorService timer;
 	// the OpenCV object that performs the video capture
-	private VideoCapture capture = new VideoCapture();
+	private VideoCapture capture = new VideoCapture(0);
 	// a flag to change the button behavior
 	private boolean cameraActive = false;
 	

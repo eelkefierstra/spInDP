@@ -86,8 +86,16 @@ public class SpiderBody
 	
 	public void stabbyStab()
 	{
-		legs[0].moveToDegrees(45.0, 105.0, 45.0);
-		legs[3].moveToDegrees(45.0, 105.0, 45.0);
+		legs[0].moveToDegrees(45.0, 115.0, 45.0);
+		legs[1].moveToDegrees( 0.0, 115.0, 45.0);
+		legs[2].moveToDegrees(90.0, 115.0, 45.0);
+		legs[3].moveToDegrees(45.0, 115.0, 45.0);
+		legs[4].moveToDegrees( 0.0, 115.0, 45.0);
+		legs[5].moveToDegrees(45.0, 115.0, 45.0);
+		for (SpiderLeg leg : legs)
+		{
+			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+		}
 	}
 	
 	public void moveToAngle(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException

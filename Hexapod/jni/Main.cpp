@@ -15,8 +15,6 @@
 
 using namespace std;
 
-
-
 JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_Main_isAlreadyRunning
   (JNIEnv *, jclass)
 {
@@ -28,7 +26,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_Main_isAlreadyRunning
 	pid_t pid = getpid();
 	ofstream pidFile;
 	pidFile.open(PIDFILE);
-	pidFile << pid;
+	pidFile << pid << endl;
 	pidFile.close();
 	return false;
 }
