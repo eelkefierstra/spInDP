@@ -83,10 +83,13 @@ public class AppConnection
 	{
 		String result = "";
 		 Random randomGenerator = new Random();
-		 int Id = randomGenerator.nextInt(18);
-		 int Hoek = randomGenerator.nextInt(90);
-		 int Temperatuur = randomGenerator.nextInt(90);
-		 result = "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";
+		 for(int i = 1; i <= 18; i++)
+			{
+				 int Id = i;
+				 int Hoek = randomGenerator.nextInt(90);
+				 int Temperatuur = randomGenerator.nextInt(90);
+				 result = "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";					
+			}
 		return result;
 	}
 	

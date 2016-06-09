@@ -6,13 +6,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.Future;
 
+import com.nhl.spindp.bluetooth.BluetoothConnection;
 import com.nhl.spindp.i2c.I2C;
 import com.nhl.spindp.netcon.AppConnection;
 import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;
 import com.nhl.spindp.spin.SpiderBody;
+import com.nhl.spindp.vision.ObjectRecognition;
 
 public class Main
 {
@@ -20,6 +23,8 @@ public class Main
 	private static ServoConnection conn;
 	private static WebSocket sock;
 	private static AppConnection appConn;
+	public ObjectRecognition vision;
+	private BluetoothConnection blue;
 	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
@@ -91,38 +96,41 @@ public class Main
 			}
 		};
 		webWorker.start();*/
-
-		I2C i2c = new I2C();
-		i2c.start();
+		//instance.vision = new ObjectRecognition();
+//		I2C i2c = new I2C();
+//		i2c.start();
+//		Thread.sleep(10);
+//		for (int i = 0; i < Byte.MAX_VALUE; i++)
+//		{
+//			short adc = i2c.getADCInfo();
+//			System.out.println(adc);
+//			double[] res = i2c.getGyroInfo();
+//			System.out.println("x: "+res[0]+" y: "+res[1]);
+//			System.out.println();
+//		}
 		
-		for (int i = 0; i < Short.MAX_VALUE; i++)
-		{
-			double adc = i2c.getADCInfo();
-			System.out.println(adc);
-			double[] res = i2c.getGyroInfo();
-			System.out.println("x: "+res[0]+" y: "+res[1]);
-			System.out.println();
-		}
+		instance.blue = new BluetoothConnection();
+		instance.blue.setupBluetooth();
 		
-		Thread appConnection = new Thread()
-		{
-			@Override
-			public void run()
-			{
-				System.out.println("App Server started123");
-				try
-				{
-					appConn = new AppConnection(1338);
-					appConn.mainLoop();
-					System.out.println("App Server started");
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-				}
-			}
-		};
-		appConnection.start();
+//		Thread appConnection = new Thread()
+//		{
+//			@Override
+//			public void run()
+//			{
+//				System.out.println("App Server started123");
+//				try
+//				{
+//					appConn = new AppConnection(1338);
+//					appConn.mainLoop();
+//					System.out.println("App Server started");
+//				}
+//				catch (Exception ex)
+//				{
+//					ex.printStackTrace();
+//				}
+//			}
+//		};
+//		appConnection.start();
 		conn = new ServoConnection();
 		
 		failedServos = new ArrayList<>();
@@ -147,18 +155,38 @@ public class Main
 		{
 			conn.moveServo(i, (short)(j * 4));
 		}*/
-		//body.moveToAngle(45.0, 45.0, 45.0);
+		//byte[] ids    = new byte[]  { 1  , 4  , 2  , 5  , 3 , 6 };
+		//short[] stand = new short[] { 512, 512, 650, 650, 50, 50};
+		//conn.moveMultiple(ids, stand);
+		//Thread.sleep(1000);
+		//body.moveToAngle(45.0, 45.0, 30.0);
+		//Thread.sleep(1000);
 		
-		body.moveToAngle(45, 40.0, 10.0);
-		
+		//body.moveToAngle(45, 40.0, 10.0);
+		Scanner scan = new Scanner(System.in);
+		String input;
+		body.stabbyStab();
 		while (running)
 		{
 			Time.updateDeltaTime();
-			body.walk(instance.forward, instance.right);
-			Thread.sleep(50);
-		}
+			//body.walk(instance.forward, instance.right);
+			Thread.sleep(100);
 
-		i2c.stop();
+			if(scan.hasNext())
+			{
+				if((input=scan.next().toLowerCase()).equals("exit"))
+				{
+	        		running = false;
+				}
+				else
+				{
+					System.out.println(input);
+				}
+			}
+		}
+		
+        scan.close();
+
 		if (sock != null)
 		{
 			sock.stop();
@@ -168,7 +196,7 @@ public class Main
 		{
 			appConn.stop();
 		}
-		appConnection.join();
+		//appConnection.join();
 	}
 	
 	public static void servoFailed(short id)
@@ -197,7 +225,6 @@ public class Main
 	 * @param ids The id's of the servo's to be moved
 	 * @param angles The angles to move to
 	 */
-	@Deprecated
 	public void driveServo(int[] ids, int[] angles)
 	{
 		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");
@@ -207,7 +234,7 @@ public class Main
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
 				//System.out.println(conn.readPresentLocation((byte)i));
-				Thread.sleep(5);
+				//Thread.sleep(5);
 			}
 			catch (Exception ex)
 			{

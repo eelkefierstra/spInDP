@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.nhl.spindp.Main;
+
 public class SpiderBody
 {
 	ExecutorService executor;
@@ -77,8 +79,15 @@ public class SpiderBody
 		}
 		for (SpiderLeg leg : legs)
 		{
-			leg.getAll();
+			//leg.getAll();
+			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
+	}
+	
+	public void stabbyStab()
+	{
+		legs[0].moveToDegrees(45.0, 105.0, 45.0);
+		legs[3].moveToDegrees(45.0, 105.0, 45.0);
 	}
 	
 	public void moveToAngle(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException
@@ -90,7 +99,8 @@ public class SpiderBody
 		}
 		for (SpiderLeg leg : legs)
 		{
-			leg.getAll();
+			//leg.getAll();
+			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
 	}
 	
