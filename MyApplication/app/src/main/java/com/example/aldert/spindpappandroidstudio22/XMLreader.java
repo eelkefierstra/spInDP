@@ -17,7 +17,7 @@ import static java.lang.System.in;
  */
 
 public class XMLreader{
-    Servo servo[] = new Servo[19];
+    Servo servo[] = new Servo[18];
     int id;
     int hoek;
     int temperatuur;
@@ -61,7 +61,6 @@ public class XMLreader{
                     break;
             }
         }
-        servo[18] =  new Servo(id, hoek, temperatuur);
     }
 
     Servo[] getServo(){

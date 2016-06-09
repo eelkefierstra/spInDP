@@ -16,7 +16,6 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     static final ServerConnection conn = new ServerConnection("10.42.1.1", 1338);
-    static boolean Connected = false;
     Activity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +69,10 @@ public class MainActivity extends AppCompatActivity {
                     conn.connect();
                     showToast("Connected");
                     conn.sendString("Heey");
-                    Connected = true;
                     conn.readResponse();
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Connected = false;
                     showToast("Niet connected");
                 }
             }

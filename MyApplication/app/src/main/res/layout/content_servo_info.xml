@@ -9,629 +9,117 @@
     tools:context="com.example.aldert.spindpappandroidstudio22.ServoInfo"
     tools:showIn="@layout/activity_servo_info"
     tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="25dp">
+    tools:layout_editor_absoluteY="81dp">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="344dp"
-        android:layout_height="551dp"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp"
+    <TextView
+        android:text="Servo Id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="9dp"
+        tools:layout_editor_absoluteY="16dp"
+        android:id="@+id/Servo1"
+        app:layout_constraintTop_toTopOf="@+id/content_servo_info"
+        android:layout_marginTop="16dp"
+        tools:layout_constraintTop_creator="0"
+        app:layout_constraintRight_toRightOf="@+id/Servo2"
+        android:layout_marginEnd="4dp"
+        tools:layout_constraintRight_creator="1" />
+
+    <TextView
+        android:text="Hoek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="32dp"
+        tools:layout_editor_absoluteY="40dp"
+        android:id="@+id/Servo2"
+        app:layout_constraintLeft_toLeftOf="@+id/Servo3"
+        android:layout_marginStart="2dp"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintTop_toBottomOf="@+id/Servo1"
+        android:layout_marginTop="8dp"
+        tools:layout_constraintTop_creator="0" />
+
+    <TextView
+        android:text="Temperatuur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="30dp"
+        tools:layout_editor_absoluteY="63dp"
+        android:id="@+id/Servo3"
         app:layout_constraintLeft_toLeftOf="@+id/content_servo_info"
+        android:layout_marginStart="30dp"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintTop_toBottomOf="@+id/Servo2"
+        android:layout_marginTop="7dp"
+        tools:layout_constraintTop_creator="1" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="16dp"
+        android:id="@+id/Hoek1"
+        app:layout_constraintLeft_toRightOf="@+id/Servo3"
+        android:layout_marginStart="24dp"
         tools:layout_constraintLeft_creator="0"
         app:layout_constraintTop_toTopOf="@+id/content_servo_info"
+        android:layout_marginTop="16dp"
+        tools:layout_constraintTop_creator="0" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="40dp"
+        android:id="@+id/Hoek2"
+        app:layout_constraintTop_toTopOf="@+id/Servo2"
         tools:layout_constraintTop_creator="0"
-        app:layout_constraintRight_toRightOf="@+id/content_servo_info"
-        tools:layout_constraintRight_creator="0"
-        app:layout_constraintBottom_toBottomOf="@+id/content_servo_info"
-        tools:layout_constraintBottom_creator="0">
-
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="33dp">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView70" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp">
-
-                <TextView
-                    android:text="Servo ID"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="33dp" />
-
-                <TextView
-                    android:text="Hoek"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="33dp" />
-
-                <TextView
-                    android:text="Temperatuur"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temperatuur"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="33dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="16dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID1"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="49dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek1"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="49dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp1"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="49dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="33dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID2"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="66dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek2"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="66dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp2"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="66dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="50dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID3"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="83dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek3"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="83dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp3"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="83dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="66dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID4"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="99dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek4"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="99dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp4"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="99dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="83dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID5"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="116dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek5"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="116dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp5"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="116dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="100dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID6"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="133dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek6"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="133dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp6"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="133dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="116dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID7"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="149dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek7"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="149dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp7"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="149dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="133dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID8"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="166dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek8"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="166dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp8"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="166dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="150dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID9"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="183dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek9"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="183dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp9"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="183dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="166dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID10"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="199dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek10"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="199dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp10"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="199dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="183dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID11"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="216dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek11"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="216dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp11"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="216dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="200dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID12"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="233dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek12"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="233dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp12"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="233dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="216dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID13"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="249dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek13"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="249dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp13"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="249dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="233dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID14"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="266dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek14"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="266dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp14"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="266dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="250dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID15"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="283dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek15"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="283dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp15"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="283dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="266dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID16"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="299dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek16"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="299dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp16"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="299dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="283dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID17"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="316dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek17"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="316dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp17"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="316dp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="195dp"
-                android:layout_height="16dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="300dp">
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ID18"
-                    tools:layout_editor_absoluteX="8dp"
-                    tools:layout_editor_absoluteY="333dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hoek18"
-                    tools:layout_editor_absoluteX="65dp"
-                    tools:layout_editor_absoluteY="333dp" />
-
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Temp18"
-                    tools:layout_editor_absoluteX="123dp"
-                    tools:layout_editor_absoluteY="333dp" />
-            </TableRow>
-        </TableLayout>
-    </LinearLayout>
-
+        app:layout_constraintRight_toRightOf="@+id/Hoek1"
+        tools:layout_constraintRight_creator="0" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="64dp"
+        android:id="@+id/Hoek3" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="104dp"
+        android:id="@+id/Temperatuur1"
+        app:layout_constraintTop_toBottomOf="@+id/Hoek3"
+        android:layout_marginTop="24dp"
+        tools:layout_constraintTop_creator="0"
+        app:layout_constraintRight_toRightOf="@+id/Hoek3"
+        tools:layout_constraintRight_creator="0" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="238dp"
+        android:id="@+id/Temperatuur2"
+        app:layout_constraintRight_toRightOf="@+id/Temperatuur1"
+        tools:layout_constraintRight_creator="0" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="262dp"
+        android:id="@+id/Temperatuur3"
+        app:layout_constraintTop_toBottomOf="@+id/Temperatuur2"
+        android:layout_marginTop="8dp"
+        tools:layout_constraintTop_creator="0"
+        app:layout_constraintRight_toRightOf="@+id/Temperatuur2"
+        tools:layout_constraintRight_creator="0" />
 </android.support.constraint.ConstraintLayout>

@@ -15,7 +15,7 @@ import java.net.Socket;
  */
 
 public class ServerConnection {
-    private Servo[] mServos = new Servo[19];
+    private Servo[] mServos = new Servo[18];
     private String mHostname;
     private int mPort;
     private Socket mSocket;

@@ -37,7 +37,7 @@ bool i2cSetupADC()
 {
     //wake up adc
     uint16_t buff = 0x0482;
-    return I2Cdev::writeWord( 0x44, 0x01, buff);
+    return I2Cdev::writeWord( 0x48, 0x01, buff);
 }
 
 bool i2cCleanGyro()
@@ -50,7 +50,7 @@ bool i2cCleanADC()
 {
 	//knock down adc
 	uint16_t buff = 0x0403 ;
-    return I2Cdev::writeWord( 0x44, 0x01, buff);
+    return I2Cdev::writeWord( 0x48, 0x01, buff);
 }
 
 JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
@@ -107,7 +107,7 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
 		jfieldID adcValField = env->GetFieldID(dataCls, "adcVal", "S");
 		if (env->ExceptionCheck()) return;
 		uint16_t res;
-		I2Cdev::readWord( 0x44, 0x00, &res);
+		I2Cdev::readWord( 0x48, 0x00, &res);
 		env->SetShortField(dataObj, adcValField, res);
 		if (env->ExceptionCheck()) return;
 	}
