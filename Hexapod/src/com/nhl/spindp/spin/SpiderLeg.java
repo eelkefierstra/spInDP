@@ -20,7 +20,7 @@ class SpiderLeg implements Runnable
 	private static final double A_MAX    =  90.0;
 	private static final double A_RAD    = Math.toRadians(A_MAX / 2.0);
 	private static final double C        = 160.0;
-	private static final double E        =  90.0;
+	private static final double E        =  90.0 * 1.25;
 	private static final double F        =  35.0;
 	private static final double L        = 127.0;
 	private static final double LACCENT  = Math.cos(A_RAD) * L;
@@ -28,7 +28,7 @@ class SpiderLeg implements Runnable
 	private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
 	private static final double coxalimL =  0.0;
 	private static final double coxalimH = 90.0;
-	private static volatile double PAR_X = 25.0;
+	private static volatile double PAR_X = 50.0;
 	private static volatile double PAR_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0)), 2.0);
 	
 	private ExecutorService executor;
@@ -119,8 +119,8 @@ class SpiderLeg implements Runnable
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
-			if (!set && forward > 0) coxaChange += ((45.0 * Time.deltaTime) * forward);
-			if (set && forward > 0) coxaChange -= ((45.0 * Time.deltaTime) * forward);
+			if (!set && forward > 0) coxaChange += ((90.0 * Time.deltaTime) * forward);
+			if (set && forward > 0) coxaChange -= ((90.0 * Time.deltaTime) * forward);
 			future = executor.submit(this);
 			res = true;
 		}

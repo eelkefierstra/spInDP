@@ -1,14 +1,11 @@
+package com.nhl.spindp.bluetooth;
 import com.nhl.spindp.Main;
 import com.nhl.spindp.vision.*;
 
 
 //This code works with the information provided by the controller
-public class commandc {
-
-	public static void main(String [] args) throws Exception
-	{
-	     controller(args[0]);     
-	}
+public class commandc
+{
 	
 	public static void controller(String commando)
 	{

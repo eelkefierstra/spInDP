@@ -84,6 +84,12 @@ public class SpiderBody
 		}
 	}
 	
+	public void stabbyStab()
+	{
+		legs[0].moveToDegrees(45.0, 105.0, 45.0);
+		legs[3].moveToDegrees(45.0, 105.0, 45.0);
+	}
+	
 	public void moveToAngle(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException
 	{
 		//SpiderLeg leg = legs[0];

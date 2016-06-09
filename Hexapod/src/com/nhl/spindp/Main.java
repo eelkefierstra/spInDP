@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.Future;
 
+import com.nhl.spindp.bluetooth.BluetoothConnection;
 import com.nhl.spindp.i2c.I2C;
 import com.nhl.spindp.netcon.AppConnection;
 import com.nhl.spindp.netcon.WebSocket;
@@ -22,6 +24,7 @@ public class Main
 	private static WebSocket sock;
 	private static AppConnection appConn;
 	public ObjectRecognition vision;
+	private BluetoothConnection blue;
 	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
@@ -94,17 +97,20 @@ public class Main
 		};
 		webWorker.start();*/
 		//instance.vision = new ObjectRecognition();
-		I2C i2c = new I2C();
-		i2c.start();
-		Thread.sleep(10);
-		for (int i = 0; i < Short.MAX_VALUE; i++)
-		{
-			short adc = i2c.getADCInfo();
-			System.out.println(adc);
-			double[] res = i2c.getGyroInfo();
-			System.out.println("x: "+res[0]+" y: "+res[1]);
-			System.out.println();
-		}
+//		I2C i2c = new I2C();
+//		i2c.start();
+//		Thread.sleep(10);
+//		for (int i = 0; i < Byte.MAX_VALUE; i++)
+//		{
+//			short adc = i2c.getADCInfo();
+//			System.out.println(adc);
+//			double[] res = i2c.getGyroInfo();
+//			System.out.println("x: "+res[0]+" y: "+res[1]);
+//			System.out.println();
+//		}
+		
+		instance.blue = new BluetoothConnection();
+		instance.blue.setupBluetooth();
 		
 //		Thread appConnection = new Thread()
 //		{
@@ -156,16 +162,31 @@ public class Main
 		//body.moveToAngle(45.0, 45.0, 30.0);
 		//Thread.sleep(1000);
 		
-		body.moveToAngle(45, 40.0, 10.0);
-		
+		//body.moveToAngle(45, 40.0, 10.0);
+		Scanner scan = new Scanner(System.in);
+		String input;
+		body.stabbyStab();
 		while (running)
 		{
 			Time.updateDeltaTime();
-			body.walk(instance.forward, instance.right);
-			//Thread.sleep(50);
-		}
+			//body.walk(instance.forward, instance.right);
+			Thread.sleep(100);
 
-		i2c.stop();
+			if(scan.hasNext())
+			{
+				if((input=scan.next().toLowerCase()).equals("exit"))
+				{
+	        		running = false;
+				}
+				else
+				{
+					System.out.println(input);
+				}
+			}
+		}
+		
+        scan.close();
+
 		if (sock != null)
 		{
 			sock.stop();
@@ -213,7 +234,7 @@ public class Main
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
 				//System.out.println(conn.readPresentLocation((byte)i));
-				Thread.sleep(5);
+				//Thread.sleep(5);
 			}
 			catch (Exception ex)
 			{
