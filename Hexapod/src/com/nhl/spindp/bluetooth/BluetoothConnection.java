@@ -62,7 +62,11 @@ public class BluetoothConnection
 		try
 		{
 			if(t2 != null)
-			    t2.join();
+			{
+				t2.interrupt();
+				t2.join();
+			}
+			
 		}
 		catch (InterruptedException e)
 		{

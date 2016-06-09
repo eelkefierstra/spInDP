@@ -122,12 +122,12 @@ public class Main
 			@Override
 			public void run()
 			{
-				System.out.println("App Server started123");
+				System.out.println("App Server started");
 				try
 				{
 					appConn = new AppConnection(1338);
 					appConn.mainLoop();
-					System.out.println("App Server started");
+					System.out.println("App Server stopped");
 				}
 				catch (Exception ex)
 				{

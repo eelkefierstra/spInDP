@@ -29,7 +29,15 @@ public class AppConnection
 	{
 		while (true)
 		{
-			Socket clientSocket = serverSocket.accept();
+			Socket clientSocket = null;
+			try
+			{
+				clientSocket = serverSocket.accept();
+			}
+			catch (Exception ex)
+			{
+				break;
+			}
 			
 			InputStreamReader iStream = new InputStreamReader(clientSocket.getInputStream());
 			BufferedReader BR = new BufferedReader(iStream);

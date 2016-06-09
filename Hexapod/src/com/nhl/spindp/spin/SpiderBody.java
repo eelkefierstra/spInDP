@@ -84,18 +84,21 @@ public class SpiderBody
 		}
 	}
 	
-	public void stabbyStab()
+	public void stabbyStab() throws InterruptedException
 	{
-		legs[0].moveToDegrees(45.0, 115.0, 45.0);
-		legs[1].moveToDegrees( 0.0, 115.0, 45.0);
-		legs[2].moveToDegrees(90.0, 115.0, 45.0);
-		legs[3].moveToDegrees(45.0, 115.0, 45.0);
-		legs[4].moveToDegrees( 0.0, 115.0, 45.0);
-		legs[5].moveToDegrees(45.0, 115.0, 45.0);
+		legs[0].moveToDegrees(45.0, 145.0, 135.0);
+		legs[1].moveToDegrees( 0.0, 115.0,  45.0);
+		legs[2].moveToDegrees(90.0, 115.0,  45.0);
+		legs[3].moveToDegrees(45.0, 145.0,  90.0);
+		legs[4].moveToDegrees( 0.0, 115.0,  45.0);
+		legs[5].moveToDegrees(45.0, 115.0, 135.0);
 		for (SpiderLeg leg : legs)
 		{
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
+		Thread.sleep(500);
+		legs[0].moveToDegrees(120.0, 145.0, 135.0);
+		legs[3].moveToDegrees(120.0, 145.0, 135.0);
 	}
 	
 	public void moveToAngle(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException

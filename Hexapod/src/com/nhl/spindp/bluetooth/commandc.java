@@ -1,5 +1,6 @@
 package com.nhl.spindp.bluetooth;
 import com.nhl.spindp.Main;
+import com.nhl.spindp.Utils;
 
 //This code works with the information provided by the controller
 public class commandc
@@ -109,11 +110,11 @@ public class commandc
 		}
 		
 		//make a turn
-		map(x, 0, 1023, -1.0, 1.0);
+		Utils.map(x, 0, 1023, -1.0, 1.0);
 		
 		
 		//walk straight
-		map(y, 0, 1023, -1.0, 1.0);
+		Utils.map(y, 0, 1023, -1.0, 1.0);
 		
 		//modes of the lcd screen (for example: dance, race mode etc.)
 		//the switch case calls the methods for each mode
@@ -124,11 +125,11 @@ public class commandc
 			break;
         
 		case 1:
-			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
+			Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		case 2:
-			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
+			Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		case 3:
@@ -136,7 +137,7 @@ public class commandc
 			break;
 			
 		case 4:
-			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
+			Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		case 5:
@@ -152,20 +153,12 @@ public class commandc
 			break;
 			
 		case 8:
-			Main.getInstance().setDirection(0, map(y, 0, 1023, -1.0, 1.0), map(x, 0, 1023, -1.0, 1.0));
+			Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
 			break;
 			
 		default:
 			break;
 		}
 		
-			}
-	
-	//sets to the x and y value to -1 or 1
-	private static double map(double x, double in_min, double in_max, double out_min, double out_max)
-	{
-		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");
-		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	}
-	
 }
