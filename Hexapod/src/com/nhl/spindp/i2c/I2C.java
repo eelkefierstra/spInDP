@@ -11,6 +11,7 @@ public class I2C
 	private double grx, gry, grz; //gyro angles
 	private double gsx, gsy, gsz; //scaled gyro data
 	private double rx = -1.0, ry = -1.0, rz = -1.0;    //filtered info
+	private double adc0 = -1.0, adc1 = -1.0;
 	private boolean done = true;
 	private Info info;
 	private Thread t1;
@@ -43,7 +44,7 @@ public class I2C
 		{
 			loopI2c();
 			filter();
-			info.setAdc(data.adcVal);
+			info.setAdc(new double[] {adc0, adc1});
 		}
 		cleanupI2c();
 	}
@@ -134,7 +135,7 @@ public class I2C
 		short res = -1;
 		synchronized (locker)
 		{
-			res = data.adcVal;
+			res = data.adcVal0;
 		}
 		return res;
 	}
@@ -146,7 +147,8 @@ public class I2C
 
 	public class I2CData
 	{
-		private short adcVal   = -1;
+		private short adcVal0  = -1;
+		private short adcVal1  = -1;
 		private short accDataX = -1;
 		private short accDataY = -1;
 		private short accDataZ = -1;

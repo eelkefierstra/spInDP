@@ -112,8 +112,8 @@ public class Main
 		Thread.sleep(10);
 		for (int i = 0; i < Byte.MAX_VALUE; i++)
 		{
-			short adc = info.getAdc();
-			System.out.println(adc);
+			double[] adc = info.getAdc();
+			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
 			double[] res = info.getGyro();
 			System.out.println("x: "+res[0]+" y: "+res[1]);
 			System.out.println();
@@ -291,7 +291,7 @@ public class Main
 	{
 		private Object locker = new Object();
 		private double gyroX, gyroY;
-		private short adcValue;
+		private double adcSpanning, adcStroom; //spanning: V, stroom: A
 		
 		public double[] getGyro()
 		{
@@ -315,21 +315,25 @@ public class Main
 			}
 		}
 		
-		public short getAdc()
+		public double[] getAdc()
 		{
-			short res = -1;
+			double[] res = { -1, -1};
 			synchronized (locker)
 			{
-				res = adcValue;
+				res[0] = adcSpanning;
+				res[1] = adcStroom;
 			}
 			return res;
 		}
 		
-		public void setAdc(short value)
+		public void setAdc(double[] data)
 		{
+			if(data.length < 2)
+				return;
 			synchronized (locker)
 			{
-				adcValue = value;
+				adcSpanning = data[0];
+				adcStroom = data[1];
 			}
 		}
 	}
