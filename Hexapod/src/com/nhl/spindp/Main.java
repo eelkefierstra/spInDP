@@ -282,7 +282,7 @@ public class Main
 		}
 	}
 	
-	private class Info
+	public class Info
 	{
 		private Object locker = new Object();
 		private double gyroX, gyroY;

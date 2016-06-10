@@ -10,10 +10,11 @@ import java.net.Socket;
 import java.util.Random;
 
 import com.nhl.spindp.Main;
+import com.nhl.spindp.Main.Info;
 
 public class AppConnection
 {
-
+	private Info info = Main.getInstance().getInfo();
 	private ServerSocket serverSocket;
 	public AppConnection() throws IOException
 	{
@@ -137,8 +138,15 @@ public class AppConnection
 	//<X:10,Y:16>	 
 	 public String CreateHellingInfo(){
 		 String result = "";
-		 Random randomGenerator = new Random();
-		 result =  "<X:"+Integer.toString(randomGenerator.nextInt(90))+",Y:"+Integer.toString(randomGenerator.nextInt(90))+">";
+		 double[] gyro = info.getGyro();
+		 int X = -1;
+		 int Y = -1;
+		 if(gyro != null){
+			 X = (int)gyro[1];
+			 Y = (int)gyro[0]; 
+		 }
+		 //Random randomGenerator = new Random();
+		 result =  "<X:"+Integer.toString(X)+",Y:"+Integer.toString(Y)+">";
 		 return result;
 	 }
 }
