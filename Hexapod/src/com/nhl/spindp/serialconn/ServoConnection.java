@@ -579,7 +579,9 @@ public class ServoConnection
 		byte[] buffer = serialPort.readBytes();//(5, 100);
 		byte[] data = new byte[0];
 		//if prefix incorrect
-		if(((buffer[0] != (byte)0xFF) || (buffer[1] != (byte)0xFF)) && buffer.length < 5) return data;
+		if(((buffer[0] != (byte)0xFF) || (buffer[1] != (byte)0xFF)) && (buffer.length < 5))
+			return data;
+		//System.out.println(buffer.length);
 		error = buffer[4];
 		if (buffer[3] != 0)
 		{

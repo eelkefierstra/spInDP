@@ -143,7 +143,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 		serialPort = 0;
 		string clazz = "java/io/IOException";
 		string mess  = "Failed to write to serial port";
-		throw_java_exception(env, &clazz[0], &mess[0]);
+		//throw_java_exception(env, &clazz[0], &mess[0]);
 		return false;
 	}
 	return true;

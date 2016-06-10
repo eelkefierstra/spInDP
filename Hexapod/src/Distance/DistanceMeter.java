@@ -1,6 +1,8 @@
 package Distance;
 
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
@@ -13,13 +15,19 @@ public class DistanceMeter {
 	String pigOut = "/dev/pigout";
 	int signalPin = 23;
 	
-	private void DistanceBoi(boolean val) throws IOException 
+	public void distanceBoi() throws IOException 
 	{
 	OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
+	BufferedReader reader = null;
+	for (int i = 0; i <=100; i++)
+	{
 	writer.write(String.format("r %s\n", signalPin));
-	System.out.println(pigOut);
 	writer.flush();
+	reader = new BufferedReader(new FileReader(pigOut));
+	System.out.println(reader.readLine());
+	}
 	writer.close();
-	}	
+	reader.close();
+  }	
 }
 

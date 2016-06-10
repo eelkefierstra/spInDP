@@ -20,12 +20,11 @@ class SpiderLeg implements Runnable
 	private static final double A_MAX    =  90.0;
 	private static final double A_RAD    = Math.toRadians(A_MAX / 2.0);
 	private static final double C        = 160.0;
-	private static final double E        =  90.0;
 	private static final double F        =  35.0;
 	private static final double L        = 127.0;
 	private static final double LACCENT  = Math.cos(A_RAD) * L;
-	private static final double D        = F - LACCENT;
-	private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
+	//private static final double D        = F - LACCENT;
+	//private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
 	private static final double coxalimL =  0.0;
 	private static final double coxalimH = 90.0;
 	private static volatile double PAR_X = 25.0;
@@ -35,11 +34,12 @@ class SpiderLeg implements Runnable
 	private Future<?> future;
 	private SpiderBody.SharedParams sharedParams;
 	
-	private double alpha   = Math.toRadians(Math.acos((Math.pow(A, 2) - Math.pow(C, 2) - Math.pow(B, 2)) / (-2 * C * B)));
-	private double gamma   = Math.toRadians(Math.acos((Math.pow(C, 2.0) - Math.pow(B, 2.0) - Math.pow(A, 2.0)) / (-2 * B * A)));
-	private double beta    = Math.toRadians(Math.acos((Math.pow(B, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
-	private double EPSILON = Math.toRadians(Math.atan(E / D));
-	private double step    = 0.0;
+	private double alpha   =  0.0;// Math.toRadians(Math.acos((Math.pow(A, 2) - Math.pow(C, 2) - Math.pow(B, 2)) / (-2 * C * B)));
+	private double gamma   =  0.0;// Math.toRadians(Math.acos((Math.pow(C, 2.0) - Math.pow(B, 2.0) - Math.pow(A, 2.0)) / (-2 * B * A)));
+	private double beta    =  0.0;// Math.toRadians(Math.acos((Math.pow(B, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
+	private double epsilon =  0.0;// Math.toRadians(Math.atan(E / D));
+	private double step    =  0.0;
+	private double E       = 90.0;
 	private boolean set    = false;
 	
 	private double coxaChange = coxalimL;
@@ -52,7 +52,7 @@ class SpiderLeg implements Runnable
     // bocht
     private static final double Length = 300;
     private static final double Width = 80;
-    private static final double R = 500;
+    //private static final double R = 500;
     private double h;
     private double b;
     private double r4;
@@ -130,6 +130,11 @@ class SpiderLeg implements Runnable
 	public Future<?> getFuture()
 	{
 		return future;
+	}
+	
+	public void setHeight(double height)
+	{
+		
 	}
 	
 	public byte[][] getAll() throws InterruptedException, ExecutionException
