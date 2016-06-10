@@ -1,14 +1,12 @@
 package com.nhl.spindp.bluetooth;
 
 import com.nhl.spindp.Main;
-//import com.nhl.spindp.vision.*;
 import com.nhl.spindp.Utils;
 
-
-//this code works with the information provided by the controller
-
+//This code works with the information provided by the controller
 public class Commandc
 {
+	
 	public static void controller(String commando)
 	{		
 		//for each value an object
