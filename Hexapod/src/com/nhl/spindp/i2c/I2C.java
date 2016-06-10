@@ -3,6 +3,11 @@ package com.nhl.spindp.i2c;
 import com.nhl.spindp.Main;
 import com.nhl.spindp.Main.Info;
 
+/**
+ * Communicate with I2C device with native methods
+ * @author eelkef
+ *
+ */
 public class I2C
 {
 	private Object locker = new Object();
@@ -11,7 +16,6 @@ public class I2C
 	private double grx, gry, grz; //gyro angles
 	private double gsx, gsy, gsz; //scaled gyro data
 	private double rx = -1.0, ry = -1.0, rz = -1.0;    //filtered info
-	private double adc0 = -1.0, adc1 = -1.0;
 	private boolean done = true;
 	private Info info;
 	private Thread t1;
@@ -30,13 +34,26 @@ public class I2C
 		});
 		info = Main.getInstance().getInfo();
 	}
-	
+	/**
+	 * Setup gyro and ADC before use
+	 * @return false if both fail
+	 */
 	public native boolean initI2c();
 	
-	public native void loopI2c();
+	/**
+	 * loop to get new info from devices
+	 */
+	private native void loopI2c();
 	
+	/**
+	 * clean devices
+	 */
 	private native void cleanupI2c();
 	
+	/**
+	 * loop to start -> update values -> clean devices
+	 * Best used in thread
+	 */
 	private void loop()
 	{
 		initI2c();
@@ -44,11 +61,14 @@ public class I2C
 		{
 			loopI2c();
 			filter();
-			info.setAdc(new double[] {adc0, adc1});
+			info.setAdc(new double[] {data.adcVal0, data.adcVal1});
 		}
 		cleanupI2c();
 	}
 	
+	/**
+	 * start i2c thread to update values
+	 */
 	public void start()
 	{
 		done = false;
@@ -63,6 +83,9 @@ public class I2C
 		t1.start();
 	}
 	
+	/**
+	 * stop i2c thread
+	 */
 	public void stop()
 	{
 		done = true;
@@ -77,6 +100,9 @@ public class I2C
 		}
 	}
 	
+	/**
+	 * scale gyroscope values
+	 */
 	private void scale()
 	{
 		//scale gyro values
@@ -85,12 +111,20 @@ public class I2C
 		gsz = (double) data.gyroZ / 131;
 	}
 	
+	/**
+	 * pythagoras
+	 * @param a length straight side a
+	 * @param b length straight side b
+	 * @return length of side
+	 */
 	private double dist(double a, double b)
 	{
 		return Math.sqrt((a*a)+(b*b));
 	}
 	
-	//loop this method to continuesly refresh gyro values
+	/**
+	 * calculate angles of accelerometer
+	 */
 	private void filter()
 	{
 		double accXscale = (double)data.accDataX / 16384.0;
@@ -102,6 +136,10 @@ public class I2C
 	}
 	
 	@Deprecated
+	/**
+	 * get gyro angle
+	 * @return array with angles[ x, y, z]
+	 */
 	public double[] getGyroInfo()
 	{
 		double[] res = { -1, -1, -1};
@@ -115,6 +153,10 @@ public class I2C
 	}
 	
 	@Deprecated
+	/**
+	 * get the gyro values once
+	 * @return array with angles[ x, y, z]
+	 */
 	public double[] runOnceAndGetGyroInfo()
 	{
 		initI2c();
@@ -130,6 +172,10 @@ public class I2C
 	}
 	
 	@Deprecated
+	/**
+	 * get adc value
+	 * @return short with value from adc
+	 */
 	public short getADCInfo()
 	{
 		short res = -1;
@@ -140,11 +186,20 @@ public class I2C
 		return res;
 	}
 	
+	/**
+	 * get data class with i2c info
+	 * @return data class object
+	 */
 	public I2CData getData()
 	{
 		return data;
 	}
 
+	/**
+	 * class with all i2c info
+	 * @author eelkef
+	 *
+	 */
 	public class I2CData
 	{
 		private short adcVal0  = -1;
