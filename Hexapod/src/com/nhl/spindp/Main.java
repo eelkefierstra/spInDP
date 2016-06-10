@@ -29,6 +29,7 @@ public class Main
 	public ObjectRecognition vision;
 	private static BluetoothConnection blue;
 	public DistanceMeter distance;
+	private static Info info;
 	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
@@ -84,7 +85,8 @@ public class Main
 		instance = new Main();
 		instance.distance = new DistanceMeter();
 		instance.distance.distanceBoi();
-		/*
+		info = instance.new Info();
+		
 		Thread webWorker = new Thread()
 		{
 			@Override
@@ -103,16 +105,16 @@ public class Main
 				}
 			}
 		};
-		webWorker.start();*/
+		webWorker.start();
 		//instance.vision = new ObjectRecognition();
 		I2C i2c = new I2C();
 		i2c.start();
 		Thread.sleep(10);
 		for (int i = 0; i < Byte.MAX_VALUE; i++)
 		{
-			short adc = i2c.getADCInfo();
+			short adc = info.getAdc();
 			System.out.println(adc);
-			double[] res = i2c.getGyroInfo();
+			double[] res = info.getGyro();
 			System.out.println("x: "+res[0]+" y: "+res[1]);
 			System.out.println();
 		}
@@ -279,4 +281,6 @@ public class Main
 			}
 		}
 	}
+==== BASE ====
+==== BASE ====
 }
