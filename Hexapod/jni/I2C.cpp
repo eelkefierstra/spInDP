@@ -107,9 +107,11 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
 	{
 		jfieldID adcValField = env->GetFieldID(dataCls, "adcVal", "S");
 		if (env->ExceptionCheck()) return;
-		uint8_t res[2] = { -1, -1};
+		uint8_t res[2] = { 0, 0};
 		I2Cdev::readBytes( adcAddr, 0x00, 2, res);
-		env->SetShortField(dataObj, adcValField, (res[ 0] << 8) | res[ 1]);
+		short resu = (res[ 0] << 8) | res[ 1];
+		short result = resu >> 4;
+		env->SetShortField(dataObj, adcValField, result);
 		if (env->ExceptionCheck()) return;
 	}
 
