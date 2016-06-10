@@ -581,7 +581,10 @@ public class ServoConnection
 		//if prefix incorrect
 		if(((buffer[0] != (byte)0xFF) || (buffer[1] != (byte)0xFF)) && (buffer.length < 5))
 			return data;
-		//System.out.println(buffer.length);
+		System.out.println(buffer.length);
+		for (byte b : buffer)
+			System.out.print(b);
+		System.out.println();
 		error = buffer[4];
 		if (buffer[3] != 0)
 		{

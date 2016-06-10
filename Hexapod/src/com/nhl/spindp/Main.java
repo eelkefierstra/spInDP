@@ -86,7 +86,7 @@ public class Main
 		instance.distance = new DistanceMeter();
 		instance.distance.distanceBoi();
 		info = instance.new Info();
-		/*
+		
 		Thread webWorker = new Thread()
 		{
 			@Override
@@ -105,7 +105,7 @@ public class Main
 				}
 			}
 		};
-		webWorker.start();*/
+		webWorker.start();
 		//instance.vision = new ObjectRecognition();
 		I2C i2c = new I2C();
 		i2c.start();
