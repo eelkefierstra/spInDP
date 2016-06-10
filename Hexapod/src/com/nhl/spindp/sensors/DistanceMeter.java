@@ -1,4 +1,4 @@
-package Distance;
+package com.nhl.spindp.sensors;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
