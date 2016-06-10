@@ -112,9 +112,9 @@ public class Main
 		Thread.sleep(10);
 		for (int i = 0; i < Byte.MAX_VALUE; i++)
 		{
-			short adc = i2c.getADCInfo();
+			short adc = info.getAdc();
 			System.out.println(adc);
-			double[] res = i2c.getGyroInfo();
+			double[] res = info.getGyro();
 			System.out.println("x: "+res[0]+" y: "+res[1]);
 			System.out.println();
 		}
@@ -281,42 +281,6 @@ public class Main
 			}
 		}
 	}
-	
-	private class Info
-	{
-		private Object locker = new Object();
-		private double gyroX, gyroY;
-		
-		public Info()
-		{
-			
-		}
-		
-		public double[] getGyro()
-		{
-			double[] res = { -1, -1};
-			synchronized (locker)
-			{
-				res[0] = gyroX;
-				res[1] = gyroY;
-			}
-			return res;
-		}
-		
-		public void setGyro(double[] data)
-		{
-			if(data.length < 2)
-				return;
-			synchronized (locker)
-			{
-				gyroX = data[0];
-				gyroY = data[1];
-			}
-		}
-	}
-	
-	public Info getInfo()
-	{
-		return info;
-	}
+==== BASE ====
+==== BASE ====
 }

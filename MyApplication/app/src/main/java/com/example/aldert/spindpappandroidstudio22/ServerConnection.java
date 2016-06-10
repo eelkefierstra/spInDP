@@ -16,6 +16,7 @@ import java.net.Socket;
 
 public class ServerConnection {
     private Servo[] mServos = new Servo[19];
+    private int[] mHelling;
     private String mHostname;
     private int mPort;
     private Socket mSocket;
@@ -43,8 +44,14 @@ public class ServerConnection {
                 //Record record = new GsonBuilder().create().fromJson(new JSONObject(userInput.replace("next", "")).getJSONObject("record").toString(), Record.class);
                 //simulation.containerReceived(record);
             //}
-            if(userInput.length() > 10){
+            if(userInput.equals("Heey terug")){
+
+            }
+            else if(userInput.length() > 20){
                 mServos = new XMLreader(userInput).getServo();
+            }
+            else if(userInput.length() < 20){
+                mHelling = new XMLreader(userInput).getHellingInfo();
             }
             System.out.println(userInput);
         }
@@ -53,6 +60,8 @@ public class ServerConnection {
     }
 
     public Servo[] getAllServoInfo(){return this.mServos;}
+
+    public int[] getHellingInfo(){return this.mHelling;}
 
     public void sendString(String data) {
         try{
