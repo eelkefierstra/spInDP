@@ -286,7 +286,7 @@ public class Main
 	{
 		return info;
 	}
-	
+
 	public class Info
 	{
 		private Object locker = new Object();
