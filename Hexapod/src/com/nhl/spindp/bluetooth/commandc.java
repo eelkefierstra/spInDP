@@ -1,3 +1,5 @@
+package com.nhl.spindp.bluetooth;
+
 import com.nhl.spindp.Main;
 //import com.nhl.spindp.vision.*;
 
