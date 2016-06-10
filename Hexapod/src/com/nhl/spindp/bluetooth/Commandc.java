@@ -9,12 +9,6 @@ import com.nhl.spindp.Utils;
 
 public class Commandc
 {
-
-	public static void main(String [] args) throws Exception
-	{
-	     controller("");     
-	}
-	
 	public static void controller(String commando)
 	{		
 		//for each value an object
