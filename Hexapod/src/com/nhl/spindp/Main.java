@@ -29,6 +29,7 @@ public class Main
 	public ObjectRecognition vision;
 	private static BluetoothConnection blue;
 	public DistanceMeter distance;
+	private static Info info;
 	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
@@ -84,6 +85,7 @@ public class Main
 		instance = new Main();
 		instance.distance = new DistanceMeter();
 		instance.distance.distanceBoi();
+		info = instance.new Info();
 		/*
 		Thread webWorker = new Thread()
 		{
@@ -278,5 +280,43 @@ public class Main
 				System.out.println(line);
 			}
 		}
+	}
+	
+	private class Info
+	{
+		private Object locker = new Object();
+		private double gyroX, gyroY;
+		
+		public Info()
+		{
+			
+		}
+		
+		public double[] getGyro()
+		{
+			double[] res = { -1, -1};
+			synchronized (locker)
+			{
+				res[0] = gyroX;
+				res[1] = gyroY;
+			}
+			return res;
+		}
+		
+		public void setGyro(double[] data)
+		{
+			if(data.length < 2)
+				return;
+			synchronized (locker)
+			{
+				gyroX = data[0];
+				gyroY = data[1];
+			}
+		}
+	}
+	
+	public Info getInfo()
+	{
+		return info;
 	}
 }
