@@ -68,18 +68,17 @@ public class AppConnection
 		}
 	}
 	
-	public String CreateDataToWrite(String input)
-	{
+	public String CreateDataToWrite(String input){
 		String Result = "";
-		switch(input)
-		{
+		switch(input){
 			case "Heey":
-				Result = "Heey Terug";
+				Result = "Heey terug";
 				break;
 			case "ServoInfo":
-				Result = CreateServoXML();
+				Result = CreateRandomXML();
 				break;
-			case "HellingHoek":
+			case "HellingInfo":
+				Result = CreateHellingInfo();
 				break;
 			case "LiveStream":
 				break;
@@ -101,6 +100,7 @@ public class AppConnection
 		return result;
 	}
 	
+	//<Servo><Id>1</Id><Hoek>20</Hoek><Temperatuur>15</Temperatuur></Servo>
 	public String CreateServoXML()
 	{
 		String result = "";
@@ -116,7 +116,6 @@ public class AppConnection
 			}
 			catch (IOException e)
 			{
-				//e.printStackTrace();
 				result +=  "<Servo><Id>"+ Integer.toString(i) + "</Id><Hoek>" +"-1"+ "</Hoek><Temperatuur>" + "-1"+ "</Temperatuur></Servo>";
 			}
 		}
@@ -134,113 +133,14 @@ public class AppConnection
 			e.printStackTrace();
 		}	
 	}
+	
+	//<X:10,Y:16>	 
+	 public String CreateHellingInfo(){
+		 String result = "";
+		 Random randomGenerator = new Random();
+		 result =  "<X:"+Integer.toString(randomGenerator.nextInt(90))+",Y:"+Integer.toString(randomGenerator.nextInt(90))+">";
+		 return result;
+	 }
 }
 
 
-/*import java.io.*;
-import java.net.*;
-
-public class AppConnection {
-
-	public static void main (String[] args) throws Exception 
-	{
-		AppConnection Server = new AppConnection();
-	    Server.run(1337);
-	}
-	
-	public void run(int port) throws Exception
-	{
-		
-//		 ServerSocket welcomeSocket = new ServerSocket(port);
-//		 while (true) {
-//		     Socket socket = welcomeSocket.accept();
-//		     new Thread(new RunnableSocketWorker(socket));
-//		 }
-		ServerSocket SRVSOCK = new ServerSocket(port);
-		while(true){
-			Socket SOCK = SRVSOCK.accept();
-			InputStreamReader IR = new InputStreamReader(SOCK.getInputStream());
-			while(true){
-				try{
-					BufferedReader BR = new BufferedReader(IR);
-					String MESSAGE = BR.readLine();
-					System.out.println(MESSAGE);
-					
-					if(MESSAGE != null)
-					{
-						PrintStream PS = new PrintStream(SOCK.getOutputStream());
-						PS.println(SendAskedData(MESSAGE));
-						System.out.println("Message send");
-					}
-				}
-				catch(Exception e){
-					System.out.println(e);
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	public String SendAskedData(String askedData){
-		String result = null;
-		return result;
-	}
-}
-
-/*
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-
-public class AppConnection
-{
-	private ServerSocket serverSocket;
-	
-	public AppConnection() throws IOException
-	{
-		serverSocket = new ServerSocket(1338);
-	}
-	
-	public AppConnection(int port) throws IOException
-	{
-		serverSocket = new ServerSocket(port);
-	}
-	
-	public void mainLoop() throws IOException
-	{
-		Socket clientSocket = serverSocket.accept();
-		ObjectInputStream iStream = new ObjectInputStream(clientSocket.getInputStream());
-		
-		while (true)
-		{
-			try
-			{
-				if(iStream != null){
-					SendDataToApp();
-				}
-				System.out.println(iStream.readObject());
-			}
-			catch (ClassNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public void SendDataToApp(){
-		try{
-			FileOutputStream fos = new FileOutputStream("t.tmp");
-			ObjectOutputStream oStream = new ObjectOutputStream(fos);
-			oStream.writeObject("Today");
-			oStream.close();
-		 
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-}
-*/

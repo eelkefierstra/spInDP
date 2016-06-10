@@ -15,7 +15,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
-    static final ServerConnection conn = new ServerConnection("10.42.1.1", 1338);
+    static final ServerConnection conn = new ServerConnection("141.252.231.47", 1338);
     static boolean Connected = false;
     Activity activity;
     @Override

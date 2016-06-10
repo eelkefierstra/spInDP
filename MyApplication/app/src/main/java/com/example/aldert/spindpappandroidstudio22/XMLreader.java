@@ -18,56 +18,89 @@ import static java.lang.System.in;
 
 public class XMLreader{
     Servo servo[] = new Servo[19];
+    int[] hellingInfo = new int[2];
     int id;
     int hoek;
     int temperatuur;
     int count = 0;
     public XMLreader(String input){
-        String woord = "";
-        String tag = "";
-        boolean endtag = false;
-        for(char c : input.toCharArray()){
-            switch (c){
-                case '<':
-                    if(!endtag){
-                        if(tag.equals("Id")){
-                            id = Integer.parseInt(woord);
+        if(input.length() >20){
+            String woord = "";
+            String tag = "";
+            boolean endtag = false;
+            for(char c : input.toCharArray()){
+                switch (c){
+                    case '<':
+                        if(!endtag){
+                            if(tag.equals("Id")){
+                                id = Integer.parseInt(woord);
+                            }
+                            else if(tag.equals("Hoek")){
+                                hoek = Integer.parseInt(woord);
+                            }
+                            else if(tag.equals("Temperatuur")){
+                                temperatuur = Integer.parseInt(woord);
+                            }
+                            else if(tag.equals("Servo")){
+                                servo[count] = new Servo(id, hoek, temperatuur);
+                                count++;
+                            }
                         }
-                        else if(tag.equals("Hoek")){
-                            hoek = Integer.parseInt(woord);
-                        }
-                        else if(tag.equals("Temperatuur")){
-                            temperatuur = Integer.parseInt(woord);
-                        }
-                        else if(tag.equals("Servo")){
-                            servo[count] = new Servo(id, hoek, temperatuur);
-                            count++;
-                        }
-                    }
-                    woord = "";
-                    endtag = false;
-                    break;
-                case '>':
-                    tag = woord;
-                    woord = "";
-                    break;
-                case '/':
-                    tag = woord;
-                    woord = "";
-                    endtag = true;
-                    break;
-                default:
-                    woord += c;
-                    break;
+                        woord = "";
+                        endtag = false;
+                        break;
+                    case '>':
+                        tag = woord;
+                        woord = "";
+                        break;
+                    case '/':
+                        tag = woord;
+                        woord = "";
+                        endtag = true;
+                        break;
+                    default:
+                        woord += c;
+                        break;
+                }
+            }
+            servo[18] =  new Servo(id, hoek, temperatuur);
+        }
+        else if(input.length() <20){
+            String woord = "";
+            for(char c : input.toCharArray()){
+                switch (c){
+                    case '<':
+                        break;
+                    case '>':
+                        hellingInfo[1] = Integer.parseInt(woord);
+                        woord = "";
+                        break;
+                    case ':':
+                        break;
+                    case 'X':
+                        break;
+                    case 'Y':
+                        break;
+                    case ',':
+                        hellingInfo[0] = Integer.parseInt(woord);
+                        woord = "";
+                        break;
+                    default:
+                        woord += c;
+                        break;
+                }
             }
         }
-        servo[18] =  new Servo(id, hoek, temperatuur);
+
     }
 
-    Servo[] getServo(){
+    public Servo[] getServo(){
         return this.servo;
     }/**/
 
+    public int[] getHellingInfo(){
+        return this.hellingInfo;
+    }
 
 /*
     private static final String ns = null;
