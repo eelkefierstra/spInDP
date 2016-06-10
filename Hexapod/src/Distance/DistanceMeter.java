@@ -9,12 +9,16 @@ import java.util.concurrent.TimeUnit;
 
 public class DistanceMeter {
 
-	String pigpioFile = "/dev/pigpio";
-	String pigOut = "/dev/pigout";
-	int signalPin = 23;
-	
 	public void distanceBoi() throws IOException 
 	{
+		String pigpioFile = "/dev/pigpio";
+		String pigOut = "/dev/pigout";
+		int signalPin = 23;
+		long startTime = 0;
+		
+		try {
+			Thread.sleep(10);		
+		
 	OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
 	BufferedReader reader = null;
 	for (int i = 0; i <=1000; i++)
@@ -23,18 +27,27 @@ public class DistanceMeter {
 	writer.flush();
 	reader = new BufferedReader(new FileReader(pigOut));
 	
-	long startTime = System.nanoTime();
-	while (reader.readLine() == "1")
+		while (reader.readLine() == "0")
 	{
+			startTime = System.nanoTime();
 	}	
+		
+		while (reader.readLine() == "1")
+		{
+		}	
+		
 	long estimatedTime = System.nanoTime() - startTime;
 	
-    int microTime = (int) (estimatedTime/1000);
-    double distanceCm = microTime/58.0;
-    System.out.println(distanceCm);
+    int microTime = (int) (estimatedTime/58000);
+    System.out.println(microTime);
   }
 	writer.close();
 	reader.close();
   }	
+		catch(InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+}		
 }
 
