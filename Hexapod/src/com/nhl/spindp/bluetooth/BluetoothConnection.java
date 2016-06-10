@@ -51,6 +51,7 @@ public class BluetoothConnection
 			{
 				String mes = data.nextLine();
 				System.out.println(mes);
+				Commandc.controller(mes);
 			}
 		}
 	}
