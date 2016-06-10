@@ -11,9 +11,9 @@ import java.util.concurrent.Future;
 
 import org.opencv.core.Core;
 
-import Distance.DistanceMeter;
 import com.nhl.spindp.bluetooth.BluetoothConnection;
-import com.nhl.spindp.i2c.I2C;
+import com.nhl.spindp.sensors.I2C;
+import com.nhl.spindp.sensors.DistanceMeter;
 import com.nhl.spindp.netcon.AppConnection;
 import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;

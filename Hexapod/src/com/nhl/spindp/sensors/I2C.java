@@ -1,4 +1,4 @@
-package com.nhl.spindp.i2c;
+package com.nhl.spindp.sensors;
 
 import com.nhl.spindp.Main;
 import com.nhl.spindp.Main.Info;
