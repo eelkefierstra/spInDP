@@ -1,5 +1,7 @@
 package com.nhl.spindp.i2c;
 
+import com.nhl.spindp.Main;
+import com.nhl.spindp.Main.Info;
 
 public class I2C
 {
@@ -9,7 +11,8 @@ public class I2C
 	private double grx, gry, grz; //gyro angles
 	private double gsx, gsy, gsz; //scaled gyro data
 	private double rx = -1.0, ry = -1.0, rz = -1.0;    //filtered info
-	private boolean init = true, done = true;
+	private boolean done = true;
+	private Info info;
 	private Thread t1;
 	
 	public I2C()
@@ -24,6 +27,7 @@ public class I2C
 				cleanupI2c();
 			}
 		});
+		info = Main.getInstance().getInfo();
 	}
 	
 	public native boolean initI2c();
@@ -39,6 +43,7 @@ public class I2C
 		{
 			loopI2c();
 			filter();
+			info.setAdc(data.adcVal);
 		}
 		cleanupI2c();
 	}
@@ -92,8 +97,10 @@ public class I2C
 		double accZscale = (double)data.accDataZ / 16384.0;
 		rx = Math.toDegrees(Math.atan2(accYscale, dist(accXscale, accZscale)));
 		ry = Math.toDegrees(Math.atan2(accXscale, dist(accYscale, accZscale)));
+		info.setGyro(new double[] {rx, ry});
 	}
 	
+	@Deprecated
 	public double[] getGyroInfo()
 	{
 		double[] res = { -1, -1, -1};
@@ -106,6 +113,7 @@ public class I2C
 		return res;
 	}
 	
+	@Deprecated
 	public double[] runOnceAndGetGyroInfo()
 	{
 		initI2c();
@@ -120,6 +128,7 @@ public class I2C
 		return res;
 	}
 	
+	@Deprecated
 	public short getADCInfo()
 	{
 		short res = -1;
