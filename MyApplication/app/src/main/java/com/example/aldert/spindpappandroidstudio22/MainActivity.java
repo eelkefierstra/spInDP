@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -18,12 +19,29 @@ public class MainActivity extends AppCompatActivity {
     static final ServerConnection conn = new ServerConnection("10.42.1.1", 1338);
     static boolean Connected = false;
     Activity activity;
+
+    Thread timer2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Connect();
-
+        if(!Connected){
+            Connect();
+        }
+        timer2 = new Thread()
+        {
+            public void run(){
+                while(true){
+                    askAdcInfo();
+                    try {
+                        Thread.sleep(1000);                 //1000 milliseconds is one second.
+                    } catch(InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        };
+        timer2.start();
         Button ServoInfoBtn = (Button) findViewById(R.id.ServoInfoBtn);
         ServoInfoBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -60,6 +78,22 @@ public class MainActivity extends AppCompatActivity {
             public void run()
             {
                 Toast.makeText(MainActivity.this, toast, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void askAdcInfo(){
+        if(Connected){
+            conn.sendString("ADC");
+            drawAdcInfo(conn.getAdcInfo());
+        }
+    }
+
+    public void drawAdcInfo(final String input){
+        runOnUiThread(new Runnable() {
+            public void run() {
+                final TextView ChangAdcInfo = (TextView) findViewById(R.id.textView2);
+                ChangAdcInfo.setText(input);
             }
         });
     }

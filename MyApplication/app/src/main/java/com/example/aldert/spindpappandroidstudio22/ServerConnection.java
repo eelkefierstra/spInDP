@@ -16,6 +16,7 @@ import java.net.Socket;
 
 public class ServerConnection {
     private Servo[] mServos = new Servo[19];
+    private String mAdc;
     private int[] mHelling;
     private String mHostname;
     private int mPort;
@@ -50,6 +51,9 @@ public class ServerConnection {
             else if(userInput.length() > 20){
                 mServos = new XMLreader(userInput).getServo();
             }
+            else if(userInput.length() <10){
+                mAdc = userInput;
+            }
             else if(userInput.length() < 20){
                 mHelling = new XMLreader(userInput).getHellingInfo();
             }
@@ -60,6 +64,8 @@ public class ServerConnection {
     }
 
     public Servo[] getAllServoInfo(){return this.mServos;}
+
+    public String getAdcInfo(){return this.mAdc;}
 
     public int[] getHellingInfo(){return this.mHelling;}
 
