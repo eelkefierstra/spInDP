@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 
 import com.nhl.spindp.Main;
+import com.nhl.spindp.Utils;
 //import com.sun.net.httpserver.*;
 
 import org.apache.http.*;
@@ -183,8 +184,8 @@ public class WebSocket
 	        	double forward, right;
 	        	String[] arr = data.split("&");
 	        	id = Integer.valueOf(arr[0].substring(arr[0].lastIndexOf("=")+1));
-	        	forward = map(Double.valueOf(arr[1].substring(arr[1].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
-	        	right = map(Double.valueOf(arr[2].substring(arr[2].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
+	        	forward = Utils.map(Double.valueOf(arr[1].substring(arr[1].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
+	        	right = Utils.map(Double.valueOf(arr[2].substring(arr[2].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
 	        	Main.getInstance().setDirection(id, forward, right);
 	        	response.setEntity(new StringEntity(data));
 	        }
@@ -215,12 +216,6 @@ public class WebSocket
 			outputStream.close();
 		}
 		*/
-	}
-	
-	private static double map(double x, double in_min, double in_max, double out_min, double out_max)
-	{
-		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");
-		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	}
 	
 	static class StdErrorExceptionLogger implements ExceptionLogger {

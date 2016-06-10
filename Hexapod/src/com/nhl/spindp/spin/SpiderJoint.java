@@ -3,7 +3,6 @@ package com.nhl.spindp.spin;
 import java.util.concurrent.Future;
 
 import com.nhl.spindp.Main;
-import com.nhl.spindp.serialconn.Servo;
 
 public class SpiderJoint
 {

@@ -27,7 +27,7 @@ class SpiderLeg implements Runnable
 	//private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
 	private static final double coxalimL =  0.0;
 	private static final double coxalimH = 90.0;
-	private static volatile double PAR_X = 25.0;
+	private static volatile double PAR_X = 50.0;
 	private static volatile double PAR_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0)), 2.0);
 	
 	private ExecutorService executor;
@@ -115,12 +115,16 @@ class SpiderLeg implements Runnable
 		{
 			if ( set && forward > 0) coxaChange += ((45.0 * Time.deltaTime) * forward);
 			if (!set && forward > 0) coxaChange -= ((45.0 * Time.deltaTime) * forward);
-			turn(right);
+			if(right <= -0.9 || right >= 0.9)
+				noscope360(right);
+			else
+				turn(right);
+			
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
-			if (!set && forward > 0) coxaChange += ((45.0 * Time.deltaTime) * forward);
-			if (set && forward > 0) coxaChange -= ((45.0 * Time.deltaTime) * forward);
+			if (!set && forward > 0) coxaChange += ((90.0 * Time.deltaTime) * forward);
+			if (set && forward > 0) coxaChange -= ((90.0 * Time.deltaTime) * forward);
 			future = executor.submit(this);
 			res = true;
 		}
@@ -181,8 +185,10 @@ class SpiderLeg implements Runnable
     /// </summary>
 	private void turn(double right)
 	{
+		final double scale = 500.0;
 		int id = getFirstId() / 3;
-        double r = 800.0;// - ();
+		//calculate the radius of turn
+        double r = 500.0 + (scale - scale*Math.abs(right)); //237 500
         
         // check if turn is right
        if(right > 0)
@@ -405,9 +411,19 @@ class SpiderLeg implements Runnable
     /// <summary>
     /// Main method for turning around his Y axis
     /// </summary>
-	private void noscope360()
+	private void noscope360(double right)
     {        
         int id = getFirstId() / 3;
+        
+        // check if turn is right
+        if(right > 0)
+         {   // select the right id for a right turn
+             if (id + 3 > 5)
+                 id -= 3; // 3 -> 0, 4 -> 1 , 5 -> 2
+             else
+                 id += 3; // 0 -> 3, 1 -> 4, 2 -> 5      
+         }
+        
         switch (id)
         {
             case 0:

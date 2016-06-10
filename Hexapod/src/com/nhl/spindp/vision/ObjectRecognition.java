@@ -13,6 +13,9 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
+import com.nhl.spindp.Main;
+import com.nhl.spindp.Utils;
+
 public class ObjectRecognition
 {
 	private Object locker;
@@ -21,7 +24,7 @@ public class ObjectRecognition
 	// a timer for acquiring the video stream
 	private ScheduledExecutorService timer;
 	// the OpenCV object that performs the video capture
-	private VideoCapture capture = new VideoCapture();
+	private VideoCapture capture = new VideoCapture(0);
 	// a flag to change the button behavior
 	private boolean cameraActive = false;
 	
@@ -232,8 +235,9 @@ public class ObjectRecognition
 			// for each contour, display it in blue
 			for (int idx = 0; idx >= 0; idx = (int) hierarchy.get(0, idx)[0])
 			{
-				x = Imgproc.boundingRect(contours.get(idx)).x + Imgproc.boundingRect(contours.get(idx)).width/2;
+				x = Imgproc.boundingRect(contours.get(idx)).x + Imgproc.boundingRect(contours.get(idx)).width/2;				
 				System.out.println(x);
+				Main.getInstance().setDirection(0,1.0 , Utils.map((double)x, 0.0, 1280.0, -1.0, 1.0));
 				/*
 				 if(x < 375)				 
 					richting = "Links";				
