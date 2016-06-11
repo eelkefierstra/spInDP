@@ -33,7 +33,7 @@ public class Main
 	private static boolean running = true;
 	public static List<Short> failedServos;
 	private volatile double forward = 1.0;
-	private volatile double right   = 0.0;
+	private volatile double right   = 0.25;
 	
 	static
 	{
@@ -83,8 +83,8 @@ public class Main
 			}
 		});*/
 		instance = new Main();
-		instance.distance = new DistanceMeter();
-		instance.distance.distanceBoi();
+		//instance.distance = new DistanceMeter();
+		//instance.distance.distanceBoi();
 		info = instance.new Info();
 		
 		Thread webWorker = new Thread()
@@ -107,7 +107,7 @@ public class Main
 		};
 		webWorker.start();
 		//instance.vision = new ObjectRecognition();
-		I2C i2c = new I2C();
+		/*I2C i2c = new I2C();
 		i2c.start();
 		Thread.sleep(10);
 		for (int i = 0; i < Byte.MAX_VALUE; i++)
@@ -117,10 +117,10 @@ public class Main
 			double[] res = info.getGyro();
 			System.out.println("x: "+res[0]+" y: "+res[1]);
 			System.out.println();
-		}
+		}*/
 		
 		blue = new BluetoothConnection();
-		blue.setupBluetooth();
+		//blue.setupBluetooth();
 		
 		Thread appConnection = new Thread()
 		{
@@ -175,14 +175,14 @@ public class Main
 		//body.moveToAngle(45, 40.0, 10.0);
 		Scanner scan = new Scanner(System.in);
 		String input;
-		body.stabbyStab();
-		while (running)
+		//body.stabbyStab();
+		while (Utils.shouldRun)
 		{
 			Time.updateDeltaTime();
 			//body.walk(instance.forward, instance.right);
 			Thread.sleep(1);
-
-			if(scan.hasNext())
+			blue.blueLoop();
+			/*if(scan.hasNext())
 			{
 				if((input = scan.next().toLowerCase()).equals("exit"))
 				{
@@ -192,7 +192,7 @@ public class Main
 				{
 					System.out.println(input);
 				}
-			}
+			}*/
 		}
         scan.close();
 

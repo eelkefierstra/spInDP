@@ -1,16 +1,12 @@
 package com.nhl.spindp.spin;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.xml.bind.DatatypeConverter;
 
-import com.nhl.spindp.Main;
 import com.nhl.spindp.Time;
-import com.nhl.spindp.serialconn.Servo;
 import com.nhl.spindp.spin.SpiderBody.SharedParams;
 
 class SpiderLeg implements Runnable
@@ -29,8 +25,8 @@ class SpiderLeg implements Runnable
 	//private static final double LACCENT  = Math.cos(A_RAD) * L;
 	//private static final double D        = F - LACCENT;
 	//private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
-	private static final double coxalimL =  0.0;
-	private static final double coxalimH = 90.0;
+	private static final double coxalimL =  2.5;
+	private static final double coxalimH = 87.5;
 	private static volatile double PAR_X = 50.0;
 	//private static volatile double PAR_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0)), 2.0);
 	
@@ -70,7 +66,7 @@ class SpiderLeg implements Runnable
     private double gamma_b;
     private double alpha_b;
     private double beta_b;
-    private static double beta_RV;
+    //private static double beta_RV;
     private double servoAngle;
     private double l;
     private double laccent;
@@ -92,13 +88,14 @@ class SpiderLeg implements Runnable
 		if (startServoId % 2 == 0)
 		{
 			coxaChange = coxalimH;
-			set = !set;
+			set = true;
 		}
 		if (coxaChange > coxalimH)
 		{
 			coxaChange -= coxalimH;
 		}
 		// 105, 240, 0
+		this.l = 127.0;
 		this.executor = executor;
 		this.sharedParams = sharedParams;
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 105);
@@ -118,8 +115,10 @@ class SpiderLeg implements Runnable
 		}
 		else if (right <= -.25 || .25 <= right)
 		{
-			if ( set && forward > 0) coxaChange += ((45.0 * Time.deltaTime) * forward);
-			if (!set && forward > 0) coxaChange -= ((45.0 * Time.deltaTime) * forward);
+			if (getFirstId() == 1)
+				System.out.println();
+			if (!set) coxaChange += ((90.0 * Time.deltaTime) * forward);
+			else if ( set) coxaChange -= ((90.0 * Time.deltaTime) * forward);
 			if(right <= -0.9 || right >= 0.9)
 				noscope360(right);
 			else
@@ -128,8 +127,8 @@ class SpiderLeg implements Runnable
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
-			if (!set && forward > 0) coxaChange += ((90.0 * Time.deltaTime) * forward);
-			if (set && forward > 0) coxaChange -= ((90.0 * Time.deltaTime) * forward);
+			if (!set) coxaChange += ((90.0 * Time.deltaTime) * forward);
+			else if ( set) coxaChange -= ((90.0 * Time.deltaTime) * forward);
 			future = executor.submit(this);
 			res = true;
 		}
@@ -211,8 +210,17 @@ class SpiderLeg implements Runnable
 		final double scale = 500.0;
 		int id = getFirstId() / 3;
 		//calculate the radius of turn
-		double r = 500.0 + (scale - scale*Math.abs(right)); //237 500
-		
+		double r = 800.0;//500.0 + (scale - scale*Math.abs(right)); //237 500
+		if (coxaChange >= coxalimH)
+		{
+			set = !set;
+			coxaChange = coxalimH;
+		}
+		else if (coxaChange <= coxalimL)
+		{
+			set = !set;
+			coxaChange = coxalimL;
+		}
 		// check if turn is right
 		if(right > 0)
 		{   // select the right id for a right turn
@@ -221,7 +229,7 @@ class SpiderLeg implements Runnable
 			else
 			    id += 3; // 0 -> 3, 1 -> 4, 2 -> 5      
 		}
-       double small_l = Math.cos(A_RAD)*l;
+		double small_l = Math.cos(A_RAD)*l;
 		switch (id)
 		{
 			case 0:
@@ -254,6 +262,7 @@ class SpiderLeg implements Runnable
 			case 3:
 			case 5:
 				// Links voor en achter
+				System.out.println((Math.sqrt(l * l - small_l* small_l) * 2));
 				h = 0.5 * Length + 0.5 * (Math.sqrt(l * l - small_l * small_l) * 2);
 				b = r - 0.5 * Width - small_l;
 				r4 = Math.sqrt(h * h + b * b);
@@ -289,7 +298,7 @@ class SpiderLeg implements Runnable
                 gamma = servoAngle + gamma_a;
                 alpha = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma)) * l4) / r4));
                 beta = 180 - gamma - alpha;
-                beta_RV = beta;
+                sharedParams.beta_RV = beta;
                 laccent = (r4 * Math.sin(Math.toRadians(beta))) / Math.sin(Math.toRadians(gamma));
                 sharedParams.b_turn = beta_a - beta;
                 break;
@@ -331,7 +340,7 @@ class SpiderLeg implements Runnable
                 beta = beta_b - sharedParams.b_turn;
                 laccent = Math.sqrt(r4 * r4 + l4 * l4 - 2 * r4 * l4 * Math.cos(beta*(Math.PI/180)));
                 if ((180 + Math.asin((Math.sin(beta*(Math.PI/180)) * l4) / laccent)*(180 / Math.PI)) > 180)                   
-                    alpha = -Math.toDegrees(180 + (Math.asin((Math.sin(Math.toRadians(beta) * l4) / laccent)))) + 360;
+                    alpha = -(180 + Math.toDegrees((Math.asin((Math.sin(Math.toRadians(beta)) * l4) / laccent)))) + 360;
                 else
                     alpha = (180 + Math.toDegrees(Math.asin((Math.sin(Math.toRadians(beta)) * l4) / laccent)));
                 gamma = 180 - alpha - Math.abs(beta);
@@ -341,20 +350,10 @@ class SpiderLeg implements Runnable
                     servoAngle = gamma_b - gamma;
                 break;
         }
-        if (servoAngle >= coxalimH)
-		{
-			set = true;
-            servoAngle = coxalimH;
-		}
-		else if (servoAngle <= coxalimL)
-		{
-			set = false;
-            servoAngle = coxalimL;
-		}
         // set right COXA, FEMUR and TIBIA
         turn2();
-        //if (id%2 != 0)
-            //servoAngle = 90 - servoAngle;
+        if (id % 2 == 1)
+            servoAngle = 90 - servoAngle;
         // t_tibia += 145;
        //  t_femur += -40;
          //servoAngle = 0;
@@ -366,17 +365,16 @@ class SpiderLeg implements Runnable
 
         //Debug.Log("C:"+ (int)servoAngle +",F:"+ (int)t_femur +",T:"+ (int)t_tibia +",e:"+ (int)t_e);
 
-        if (coxaChange >= 85) set = true;
-        if (coxaChange <= 5) set = false;
+        if (coxaChange >= coxalimH) set = true;
+        if (coxaChange <= coxalimL) set = false;
     }
 
     public void turn2()
     {
         //calculate hight of legg depending on the servoAngle (aX^2 + b)
-        double f_q = 10.0; // top is (p , q) 
         double f_p = 45.0;
-        double f_a = (-f_q)/Math.pow(-f_p, 2);
-        double f_h = f_a * Math.pow((sharedParams.servoAngle_rv - f_p), 2) + f_q;
+        double f_a = (-PAR_X)/Math.pow(-f_p, 2);
+        double f_h = f_a * Math.pow((sharedParams.servoAngle_rv - f_p), 2) + PAR_X;
         //Debug.Log("y:"+f_h+",x:"+sharedParams.servoAngle_rv + ",a:"+f_a);
         //  0 = a * (90-45)^2 + 45 
         // a = (-q)/(-p)^2

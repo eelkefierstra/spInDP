@@ -7,6 +7,8 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 //#include <sys/ioctl.h>
+#include <thread>
+#include <chrono>
 #include <vector>
 #include <iterator>
 #include <fcntl.h>

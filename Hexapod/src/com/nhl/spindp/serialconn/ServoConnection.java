@@ -585,7 +585,9 @@ public class ServoConnection
 		for (byte b : buffer)
 			System.out.print(b);
 		System.out.println();
-		error = buffer[4];
+		if(buffer.length < 5)
+			return data;
+		//error = buffer[4];
 		if (buffer[3] != 0)
 		{
 			//data = serialPort.readBytes(buffer[3] - 1);//, 10);

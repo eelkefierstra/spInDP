@@ -79,7 +79,8 @@ public class SpiderJoint
 		}
 		else
 			val += offset;
-		if (Double.isNaN(val)) throw new IllegalArgumentException("angle must not be NaN");
+		if (Double.isNaN(val)) 
+			throw new IllegalArgumentException("angle must not be NaN");
 		else
 		{
 			if (val > upperRange)
