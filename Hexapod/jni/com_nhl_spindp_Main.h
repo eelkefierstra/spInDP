@@ -15,14 +15,6 @@ extern "C" {
 JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_Main_isAlreadyRunning
   (JNIEnv *, jclass);
 
-/*
- * Class:     com_nhl_spindp_Main
- * Method:    cleanup
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_nhl_spindp_Main_cleanup
-  (JNIEnv *, jclass);
-
 #ifdef __cplusplus
 }
 #endif

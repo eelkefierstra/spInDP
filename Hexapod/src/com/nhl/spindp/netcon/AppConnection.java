@@ -16,6 +16,8 @@ public class AppConnection
 {
 	private Info info = Main.getInstance().getInfo();
 	private ServerSocket serverSocket;
+	private Thread worker;
+	
 	public AppConnection() throws IOException
 	{
 		serverSocket = new ServerSocket(1338);
@@ -24,6 +26,24 @@ public class AppConnection
 	public AppConnection(int port) throws IOException
 	{
 		serverSocket = new ServerSocket(port);
+	}
+	
+	public void start()
+	{
+		worker = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					mainLoop();
+				}
+				catch (IOException e) { }
+			}
+		};
+		worker.setDaemon(true);
+		worker.start();
 	}
 	
 	public void mainLoop() throws IOException
