@@ -80,6 +80,7 @@ public class I2C
 				loop();
 			}
 		};
+		t1.setDaemon(true);
 		t1.start();
 	}
 	

@@ -105,6 +105,26 @@ public class SpiderBody
 		}
 	}
 	
+	public int[] getIds()
+	{
+		int[] res = new int[legs.length * 3];
+		for (int i = 0; i < legs.length; i++)
+		{
+			System.arraycopy(legs[i].getIds(), 0, res, i * 3, 3);
+		}
+		return res;
+	}
+	
+	public int[] getAngles()
+	{
+		int[] res = new int[legs.length * 3];
+		for (int i = 0; i < legs.length; i++)
+		{
+			System.arraycopy(legs[i].getAngles(), 0, res, i * 3, 3);
+		}
+		return res;
+	}
+	
 	public void moveToAngle(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException
 	{
 		//SpiderLeg leg = legs[0];
@@ -125,6 +145,7 @@ public class SpiderBody
         public double firstCoxaChange;
         public double servoAngle_rv;
         public double b_turn;
+        public double beta_RV;
         
         public SharedParams()
         { 
@@ -133,15 +154,16 @@ public class SpiderBody
 
         public SharedParams(int firstId)
         { 
-        	this(firstId, 0.0, 0.0, 0.0);
+        	this(firstId, 0.0, 0.0, 0.0, 0.0);
         }
 
-        public SharedParams(int firstId, double firstCoxaChange, double servoAngle_rv, double b_turn)
+        public SharedParams(int firstId, double firstCoxaChange, double servoAngle_rv, double b_turn, double beta_RV)
         {
             this.firstId = firstId;
             this.firstCoxaChange = firstCoxaChange;
             this.servoAngle_rv = servoAngle_rv;
             this.b_turn = b_turn;
+            this.beta_RV = beta_RV;
         }
 		
 	}

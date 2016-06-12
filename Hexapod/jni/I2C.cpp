@@ -7,10 +7,12 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 //#include <sys/ioctl.h>
+#include <thread>
+#include <chrono>
 #include <vector>
 #include <iterator>
 #include <fcntl.h>
-#include "com_nhl_spindp_i2c_I2C.h"
+#include "com_nhl_spindp_sensors_I2C.h"
 
 #define DEVICE "/dev/i2c-1"
 
@@ -78,7 +80,7 @@ bool i2cCleanADC()
     return I2Cdev::writeWord( adcAddr, 0x01, buff);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
+JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_sensors_I2C_initI2c
   (JNIEnv *env, jobject)
 {
 	int err = 0;
@@ -117,7 +119,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_i2c_I2C_initI2c
 	return true;
 }
 
-JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
+JNIEXPORT void JNICALL Java_com_nhl_spindp_sensors_I2C_loopI2c
   (JNIEnv *env, jobject thisObj)
 {
 	jclass dataCls = env->FindClass("com/nhl/spindp/i2c/I2C$I2CData");
@@ -167,7 +169,7 @@ JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_loopI2c
 	if (env->ExceptionCheck()) return;
 }
 
-JNIEXPORT void JNICALL Java_com_nhl_spindp_i2c_I2C_cleanupI2c
+JNIEXPORT void JNICALL Java_com_nhl_spindp_sensors_I2C_cleanupI2c
   (JNIEnv *, jobject)
 {
 	int err = 0;

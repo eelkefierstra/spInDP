@@ -16,6 +16,8 @@ public class AppConnection
 {
 	private Info info = Main.getInstance().getInfo();
 	private ServerSocket serverSocket;
+	private Thread worker;
+	
 	public AppConnection() throws IOException
 	{
 		serverSocket = new ServerSocket(1338);
@@ -26,11 +28,32 @@ public class AppConnection
 		serverSocket = new ServerSocket(port);
 	}
 	
+<<<<<<< HEAD
 	/**
 	 * The mainloop of the server, it waits for a connection 
 	 * and sends instructions
 	 * @throws IOException
 	 */
+=======
+	public void start()
+	{
+		worker = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					mainLoop();
+				}
+				catch (IOException e) { }
+			}
+		};
+		worker.setDaemon(true);
+		worker.start();
+	}
+	
+>>>>>>> 808def41906e52a9f528e7fc17de7c35c31dd43b
 	public void mainLoop() throws IOException
 	{
 		while (true)

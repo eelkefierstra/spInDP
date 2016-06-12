@@ -1,11 +1,93 @@
 package com.nhl.spindp.bluetooth;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.file.Paths;
 import java.util.Scanner;
-import com.fazecast.jSerialComm.*;
+//import com.fazecast.jSerialComm.*;
+import com.nhl.spindp.Utils;
 
 public class BluetoothConnection
 {
-	SerialPort port;
+	private String btFile = "/tmp/BT_IN";
+	private FileReader fReader;
+	private Thread worker;
+	
+	public BluetoothConnection()
+	{
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				if (fReader != null)
+				{
+					try
+					{
+						fReader.close();
+					}
+					catch (IOException e) { }
+				}
+			}
+		});
+	}
+	
+	public void start()
+	{
+		worker = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				String buff = "";
+				int c = 0;
+				while (Utils.shouldRun)
+				{
+					try
+					{
+						if ((c = fReader.read()) != -1)
+						{
+							if ((char)c == '<') buff = "";
+							buff += (char)c;
+							if ((char)c == '>')
+								System.out.println("Complete instruction");
+						}
+					}
+					catch (Exception ex) { }
+				}
+			}
+		};
+		worker.setDaemon(true);
+		worker.start();
+	}
+	
+	public void blueLoop() throws IOException
+	{
+		//FileChannel.open(Paths.get(btFile)).truncate(0).close();
+		fReader = null;
+		BufferedReader reader = new BufferedReader(new FileReader(btFile));
+		int c = 0;
+		String buff = "";
+		
+		while (Utils.shouldRun)
+		{
+			if ((c = fReader.read()) != -1)
+			{
+				if ((char)c == '<') buff = "";
+				buff += (char)c;
+				if ((char)c == '>')
+					System.out.println("Complete instruction");
+			}
+			if (reader.ready())
+				System.out.println(reader.readLine());
+
+		}
+		reader.close();
+	}
+	/*SerialPort port;
 	Scanner data;
 	boolean done = false;
 	Thread t2;
@@ -90,5 +172,5 @@ public class BluetoothConnection
 				Commandc.controller(mes);
 			}
 		}
-	}
+	}*/
 }

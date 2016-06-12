@@ -32,7 +32,8 @@ import org.apache.http.util.EntityUtils;
 
 public class WebSocket
 {
-	HttpServer server;
+	private HttpServer server;
+	private Thread worker;
 	
 	public WebSocket()
 	{
@@ -93,7 +94,25 @@ public class WebSocket
 		server.setExecutor(null);
 	}
 	*/
-	public void start() throws IOException, InterruptedException
+	public void start()
+	{
+		worker = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					init();
+				}
+				catch (Exception ex) { }
+			}
+		};
+		worker.setDaemon(true);
+		worker.start();
+	}
+	
+	private void init() throws IOException, InterruptedException
 	{
 		server.start();
         server.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);

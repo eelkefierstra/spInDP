@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -26,14 +28,15 @@ public class Main
 	private static ServoConnection conn;
 	private static WebSocket sock;
 	private static AppConnection appConn;
+	private static LedStrip ledStrip;
 	public ObjectRecognition vision;
 	private static BluetoothConnection blue;
 	public DistanceMeter distance;
 	private static Info info;
 	private static boolean running = true;
 	public static List<Short> failedServos;
-	private volatile double forward = 1.0;
-	private volatile double right   = 0.0;
+	private volatile double forward = 0.0;
+	private volatile double right   = 0.25;
 	
 	static
 	{
@@ -43,8 +46,6 @@ public class Main
 	}
 	
 	private static native boolean isAlreadyRunning();
-	
-	private static native void cleanup();
 	
 	public int readCurrentAngle(byte id) throws IOException
 	{
@@ -68,8 +69,8 @@ public class Main
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception
-	{/*
-		if (isAlreadyRunning())
+	{
+		/*if (isAlreadyRunning())
 		{
 			System.out.println("Hexapod is already running");
 			//System.exit(1);
@@ -79,33 +80,23 @@ public class Main
 			@Override
 			public void run()
 			{
-				cleanup();
+				try
+				{
+					Files.deleteIfExists(new File("/tmp/Hexapod.pid").toPath());
+				}
+				catch (IOException e) { }
 			}
 		});*/
 		instance = new Main();
-		instance.distance = new DistanceMeter();
-		instance.distance.distanceBoi();
+		ledStrip = new LedStrip();
+		ledStrip.setDaemon(true);
+		ledStrip.start();
+		//instance.distance = new DistanceMeter();
+		//instance.distance.distanceBoi();
 		info = instance.new Info();
 		
-		Thread webWorker = new Thread()
-		{
-			@Override
-			public void run()
-			{
-				System.out.println("webWorker started");
-				try
-				{
-					sock = new WebSocket(8000);
-					sock.start();
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-					//System.exit(-1);
-				}
-			}
-		};
-		webWorker.start();
+		sock = new WebSocket(8000);
+		sock.start();
 		//instance.vision = new ObjectRecognition();
 		I2C i2c = new I2C();
 		i2c.start();
@@ -120,27 +111,10 @@ public class Main
 		}
 		
 		blue = new BluetoothConnection();
-		blue.setupBluetooth();
+		blue.start();
 		
-		Thread appConnection = new Thread()
-		{
-			@Override
-			public void run()
-			{
-				System.out.println("App Server started");
-				try
-				{
-					appConn = new AppConnection(1338);
-					appConn.mainLoop();
-					System.out.println("App Server stopped");
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-				}
-			}
-		};
-		appConnection.start();
+		appConn = new AppConnection(1338);
+		appConn.start();
 		conn = new ServoConnection();
 		
 		failedServos = new ArrayList<>();
@@ -168,21 +142,16 @@ public class Main
 		//byte[] ids    = new byte[]  { 1  , 4  , 2  , 5  , 3 , 6 };
 		//short[] stand = new short[] { 512, 512, 650, 650, 50, 50};
 		//conn.moveMultiple(ids, stand);
-		//Thread.sleep(1000);
-		//body.moveToAngle(45.0, 45.0, 30.0);
-		//Thread.sleep(1000);
 		
-		//body.moveToAngle(45, 40.0, 10.0);
 		Scanner scan = new Scanner(System.in);
 		String input;
-		body.stabbyStab();
-		while (running)
+		//body.stabbyStab();
+		while (Utils.shouldRun)
 		{
 			Time.updateDeltaTime();
 			//body.walk(instance.forward, instance.right);
 			Thread.sleep(1);
-
-			if(scan.hasNext())
+			/*if(scan.hasNext())
 			{
 				if((input = scan.next().toLowerCase()).equals("exit"))
 				{
@@ -192,20 +161,10 @@ public class Main
 				{
 					System.out.println(input);
 				}
-			}
+			}*/
 		}
         scan.close();
-
-		if (sock != null)
-		{
-			sock.stop();
-		}
-		//webWorker.join();
-		if(appConn != null)
-		{
-			appConn.stop();
-		}
-		//appConnection.join();
+        Utils.shouldRun = false;
 	}
 	
 	public static void servoFailed(short id)
