@@ -4,7 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-public class LedStrip implements Runnable
+public class LedStrip extends Thread
 {
 	@Override
 	public void run()
@@ -15,7 +15,7 @@ public class LedStrip implements Runnable
 		rgbColour[1] = 0;
 		rgbColour[2] = 0;
 
-		while (true)
+		while (Utils.shouldRun)
 		{
 			// Choose the colours to increment and decrement.
 			for (int decColour = 0; decColour < 3; decColour += 1)
@@ -34,12 +34,11 @@ public class LedStrip implements Runnable
 					}
 					catch (Exception e)
 					{
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
 				}
-	  		}		}
+	  		}
+		}
 	}
 
 	private static void setColourRgb(int r, int g, int b) throws IOException

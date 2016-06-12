@@ -105,6 +105,26 @@ public class SpiderBody
 		}
 	}
 	
+	public int[] getIds()
+	{
+		int[] res = new int[legs.length * 3];
+		for (int i = 0; i < legs.length; i++)
+		{
+			System.arraycopy(legs[i].getIds(), 0, res, i * 3, 3);
+		}
+		return res;
+	}
+	
+	public int[] getAngles()
+	{
+		int[] res = new int[legs.length * 3];
+		for (int i = 0; i < legs.length; i++)
+		{
+			System.arraycopy(legs[i].getAngles(), 0, res, i * 3, 3);
+		}
+		return res;
+	}
+	
 	public void moveToAngle(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException
 	{
 		//SpiderLeg leg = legs[0];

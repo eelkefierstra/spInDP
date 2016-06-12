@@ -7,6 +7,56 @@ import com.nhl.spindp.Utils;
 public class BluetoothConnection
 {
 	private String btFile = "/tmp/BT_IN";
+	private FileReader fReader;
+	private Thread worker;
+	
+	public BluetoothConnection()
+	{
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				if (fReader != null)
+				{
+					try
+					{
+						fReader.close();
+					}
+					catch (IOException e) { }
+				}
+			}
+		});
+	}
+	
+	public void start()
+	{
+		worker = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				String buff = "";
+				int c = 0;
+				while (Utils.shouldRun)
+				{
+					try
+					{
+						if ((c = fReader.read()) != -1)
+						{
+							if ((char)c == '<') buff = "";
+							buff += (char)c;
+							if ((char)c == '>')
+								System.out.println("Complete instruction");
+						}
+					}
+					catch (Exception ex) { }
+				}
+			}
+		};
+		worker.setDaemon(true);
+		worker.start();
+	}
 	
 	public void blueLoop() throws IOException
 	{
@@ -16,7 +66,7 @@ public class BluetoothConnection
 		int c = 0;
 		String buff = "";
 		
-		while(Utils.shouldRun)
+		while (Utils.shouldRun)
 		{
 			if ((c = fReader.read()) != -1)
 			{
