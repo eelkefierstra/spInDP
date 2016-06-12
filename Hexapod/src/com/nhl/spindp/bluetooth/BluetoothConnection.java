@@ -1,13 +1,7 @@
 package com.nhl.spindp.bluetooth;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.file.Paths;
-import java.util.Scanner;
-import com.fazecast.jSerialComm.*;
 import com.nhl.spindp.Utils;
 
 public class BluetoothConnection
@@ -17,8 +11,8 @@ public class BluetoothConnection
 	public void blueLoop() throws IOException
 	{
 		//FileChannel.open(Paths.get(btFile)).truncate(0).close();
-		FileReader fReader = null;
-		BufferedReader reader = new BufferedReader(new FileReader(btFile));
+		FileReader fReader = new FileReader(btFile);
+		//BufferedReader reader = new BufferedReader(new FileReader(btFile));
 		int c = 0;
 		String buff = "";
 		
@@ -26,13 +20,20 @@ public class BluetoothConnection
 		{
 			if ((c = fReader.read()) != -1)
 			{
+				if((char) c == '\n')
+					break;
 				buff += (char)c;
+				if((char)c == '>')
+				{
+					Commandc.controller(buff);
+					buff = "";
+				}
 			}
-			if (reader.ready())
-				System.out.println(reader.readLine());
+			/*if (reader.ready())
+				System.out.println(reader.readLine());*/
 
 		}
-		reader.close();
+		fReader.close();
 	}
 	/*SerialPort port;
 	Scanner data;

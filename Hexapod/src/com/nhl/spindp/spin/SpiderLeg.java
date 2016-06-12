@@ -209,6 +209,14 @@ class SpiderLeg implements Runnable
 	{
 		final double scale = 500.0;
 		int id = getFirstId() / 3;
+		// check if turn is right
+ 		if(right > 0)
+ 		{   // select the right id for a right turn
+ 			if (id + 3 > 5)
+ 			    id -= 3; // 3 -> 0, 4 -> 1 , 5 -> 2
+ 			else
+ 			    id += 3; // 0 -> 3, 1 -> 4, 2 -> 5      
+ 		}
 		//calculate the radius of turn
 		double r = 800.0;//500.0 + (scale - scale*Math.abs(right)); //237 500
 		if (coxaChange >= coxalimH)
@@ -221,14 +229,7 @@ class SpiderLeg implements Runnable
 			set = !set;
 			coxaChange = coxalimL;
 		}
-		// check if turn is right
-		if(right > 0)
-		{   // select the right id for a right turn
-			if (id + 3 > 5)
-			    id -= 3; // 3 -> 0, 4 -> 1 , 5 -> 2
-			else
-			    id += 3; // 0 -> 3, 1 -> 4, 2 -> 5      
-		}
+		
 		double small_l = Math.cos(A_RAD)*l;
 		switch (id)
 		{
@@ -352,6 +353,7 @@ class SpiderLeg implements Runnable
         }
         // set right COXA, FEMUR and TIBIA
         turn2();
+     
         if (id % 2 == 1)
             servoAngle = 90 - servoAngle;
         // t_tibia += 145;
