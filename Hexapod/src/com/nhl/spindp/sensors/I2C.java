@@ -18,7 +18,7 @@ public class I2C
 	private double rx = -1.0, ry = -1.0, rz = -1.0;    //filtered info
 	private boolean done = true;
 	private Info info;
-	private Thread t1;
+	private Thread worker;
 	
 	public I2C()
 	{
@@ -72,7 +72,7 @@ public class I2C
 	public void start()
 	{
 		done = false;
-		t1 = new Thread()
+		worker = new Thread()
 		{
 			@Override
 			public void run()
@@ -80,8 +80,9 @@ public class I2C
 				loop();
 			}
 		};
-		t1.setDaemon(true);
-		t1.start();
+		worker.setDaemon(true);
+		worker.setName("I2CWorker");
+		worker.start();
 	}
 	
 	/**
@@ -92,8 +93,8 @@ public class I2C
 		done = true;
 		try
 		{
-			if(t1 != null)
-			    t1.join();
+			if(worker != null)
+			    worker.join();
 		}
 		catch (InterruptedException e)
 		{

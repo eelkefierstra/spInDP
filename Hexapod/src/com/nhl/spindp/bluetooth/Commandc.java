@@ -6,17 +6,18 @@ import com.nhl.spindp.Utils;
 //This code works with the information provided by the controller
 public class Commandc
 {
+	//for each value an object
+	private static int a  = 0; //button a
+	private static int b  = 0; //button b
+	private static int c  = 0; //button c
+	private static int x  = 0; //horizontal value joystick
+	private static int y  = 0; //vertical value joystick
+	private static int s  = 0; //value lcd
+	private static int ss = 0; //switch value lcd
 	
-	public static void controller(String commando)
+	public static synchronized void controller(String commando)
 	{		
-		//for each value an object
-		String a = "low"; //button a
-		String b = "low"; //button b
-		String c = "low"; //button c
-		int x = 0;        //horizontal value joystick
-		int y = 0;        //vertical value joystick
-		int s = 0;        //value lcd
-		int ss = 0;       //switch value lcd
+		
 		
 		if (commando.startsWith("<") && commando.endsWith(">"))
 		{
@@ -26,35 +27,30 @@ public class Commandc
 		{
 			return;
 		}
-		//loops through string commando
-		for (String subStr : commando.split(","))
+		
+		//loops through commando string
+		String[] strArr = commando.split(",");
+		if(strArr.length != 6)
+			return;
+		
+		for (String subStr : strArr)
 		{
-			
 			//searches for 'a' in "commando", skips to the value and then changes object a to high if the value is 1
 			if (subStr.charAt(0) == 'a')
 			{
-				if (subStr.endsWith("1"))
-				{
-					a = "high";
-				}
+				a = Integer.parseInt(subStr.substring(2));
 			}
 						
-		//searches for 'b' in "commando", skips to the value and then changes object b to high if the value is 1
+			//searches for 'b' in "commando", skips to the value and then changes object b to high if the value is 1
 			else if (subStr.charAt(0) == 'b')
 			{
-				if (subStr.endsWith("1"))
-				{
-					b = "high";
-				}
+				b = Integer.parseInt(subStr.substring(2));
 			}
 			
 			//searches for 'c' in "commando", skips to the value and then changes object c to high if the value is 1
 			else if (subStr.charAt(0) == 'c')
 			{
-				if (subStr.endsWith("1"))
-				{
-					c = "high";
-				}
+				c = Integer.parseInt(subStr.substring(2));
 			}
 			
 			//searches for 'x' in "commando", skips to the value and then changes object x to an integer between 0 and 1023
@@ -64,7 +60,7 @@ public class Commandc
 			}
 			
 			//searches for 'y' in "commando", skips to the value and then changes object y to an integer between 0 and 1023
-			else if (subStr.charAt(0) == 'y')
+			else if (subStr.charAt(0) == 'Y')
 			{
 				y = Integer.parseInt(subStr.substring(2));
 			}
@@ -76,34 +72,28 @@ public class Commandc
 			}
 		}
 		
-		//b is pressed, selected mode will start
-		if (b == "high")
+		//b is pressed, which kills all actions "killswitch"
+		if (b == 1)
 		{
 			ss = 0;
 		}
 		
-		//a is pressed, which kills all actions "killswitch"
-		else if (a == "high")
+		//a is pressed, selected mode will start
+		else if (a == 1)
 		{
             ss = s;
 		}
 
 		//c is pressed, the spider tries to destroy a balloon
-		else if (c == "high")
+		else if (c == 1)
 		{
 			
 		}
+		
 		else if(s == -1)
 		{
 			s = 0;
 		}
-		
-		//make a turn
-		//Utils.map(x, 0, 1023, -1.0, 1.0);
-		
-		
-		//walk straight
-		//Utils.map(y, 0, 1023, -1.0, 1.0);
 		
 		//modes of the lcd screen (for example: dance, race mode etc.)
 		//the switch case calls the methods for each mode
@@ -118,7 +108,7 @@ public class Commandc
 			case 5://Ballon zoeken
 				Main.getInstance().vision.start("balloon");
 				break;
-			case 1: //Spinnijdig race
+			case 1://Spinnijdig race
 			case 2://Spider Race
 			case 4://Spider Gap
 			case 8://Poortje

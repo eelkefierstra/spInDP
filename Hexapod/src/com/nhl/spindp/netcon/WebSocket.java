@@ -109,6 +109,7 @@ public class WebSocket
 			}
 		};
 		worker.setDaemon(true);
+		worker.setName("WebWorker");
 		worker.start();
 	}
 	

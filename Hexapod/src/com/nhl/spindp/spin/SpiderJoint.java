@@ -81,7 +81,10 @@ public class SpiderJoint
 		else
 			val += offset;
 		if (Double.isNaN(val)) 
+		{
+			LedStrip.throwError();
 			throw new IllegalArgumentException("angle must not be NaN");
+		}
 		else
 		{
 			if (val > upperRange)

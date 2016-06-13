@@ -48,6 +48,7 @@ public class AppConnection
 			}
 		};
 		worker.setDaemon(true);
+		worker.setName("AppThread");
 		worker.start();
 	}
 	

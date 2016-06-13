@@ -142,6 +142,7 @@ public class SpiderBody
 	
 	public class SharedParams
 	{
+		public boolean sync;
 	 	public final int firstId;
         public double firstCoxaChange;
         public double servoAngle_rv;
@@ -150,16 +151,17 @@ public class SpiderBody
         
         public SharedParams()
         { 
-        	this(1);
+        	this(false, 1);
         }
 
-        public SharedParams(int firstId)
+        public SharedParams(boolean sync,int firstId)
         { 
-        	this(firstId, 0.0, 0.0, 0.0, 0.0);
+        	this(sync, firstId, 0.0, 0.0, 0.0, 0.0);
         }
 
-        public SharedParams(int firstId, double firstCoxaChange, double servoAngle_rv, double b_turn, double beta_RV)
+        public SharedParams(boolean sync, int firstId, double firstCoxaChange, double servoAngle_rv, double b_turn, double beta_RV)
         {
+        	this.sync = sync;
             this.firstId = firstId;
             this.firstCoxaChange = firstCoxaChange;
             this.servoAngle_rv = servoAngle_rv;

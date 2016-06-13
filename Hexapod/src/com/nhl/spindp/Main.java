@@ -86,9 +86,12 @@ public class Main
 			}
 		});*/
 		instance = new Main();
+		
 		ledStrip = new LedStrip();
 		ledStrip.setDaemon(true);
+		ledStrip.setName("LedThread");
 		ledStrip.start();
+		
 		instance.distance = new DistanceMeter();
 		//instance.distance.start();
 		info = instance.new Info();
@@ -119,7 +122,6 @@ public class Main
 		failedServos = new ArrayList<>();
 		Time.updateDeltaTime();
 		SpiderBody body = new SpiderBody((byte) 1);
-		//body.testCalcs();
 		//byte[] ids    = new byte[]  { 1  , 4  , 2  , 5  , 3 , 6 };
 		//short[] stand = new short[] { 512, 512, 650, 650, 50, 50};
 		//conn.moveMultiple(ids, stand);

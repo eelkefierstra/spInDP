@@ -68,6 +68,7 @@ public class BluetoothConnection
 			}
 		};
 		worker.setDaemon(true);
+		worker.setName("BlueThread");
 		worker.start();
 	}
 	

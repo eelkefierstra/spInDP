@@ -94,10 +94,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -130,10 +130,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -149,10 +149,10 @@ public class ServoConnection
 		byte[] buffer = Servo.createResetInstruction(id);
 		serialPort.writeBytes(buffer);
 		byte[] res = readData();
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -176,10 +176,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -601,7 +601,7 @@ public class ServoConnection
 		//if prefix incorrect
 		if(((buffer[0] != (byte)0xFF) || (buffer[1] != (byte)0xFF)) && (buffer.length < 5))
 			return data;
-		System.out.println(buffer.length);
+		//System.out.println(buffer.length);
 		for (byte b : buffer)
 			System.out.print(b);
 		System.out.println();
@@ -621,7 +621,7 @@ public class ServoConnection
 			if(!checksum)
 			{
 				System.err.println("checksum error!");
-				LedStrip.throwError();
+				//LedStrip.throwError();
 				/*System.err.println(" .----------------.  .----------------.  .----------------.  .----------------.  .----------------. ");
 				System.err.println("| .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |");
 				System.err.println("| |  _________   | || |  _______     | || |  _______     | || |     ____     | || |  _______     | |");

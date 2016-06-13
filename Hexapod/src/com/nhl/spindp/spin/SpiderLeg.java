@@ -25,20 +25,20 @@ class SpiderLeg implements Runnable
 	//private static final double LACCENT  = Math.cos(A_RAD) * L;
 	//private static final double D        = F - LACCENT;
 	//private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
-	private static final double coxalimL =  15;
-	private static final double coxalimH =  75;
-	private static volatile double PAR_X = 50.0;
+	private static final double coxalimL =  15.0;
+	private static final double coxalimH =  75.0;
+	private static volatile double PAR_X =  50.0;
 	//private static volatile double PAR_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0)), 2.0);
 	
 	private ExecutorService executor;
 	private Future<?> future;
 	private SpiderBody.SharedParams sharedParams;
 	
-	private double alpha   =  0.0;// Math.toRadians(Math.acos((Math.pow(A, 2) - Math.pow(C, 2) - Math.pow(B, 2)) / (-2 * C * B)));
-	private double gamma   =  0.0;// Math.toRadians(Math.acos((Math.pow(C, 2.0) - Math.pow(B, 2.0) - Math.pow(A, 2.0)) / (-2 * B * A)));
-	private double beta    =  0.0;// Math.toRadians(Math.acos((Math.pow(B, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
-	private double epsilon =  0.0;// Math.toRadians(Math.atan(E / D));
-	private double step    =  0.0;
+	private double alpha   =   0.0;// Math.toRadians(Math.acos((Math.pow(A, 2) - Math.pow(C, 2) - Math.pow(B, 2)) / (-2 * C * B)));
+	private double gamma   =   0.0;// Math.toRadians(Math.acos((Math.pow(C, 2.0) - Math.pow(B, 2.0) - Math.pow(A, 2.0)) / (-2 * B * A)));
+	private double beta    =   0.0;// Math.toRadians(Math.acos((Math.pow(B, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
+	private double epsilon =   0.0;// Math.toRadians(Math.atan(E / D));
+	private double step    =   0.0;
 	private double e       = 110.0;
 	private boolean set    = false;
 	
@@ -51,7 +51,7 @@ class SpiderLeg implements Runnable
     //private final double small_l = Math.cos(A_RAD)*l;
     // bocht
     private static final double Length = 300;
-    private static final double Width  = 80;
+    private static final double Width  =  80;
     //private static final double R = 500;
     private double h;
     private double b;
@@ -88,15 +88,11 @@ class SpiderLeg implements Runnable
 			coxaChange = coxalimH;
 			set = true;
 		}
-		if (coxaChange > coxalimH)
-		{
-			coxaChange -= coxalimH;
-		}
 		// 105, 240, 0
 		this.l = 127.0;
 		this.executor = executor;
 		this.sharedParams = sharedParams;
-		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 105);
+		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 105);//, 90, 210);
 		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 240);
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
 	}
@@ -104,8 +100,13 @@ class SpiderLeg implements Runnable
 	public boolean walk(double forward, double right)
 	{
 		boolean res = false;
-		if (Time.shouldSync())
-			coxaChange = (int)coxaChange;
+		if (sharedParams.sync)
+		{
+			if (getFirstId() % 2 == 0)
+				 coxaChange = coxalimH;
+			else coxaChange = coxalimL;
+			sharedParams.sync = false;
+		}
 		if (forward == 0 && right == 0)
 		{
 			future = executor.submit(this);
@@ -113,8 +114,6 @@ class SpiderLeg implements Runnable
 		}
 		else if (right <= -.25 || .25 <= right)
 		{
-			if (getFirstId() == 1)
-				System.out.println();
 			if (!set)
 				 coxaChange += ((90.0 * Time.deltaTime) * forward);
 			else coxaChange -= ((90.0 * Time.deltaTime) * forward);
@@ -126,8 +125,6 @@ class SpiderLeg implements Runnable
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
-			if (getFirstId() == 1)
-				System.out.println();
 			if (!set)
 				 coxaChange += ((90.0 * Time.deltaTime) * forward);
 			else coxaChange -= ((90.0 * Time.deltaTime) * forward);
@@ -167,7 +164,7 @@ class SpiderLeg implements Runnable
 		{
 			res[i] = servos[i].getFuture().get();
 			if (res[i][0] != (byte)0xFF || res[i][1] != (byte)0xFF)
-				System.out.println(DatatypeConverter.printHexBinary(res[i]));
+				System.out.println();//DatatypeConverter.printHexBinary(res[i]));
 		}
 		return res;
 	}
@@ -184,6 +181,8 @@ class SpiderLeg implements Runnable
 		{
 			set = !set;
 			coxaChange = coxalimL;
+			if (getFirstId() == 1)
+				sharedParams.sync = true;
 		}
 		double lAccent = Math.cos(A_RAD) * l;
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
@@ -265,7 +264,6 @@ class SpiderLeg implements Runnable
 			case 3:
 			case 5:
 				// Links voor en achter
-				System.out.println((Math.sqrt(l * l - small_l* small_l) * 2));
 				h = 0.5 * Length + 0.5 * (Math.sqrt(l * l - small_l * small_l) * 2);
 				b = r - 0.5 * Width - small_l;
 				r4 = Math.sqrt(h * h + b * b);
