@@ -1,5 +1,6 @@
 package com.nhl.spindp.bluetooth;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import com.nhl.spindp.Utils;
@@ -10,8 +11,9 @@ public class BluetoothConnection
 	private FileReader fReader;
 	private Thread worker;
 	
-	public BluetoothConnection()
+	public BluetoothConnection() throws FileNotFoundException
 	{
+		fReader = new FileReader(btFile);
 		Runtime.getRuntime().addShutdownHook(new Thread()
 		{
 			@Override
@@ -44,13 +46,22 @@ public class BluetoothConnection
 					{
 						if ((c = fReader.read()) != -1)
 						{
-							if ((char)c == '<') buff = "";
-							buff += (char)c;
-							if ((char)c == '>')
+							if ((char)c == '<')
+							{
+								buff = "";
+								buff += (char)c;
+							}
+							else if ((char)c == '>')
+							{
 								System.out.println("Complete instruction");
+								Commandc.controller(buff);
+							}
 						}
 					}
-					catch (Exception ex) { }
+					catch (Exception ex)
+					{
+						ex.printStackTrace();
+					}
 				}
 			}
 		};
@@ -58,7 +69,8 @@ public class BluetoothConnection
 		worker.start();
 	}
 	
-	public void blueLoop() throws IOException
+	@Deprecated
+	private void blueLoop() throws IOException
 	{
 		//FileChannel.open(Paths.get(btFile)).truncate(0).close();
 		FileReader fReader = new FileReader(btFile);

@@ -117,8 +117,9 @@ class SpiderLeg implements Runnable
 		{
 			if (getFirstId() == 1)
 				System.out.println();
-			if (!set) coxaChange += ((90.0 * Time.deltaTime) * forward);
-			else if ( set) coxaChange -= ((90.0 * Time.deltaTime) * forward);
+			if (!set)
+				 coxaChange += ((90.0 * Time.deltaTime) * forward);
+			else coxaChange -= ((90.0 * Time.deltaTime) * forward);
 			if(right <= -0.9 || right >= 0.9)
 				noscope360(right);
 			else
@@ -127,8 +128,11 @@ class SpiderLeg implements Runnable
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
-			if (!set) coxaChange += ((90.0 * Time.deltaTime) * forward);
-			else if ( set) coxaChange -= ((90.0 * Time.deltaTime) * forward);
+			if (getFirstId() == 1)
+				System.out.println();
+			if (!set)
+				 coxaChange += ((90.0 * Time.deltaTime) * forward);
+			else coxaChange -= ((90.0 * Time.deltaTime) * forward);
 			future = executor.submit(this);
 			res = true;
 		}

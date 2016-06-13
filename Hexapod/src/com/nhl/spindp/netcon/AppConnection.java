@@ -28,13 +28,11 @@ public class AppConnection
 		serverSocket = new ServerSocket(port);
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * The mainloop of the server, it waits for a connection 
 	 * and sends instructions
 	 * @throws IOException
 	 */
-=======
 	public void start()
 	{
 		worker = new Thread()
@@ -53,7 +51,6 @@ public class AppConnection
 		worker.start();
 	}
 	
->>>>>>> 808def41906e52a9f528e7fc17de7c35c31dd43b
 	public void mainLoop() throws IOException
 	{
 		while (true)
@@ -129,7 +126,7 @@ public class AppConnection
 	 */
 	public String CreateADCInfo(){
 		String result = "";
-		result = Short.toString(info.getAdc());
+		result = String.valueOf(info.getAdc());
 		return result;
 	}
 	

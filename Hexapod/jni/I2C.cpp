@@ -122,9 +122,9 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_sensors_I2C_initI2c
 JNIEXPORT void JNICALL Java_com_nhl_spindp_sensors_I2C_loopI2c
   (JNIEnv *env, jobject thisObj)
 {
-	jclass dataCls = env->FindClass("com/nhl/spindp/i2c/I2C$I2CData");
+	jclass dataCls = env->FindClass("com/nhl/spindp/sensors/I2C$I2CData");
 	if (env->ExceptionCheck()) return;
-	jfieldID dataField = env->GetFieldID( env->GetObjectClass(thisObj), "data", "Lcom/nhl/spindp/i2c/I2C$I2CData;");
+	jfieldID dataField = env->GetFieldID( env->GetObjectClass(thisObj), "data", "Lcom/nhl/spindp/sensors/I2C$I2CData;");
 	if (env->ExceptionCheck()) return;
 	jobject dataObj = env->GetObjectField( thisObj, dataField);
 	if (env->ExceptionCheck()) return;
