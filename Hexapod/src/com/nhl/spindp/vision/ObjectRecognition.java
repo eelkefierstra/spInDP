@@ -78,8 +78,6 @@ public class ObjectRecognition
 						grabFrame();
 					}
 				};
-				
-				
 				timer = Executors.newSingleThreadScheduledExecutor();
 				timer.scheduleAtFixedRate(frameGrabber, 0, 33, TimeUnit.MILLISECONDS);
 			}
@@ -247,7 +245,7 @@ public class ObjectRecognition
 					richting = "Midden";
 				*/
 				
-				Imgproc.drawContours(frame, contours, idx, new Scalar(250, 0, 0));
+				//Imgproc.drawContours(frame, contours, idx, new Scalar(250, 0, 0));
 			}
 		}
 		

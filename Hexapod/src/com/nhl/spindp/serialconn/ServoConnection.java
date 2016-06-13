@@ -7,6 +7,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.nhl.spindp.LedStrip;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -88,6 +90,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -123,6 +126,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -168,6 +172,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -197,6 +202,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -226,6 +232,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -253,6 +260,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -280,6 +288,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -300,6 +309,7 @@ public class ServoConnection
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
+			LedStrip.throwError();
 		}
 	}
 	
@@ -326,6 +336,7 @@ public class ServoConnection
 		if (!serialPort.writeBytes(buffer))
 		{
 			System.out.println("Send instruction failed");
+			LedStrip.throwError();
 		}
 	}
 	
@@ -347,6 +358,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -374,6 +386,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -401,6 +414,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -430,6 +444,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -455,6 +470,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -480,6 +496,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -506,6 +523,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -532,6 +550,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -558,6 +577,7 @@ public class ServoConnection
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
+				LedStrip.throwError();
 			}
 			res = readData();
 		}
@@ -601,6 +621,7 @@ public class ServoConnection
 			if(!checksum)
 			{
 				System.err.println("checksum error!");
+				LedStrip.throwError();
 				/*System.err.println(" .----------------.  .----------------.  .----------------.  .----------------.  .----------------. ");
 				System.err.println("| .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |");
 				System.err.println("| |  _________   | || |  _______     | || |  _______     | || |     ____     | || |  _______     | |");

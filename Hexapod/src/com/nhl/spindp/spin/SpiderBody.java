@@ -61,11 +61,10 @@ public class SpiderBody
 	 */
 	public void walk(double forward, double right) throws IOException, InterruptedException, ExecutionException
 	{
-		int i = 0;
-		for (; i < legs.length; i++)
+		for (SpiderLeg leg : legs)
 		{
-			if (legs[i].walk(forward, right))
-				futures.offer(legs[i].getFuture());
+			if (leg.walk(forward, right))
+				futures.offer(leg.getFuture());
 		}
 		while (!futures.isEmpty())
 		{

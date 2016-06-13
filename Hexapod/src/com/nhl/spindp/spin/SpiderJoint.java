@@ -2,6 +2,7 @@ package com.nhl.spindp.spin;
 
 import java.util.concurrent.Future;
 
+import com.nhl.spindp.LedStrip;
 import com.nhl.spindp.Main;
 
 public class SpiderJoint
@@ -87,11 +88,13 @@ public class SpiderJoint
             {
                 System.err.println("val of servo " + servoId + " clamped");
                 val = upperRange;
+                LedStrip.throwError();
             }
-            if (val < lowerRange)
+			else if (val < lowerRange)
             {
             	System.err.println("val of servo " + servoId + " clamped");
                 val = lowerRange;
+                LedStrip.throwError();
             }
 			this.angle = val;
 		}
