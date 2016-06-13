@@ -130,7 +130,7 @@ public class DistanceMeter
 			
 
 			
-			System.out.println(microTime);
+			//System.out.println(microTime);
 			
 			//System.out.println(c);
 			}

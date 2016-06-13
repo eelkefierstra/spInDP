@@ -113,7 +113,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_sensors_I2C_initI2c
 		env->ThrowNew(ex, &mess[0]);
 		return false;
 	}
-	cout<< "bools= adc: "<<adc<<" gyro: "<<gyro<<endl;
+	cout<< "I2C online= adc: "<<adc<<" gyro: "<<gyro<<endl;
 	return true;
 }
 

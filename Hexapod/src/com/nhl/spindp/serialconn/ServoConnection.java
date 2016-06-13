@@ -264,10 +264,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -292,10 +292,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 
@@ -362,10 +362,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -390,10 +390,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -418,10 +418,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -448,10 +448,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return res.length != 0;
 	}
 	
@@ -474,10 +474,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return Byte.toUnsignedInt(res[0]);
 	}
 	
@@ -500,10 +500,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return (res[0] << 8) | res[1];
 	}
 	
@@ -527,10 +527,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return Byte.toUnsignedInt(res[0]);
 	}
 	
@@ -554,10 +554,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return (res[0] << 8) | res[1];
 	}
 	
@@ -581,10 +581,10 @@ public class ServoConnection
 			}
 			res = readData();
 		}
-		for (byte b : res)
+		/*for (byte b : res)
 		{
 			System.out.println(b);
-		}
+		}*/
 		return (res[0] << 8) | res[1];
 	}
 		
@@ -602,9 +602,9 @@ public class ServoConnection
 		if(((buffer[0] != (byte)0xFF) || (buffer[1] != (byte)0xFF)) && (buffer.length < 5))
 			return data;
 		//System.out.println(buffer.length);
-		for (byte b : buffer)
+		/*for (byte b : buffer)
 			System.out.print(b);
-		System.out.println();
+		System.out.println();*/
 		if(buffer.length < 5)
 			return data;
 		//error = buffer[4];

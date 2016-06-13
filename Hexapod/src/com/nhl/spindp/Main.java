@@ -100,16 +100,7 @@ public class Main
 		sock.start();
 		//instance.vision = new ObjectRecognition();
 		I2C i2c = new I2C();
-		i2c.start();/*
-		Thread.sleep(10);
-		for (int i = 0; i < Byte.MAX_VALUE; i++)
-		{
-			double[] adc = info.getAdc();
-			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
-			double[] res = info.getGyro();
-			System.out.println("x: "+res[0]+" y: "+res[1]);
-			System.out.println();
-		}*/
+		i2c.start();
 		
 		blue = new BluetoothConnection();
 		blue.start();
