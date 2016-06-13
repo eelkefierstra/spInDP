@@ -3,10 +3,8 @@
 #include <fstream>
 #include <iomanip>
 #include <unistd.h>
-//#include <linux/i2c-dev.h>
 #include "I2Cdev.h"
 #include "MPU6050.h"
-//#include <sys/ioctl.h>
 #include <thread>
 #include <chrono>
 #include <vector>
@@ -49,9 +47,9 @@ short readADC(int channel)
 	if(channel > 1)
 		return -1;
 	else if(channel == 0)
-		buf = 0xC383;
+		buf = 0xC183;
 	else if(channel == 1)
-		buf = 0xD383;
+		buf = 0xD183;
 	else
 		return -1;
 	//write what input to get

@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -35,8 +33,8 @@ public class Main
 	private static Info info;
 	private static boolean running = true;
 	public static List<Short> failedServos;
-	private volatile double forward = 1.0;
-	private volatile double right   = 0.25;
+	private volatile double forward = 0.0;
+	private volatile double right   = 0.0;
 	
 	static
 	{
@@ -91,15 +89,15 @@ public class Main
 		ledStrip = new LedStrip();
 		ledStrip.setDaemon(true);
 		ledStrip.start();
-		//instance.distance = new DistanceMeter();
-		//instance.distance.distanceBoi();
+		instance.distance = new DistanceMeter();
+		//instance.distance.start();
 		info = instance.new Info();
 		
 		sock = new WebSocket(8000);
 		sock.start();
 		//instance.vision = new ObjectRecognition();
 		I2C i2c = new I2C();
-		i2c.start();
+		i2c.start();/*
 		Thread.sleep(10);
 		for (int i = 0; i < Byte.MAX_VALUE; i++)
 		{
@@ -108,48 +106,34 @@ public class Main
 			double[] res = info.getGyro();
 			System.out.println("x: "+res[0]+" y: "+res[1]);
 			System.out.println();
-		}
+		}*/
 		
 		blue = new BluetoothConnection();
 		blue.start();
 		
 		appConn = new AppConnection(1338);
 		appConn.start();
+		
 		conn = new ServoConnection();
 		
 		failedServos = new ArrayList<>();
 		Time.updateDeltaTime();
 		SpiderBody body = new SpiderBody((byte) 1);
 		//body.testCalcs();
-		/*System.out.print("Sending reset... ");
-		conn.sendResetToAll();
-		System.out.println("Reset send.");
-		System.out.println("Sending instruction to: " + String.format("%2x", 1).toUpperCase());
-		if (!instance.conn.sendInstruction((byte)1, ServoConnection.INSTRUCTION_WRITE_DATA))
-		{
-			//System.err.println("Instruction not recieved: " + String.format("%2x", p.conn.getError()).toUpperCase());
-			//System.exit(1);
-		}
-		else
-		{
-			System.out.println("Sent instruction to: " + String.format("%2x", 1).toUpperCase());
-		}*/
-		/*
-		for (byte i = 1; i <= 18; i++)
-		{
-			conn.moveServo(i, (short)(j * 4));
-		}*/
 		//byte[] ids    = new byte[]  { 1  , 4  , 2  , 5  , 3 , 6 };
 		//short[] stand = new short[] { 512, 512, 650, 650, 50, 50};
 		//conn.moveMultiple(ids, stand);
 		
-		Scanner scan = new Scanner(System.in);
-		String input;
 		//body.stabbyStab();
 		while (Utils.shouldRun)
 		{
 			Time.updateDeltaTime();
-			//body.walk(instance.forward, instance.right);
+			body.walk(instance.forward, instance.right);
+			/*double[] adc = info.getAdc();
+			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
+			double[] res = info.getGyro();
+			System.out.println("x: "+res[0]+" y: "+res[1]);
+			System.out.println();*/
 			Thread.sleep(1);
 			/*if(scan.hasNext())
 			{
@@ -157,13 +141,8 @@ public class Main
 				{
 	        		running = false;
 				}
-				else
-				{
-					System.out.println(input);
-				}
 			}*/
 		}
-        scan.close();
         Utils.shouldRun = false;
 	}
 	

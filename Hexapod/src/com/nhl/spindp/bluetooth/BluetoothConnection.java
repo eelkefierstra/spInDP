@@ -46,14 +46,16 @@ public class BluetoothConnection
 					{
 						if ((c = fReader.read()) != -1)
 						{
+							if((char)c == '\n')
+								continue;
+							buff += (char)c;
 							if ((char)c == '<')
 							{
-								buff = "";
-								buff += (char)c;
+								buff = "<";
 							}
 							else if ((char)c == '>')
 							{
-								System.out.println("Complete instruction");
+								System.out.println("Complete instruction: "+ buff);
 								Commandc.controller(buff);
 							}
 						}

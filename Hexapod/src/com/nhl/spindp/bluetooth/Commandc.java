@@ -109,44 +109,29 @@ public class Commandc
 		//the switch case calls the methods for each mode
 		switch (ss)
 		{
-		case 0:	
-			Main.getInstance().setDirection(0, 0, 0);
-			break;
-        
-		case 1: //Spinnijdig race	
-			Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
-			break;
-			
-		case 2://Spider Race
-			Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
-			break;
-			
-		case 3://Volg de lijn
-			Main.getInstance().vision.start("line");
-			break;
-			
-		case 4://Spider Gap
-			Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
-			break;
-			
-		case 5://Ballon zoeken
-			Main.getInstance().vision.start("balloon");
-			break;
-			
-		case 6://De paringsdans
-			
-			break;
-			
-		case 7://Dans
-			
-			break;
-			
-		case 8://Poortje
-			Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
-			break;
-			
-		default:
-			break;
+			case 0:	
+				Main.getInstance().setDirection(0, 0, 0);
+				break;
+			case 3://Volg de lijn
+				Main.getInstance().vision.start("line");
+				break;
+			case 5://Ballon zoeken
+				Main.getInstance().vision.start("balloon");
+				break;
+			case 1: //Spinnijdig race
+			case 2://Spider Race
+			case 4://Spider Gap
+			case 8://Poortje
+				Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
+				break;
+			case 6://De paringsdans
+				
+				break;
+			case 7://Dans
+				
+				break;
+			default:
+				break;
 		}
 	}	
 }

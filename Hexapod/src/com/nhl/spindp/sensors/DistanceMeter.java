@@ -7,9 +7,36 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.concurrent.TimeUnit;
 
+import com.nhl.spindp.Utils;
+import com.nhl.spindp.bluetooth.Commandc;
+import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
+
 public class DistanceMeter
 {
-	public void distanceBoi() throws IOException 
+	private Thread worker;
+	
+	public void start()
+	{
+		worker = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					distanceBoi();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		};
+		worker.setDaemon(true);
+		worker.start();
+	}
+	
+	private void distanceBoi() throws IOException 
 	{
 		String pigpioFile = "/dev/pigpio";
 		String pigOut = "/dev/pigout";
@@ -17,25 +44,36 @@ public class DistanceMeter
 		long startTime = 0;
 		long stopTime = 0;
 		
+		double a = 0;
+		double b = 0;
+		double c = 0;
+		double d = 0;
+		double e = 0;
+		
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(pigpioFile));
 		BufferedReader reader = new BufferedReader(new FileReader(pigOut));
-		//for (int i = 0; i <=1000; i++)
-		boolean running = true;
 		
-		while (running)
+		String s;
+		
+		
+		while (Utils.shouldRun)
 		{
+			
+			for (int i = -1; i <= 3; i++)
+			{			
 			writer.write(String.format("r %s\n", signalPin));
 			writer.flush();
+			
 			try
 			{
-				Thread.sleep(100);
+				Thread.sleep(500);
 			}
-			catch (InterruptedException e)
+			catch (InterruptedException e1)
 			{
-				e.printStackTrace();
+				e1.printStackTrace();
 			}
 		
-			while (reader.readLine() == "0")
+			while ((s = reader.readLine()).compareTo("0") == 0)
 			{
 			
 				startTime = System.nanoTime();
@@ -45,7 +83,7 @@ public class DistanceMeter
 			
 			writer.write(String.format("r %s\n", signalPin));
 			writer.flush();
-			while (reader.readLine() == "1")
+			while ((s = reader.readLine()).compareTo("1") == 0)
 			{		
 				stopTime = System.nanoTime();
 				writer.write(String.format("r %s\n", signalPin));
@@ -53,10 +91,49 @@ public class DistanceMeter
 			}	
 			
 			long estimatedTime = stopTime - startTime;
-		
-			double microTime = (double) (estimatedTime*17150);
+			double microTime = (double) (estimatedTime/58000.0);
+			if (microTime < 0)
+			{
+				continue;
+			}
+			
+			if (i == 0)
+			{
+				a = microTime;
+			}
+			
+			else if (i == 1)
+			{
+				b = microTime;
+			}
+			
+			else if (i == 2)
+			{
+				c = microTime;
+			}
+			
+			else if (i == 3)
+			{
+				d = microTime;
+			}
+			
+			else if (i == 4)
+			{
+				e = microTime;
+			}
+			
+			else if (i == 5)
+			{
+				microTime  = (a + b + c + d + e) / 3;
+				i = 0;
+			}
+			
+
+			
 			System.out.println(microTime);
-			//System.out.println(reader.readLine());
+			
+			//System.out.println(c);
+			}
 		}
 		writer.close();
 		reader.close();
