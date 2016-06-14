@@ -28,6 +28,10 @@ public class ObjectRecognition
 	// a flag to change the button behavior
 	private boolean cameraActive = false;
 	
+	/**
+	 * Get x coordinate of found object
+	 * @return
+	 */
 	public int getX()
 	{
 		int res = 0;
@@ -38,16 +42,26 @@ public class ObjectRecognition
 		return res;
 	}
 	
+	/**
+	 * start vision
+	 * @param sort "line" to search for line and "balloon" to search for balloon
+	 */
 	public void start(String sort)
 	{
-		if (sort == "line")
+		if (sort.equals("line"))
 			type = "line";
+		else if(sort.equals("balloon"))
+			type = "balloon";
 		else
 			type = "balloon";
+		
 		if(!cameraActive)
 			startCamera();
 	}
 	
+	/**
+	 * stop vision search
+	 */
 	public void stop()
 	{
 		if(cameraActive)
@@ -56,6 +70,9 @@ public class ObjectRecognition
 		}
 	}
 	
+	/**
+	 * start camera and search
+	 */
 	private void startCamera()
 	{		
 		if (!cameraActive)
@@ -109,8 +126,6 @@ public class ObjectRecognition
 	
 	/**
 	 * Get a frame from the opened video stream (if any)
-	 * 
-	 * @return the {@link Image} to show
 	 */
 	private void grabFrame()
 	{
@@ -235,16 +250,6 @@ public class ObjectRecognition
 				x = Imgproc.boundingRect(contours.get(idx)).x + Imgproc.boundingRect(contours.get(idx)).width/2;				
 				//System.out.println(x);
 				Main.getInstance().setDirection(0,1.0 , Utils.map((double)x, 0.0, 1280.0, -1.0, 1.0));
-				/*
-				 if(x < 375)				 
-					richting = "Links";				
-				else if(x > 425)
-					richting = "Rechts";
-				else
-					richting = "Midden";
-				*/
-				
-				//Imgproc.drawContours(frame, contours, idx, new Scalar(250, 0, 0));
 			}
 		}
 		return frame;

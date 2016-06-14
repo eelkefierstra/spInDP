@@ -30,7 +30,7 @@ public class SerialPort
 	}
 	
 	/**
-	 * Writes message to serialOutFile
+	 * Writes message to native method
 	 * @param message The message to send
 	 * @return True when no Exceptions occur
 	 * @throws IOException
@@ -40,6 +40,13 @@ public class SerialPort
 		return nativeWrite(message);
 	}
 	
+	/**
+	 * Writes message to serial file
+	 * @param message The message to send
+	 * @return True when no Exceptions occur
+	 * @throws IOException
+	 */
+	@Deprecated
 	private boolean writeBits(byte[] message) throws IOException
 	{
 		//System.out.print("Sent: ");
@@ -63,6 +70,11 @@ public class SerialPort
 	
 	private native byte[] nativeReadBytes() throws IOException;
 	
+	/**
+	 * reads data from serial
+	 * @return data read
+	 * @throws IOException
+	 */
 	private byte[] readBits() throws IOException
 	{
 		byte[] buffer = new byte[32];
@@ -76,6 +88,12 @@ public class SerialPort
 		return Arrays.copyOf(buffer, read);
 	}
 	
+	/**
+	 * reads data from serial file
+	 * @param len amount of bytes to read
+	 * @return data read
+	 * @throws IOException
+	 */
 	private byte[] readBits(int len) throws IOException
 	{
 		byte[] buffer = new byte[len];
