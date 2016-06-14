@@ -32,6 +32,7 @@ public class Main
 	public static List<Short> failedServos;
 	private volatile double forward = .5;
 	private volatile double right   = 0.0;
+	private volatile boolean crab   = true;
 	
 	static
 	{
@@ -145,7 +146,7 @@ public class Main
 			body.setWidth(90.0);
 			//body.walk(0.25, 0.5);
 
-			body.walk(instance.forward, instance.right);
+			body.walk(instance.forward, instance.right, instance.crab);
 			/*double[] adc = info.getAdc();
 			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
 			double[] res = info.getGyro();

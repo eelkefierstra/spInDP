@@ -45,6 +45,7 @@ class SpiderLeg implements Runnable
 	private static final double MAXE     = Math.sqrt(Math.pow((A + C), 2) + Math.pow((127 - F), 2) ); //200;
 	
 	private double coxaChange = coxalimL;
+	private boolean crab      = false;
 	
 	private double t_femur;
     private double t_tibia;
@@ -108,8 +109,9 @@ class SpiderLeg implements Runnable
 		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++,  beta,  20);
 	}
 	
-	public boolean walk(double forward, double right)
+	public boolean walk(double forward, double right, boolean crab)
 	{
+		this.crab = crab;
 		boolean res = false;
 		if (sharedParams.sync)
 		{
@@ -132,13 +134,21 @@ class SpiderLeg implements Runnable
 				noscope360(right);
 			else
 				turn(right);
-			
 		}
 		else if (forward <= -.25 || .25 <= forward)
 		{
-			if (!set)
-				 coxaChange += ((90.0 * Time.deltaTime) * forward);
-			else coxaChange -= ((90.0 * Time.deltaTime) * forward);
+			if (!crab)
+			{
+				if (!set)
+					 coxaChange += ((90.0 * Time.deltaTime) * forward);
+				else coxaChange -= ((90.0 * Time.deltaTime) * forward);
+			}
+			else
+			{
+				if (!set)
+					 l += ((10 * Time.deltaTime) * forward);
+				else l -= ((10 * Time.deltaTime) * forward);
+			}
 			future = executor.submit(this);
 			res = true;
 		}
@@ -193,6 +203,20 @@ class SpiderLeg implements Runnable
 			coxaChange = coxalimL;
 			if (getFirstId() == 1)
 				sharedParams.sync = true;
+		}
+		if (crab)
+		{
+			coxaChange = 45.0;
+			if (l < MINL)
+			{
+				l = MINL;
+				set = !set;
+			}
+			else if (l > MAXL)
+			{
+				l = MAXL;
+				set = !set;
+			}
 		}
 		double lAccent = Math.cos(A_RAD) * l;
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
