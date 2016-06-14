@@ -16,7 +16,7 @@ public class SerialPort
 	private static final File serialInFile  = new File("/tmp/S_IN");
 	private static final File serialOutFile = new File("/tmp/S_OUT");
 	
-	SerialPort()
+	public SerialPort()
 	{
 		initPort("/dev/serial0");
 		Runtime.getRuntime().addShutdownHook(new Thread()
@@ -65,15 +65,12 @@ public class SerialPort
 	
 	private byte[] readBits() throws IOException
 	{
-		//System.out.print("Received: ");
 		byte[] buffer = new byte[32];
 		FileInputStream reader = new FileInputStream(serialInFile);
 		int read = reader.read(buffer);
-		//System.out.println(DatatypeConverter.printHexBinary(buffer));
 		reader.close();
 		if (read < 0)
 		{
-			//throw new IOException("No reaction from servo" + String.valueOf(id) + '!');
 			System.err.println("No reaction from servo!");
 		}
 		return Arrays.copyOf(buffer, read);

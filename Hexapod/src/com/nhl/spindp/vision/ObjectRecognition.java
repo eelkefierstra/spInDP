@@ -40,13 +40,12 @@ public class ObjectRecognition
 	
 	public void start(String sort)
 	{
-		if (sort == "balloon")
-			type = "balloon";
-		else
+		if (sort == "line")
 			type = "line";
+		else
+			type = "balloon";
 		if(!cameraActive)
 			startCamera();
-		
 	}
 	
 	public void stop()
@@ -248,7 +247,6 @@ public class ObjectRecognition
 				//Imgproc.drawContours(frame, contours, idx, new Scalar(250, 0, 0));
 			}
 		}
-		
 		return frame;
 	}
 }

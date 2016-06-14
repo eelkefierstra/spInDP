@@ -11,6 +11,11 @@ public class BluetoothConnection
 	private FileReader fReader;
 	private Thread worker;
 	
+	/**
+	 * create new bluetooth listener
+	 * has shutdownhook to automatically clean up
+	 * @throws FileNotFoundException
+	 */
 	public BluetoothConnection() throws FileNotFoundException
 	{
 		fReader = new FileReader(btFile);
@@ -31,6 +36,9 @@ public class BluetoothConnection
 		});
 	}
 	
+	/**
+	 * start bluetooth reading thread
+	 */
 	public void start()
 	{
 		worker = new Thread()
@@ -60,10 +68,7 @@ public class BluetoothConnection
 							}
 						}
 					}
-					catch (Exception ex)
-					{
-						ex.printStackTrace();
-					}
+					catch (Exception ex) { }
 				}
 			}
 		};

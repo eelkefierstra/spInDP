@@ -9,6 +9,9 @@ public class Time
 	
 	public static double deltaTime;
 	
+	/**
+	 * update time since last time
+	 */
 	public static void updateDeltaTime()
 	{
 		long currentTime = System.currentTimeMillis();
@@ -20,11 +23,19 @@ public class Time
 		}
 	}
 	
+	/**
+	 * should times get synced
+	 * @return true if it should be synced
+	 */
 	public static boolean shouldSync()
 	{
 		return shouldSync;
 	}
 	
+	/**
+	 * should time get updated
+	 * @return true if time should get updated
+	 */
 	public static boolean shouldUpdate()
 	{
 		return shouldUpdate;

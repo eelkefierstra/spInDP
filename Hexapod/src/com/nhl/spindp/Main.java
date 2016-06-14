@@ -1,12 +1,9 @@
 package com.nhl.spindp;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import org.opencv.core.Core;
 
@@ -28,7 +25,8 @@ public class Main
 	private static LedStrip ledStrip;
 	public ObjectRecognition vision;
 	private static BluetoothConnection blue;
-	private DistanceMeter distance;
+	public static DistanceMeter distance;
+	private static SpiderBody body;
 	private static Info info;
 	private static boolean running = true;
 	public static List<Short> failedServos;
@@ -44,11 +42,23 @@ public class Main
 	
 	private static native boolean isAlreadyRunning();
 	
+	/**
+	 * Get current servo angle
+	 * @param id Servo ID to get angle from
+	 * @return angle in range: 0 - 1024
+	 * @throws IOException
+	 */
 	public int readCurrentAngle(byte id) throws IOException
 	{
 		return conn.readPresentLocation(id);
 	}
 	
+	/**
+	 * Read current servo temperature
+	 * @param id Servo ID to get temperature from
+	 * @return current temperature
+	 * @throws IOException
+	 */
 	public int readCurrentTemperature(byte id) throws IOException
 	{
 		return conn.readTemperature(id);
@@ -85,33 +95,43 @@ public class Main
 			}
 		});*/
 		instance = new Main();
+		info = instance.new Info();
 		
+		//start led strip color thread
 		ledStrip = new LedStrip();
 		ledStrip.setDaemon(true);
 		ledStrip.setName("LedThread");
 		ledStrip.start();
 		
-		instance.distance = new DistanceMeter();
-		//instance.distance.start();
-		info = instance.new Info();
+		//start distance meter
+		distance = new DistanceMeter();
+		//distance.start();
 		
+		//start web server
 		sock = new WebSocket(8000);
 		sock.start();
+		
+		//create vision object
 		//instance.vision = new ObjectRecognition();
+		
+		//create and strat I2C communication
 		I2C i2c = new I2C();
 		i2c.start();
 		
+		//start listening to bluetooth info
 		blue = new BluetoothConnection();
 		blue.start();
 		
+		//start app connection server
 		appConn = new AppConnection(1338);
 		appConn.start();
 		
+		//connect to servo's
 		conn = new ServoConnection();
 		
 		failedServos = new ArrayList<>();
 		Time.updateDeltaTime();
-		SpiderBody body = new SpiderBody((byte) 1);
+		body = new SpiderBody((byte) 1);
 		//byte[] ids    = new byte[]  { 1  , 4  , 2  , 5  , 3 , 6 };
 		//short[] stand = new short[] { 512, 512, 650, 650, 50, 50};
 		//conn.moveMultiple(ids, stand);
@@ -139,6 +159,10 @@ public class Main
         Utils.shouldRun = false;
 	}
 	
+	/**
+	 * keep track of failed servo's
+	 * @param id ID i=of failed servo
+	 */
 	public static void servoFailed(short id)
 	{
 		for (Short s : failedServos)
@@ -149,16 +173,16 @@ public class Main
 		failedServos.sort(null);
 	}
 	
+	/**
+	 * set direction parameters for walking
+	 * @param id spider ID
+	 * @param forward how fast to walk in range: -1 - 1
+	 * @param right wich way to walk in range: -1 - 1
+	 */
 	public void setDirection(int id, double forward, double right)
 	{
 		this.forward = forward;
 		this.right   = right;
-	}
-	
-	@Deprecated
-	public static Future<byte[]> submitInstruction(byte[] message)
-	{
-		return conn.submitInstruction(message);
 	}
 	
 	/**
@@ -186,31 +210,16 @@ public class Main
 	}
 	
 	/**
-	 * Dirty hack for if the C++ thing doesn't work out. Don't use, seriously
-	 * @param ids The id's of the servo's to be moved
-	 * @param angles The angles to move to
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * make spider stab a balloon
+	 * @param id spider ID
 	 */
-	@Deprecated
-	public void driveServoInPython(int[] ids, int[] angles) throws IOException, InterruptedException
+	public void stab(int id)
 	{
-		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have same length");
-		String line = "";
-		for (int i = 0; i < ids.length; i++)
+		try
 		{
-			Process p = new ProcessBuilder("python",
-					"~/git/spInDP/python/goto.py",
-					String.valueOf(ids[i]),
-					String.valueOf(angles[i])).start();
-					//.directory(new File("~/git/spInDP/python")).start();
-			p.waitFor();
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()), 1);
-			while ((line = reader.readLine()) != null)
-			{
-				System.out.println(line);
-			}
+			body.stabbyStab();
 		}
+		catch (InterruptedException e) { }
 	}
 	
 	public Info getInfo()
@@ -218,12 +227,22 @@ public class Main
 		return info;
 	}
 
+	/**
+	 * class with sensor info
+	 * @author eelkef
+	 *
+	 */
 	public class Info
 	{
 		private Object locker = new Object();
 		private double gyroX, gyroY;
 		private double adcSpanning, adcStroom; //spanning: V, stroom: A
+		private double distance;
 		
+		/**
+		 * Get gyroscope angles
+		 * @return array with x en y angle
+		 */
 		public double[] getGyro()
 		{
 			double[] res = { -1, -1};
@@ -235,6 +254,10 @@ public class Main
 			return res;
 		}
 		
+		/**
+		 * Set gyroscope angle
+		 * @param data array with x and y angle
+		 */
 		public void setGyro(double[] data)
 		{
 			if(data.length < 2)
@@ -246,6 +269,10 @@ public class Main
 			}
 		}
 		
+		/**
+		 * Get adc info
+		 * @return array with power and current
+		 */
 		public double[] getAdc()
 		{
 			double[] res = { -1, -1};
@@ -257,6 +284,10 @@ public class Main
 			return res;
 		}
 		
+		/**
+		 * Set adc info
+		 * @param data array with power and current
+		 */
 		public void setAdc(double[] data)
 		{
 			if(data.length < 2)
@@ -265,6 +296,32 @@ public class Main
 			{
 				adcSpanning = data[0];
 				adcStroom = data[1];
+			}
+		}
+		
+		/**
+		 * Get distance
+		 * @return double with distance in cm
+		 */
+		public double getDistance()
+		{
+			double res;
+			synchronized (locker)
+			{
+				res = distance;
+			}
+			return res;
+		}
+		
+		/**
+		 * Set distance
+		 * @param distance measurement
+		 */
+		public void setDistance(double data)
+		{
+			synchronized (locker)
+			{
+				distance = data;
 			}
 		}
 	}

@@ -138,7 +138,6 @@ public class Servo
 	 */
 	public static byte[] createSyncWriteDataInstruction(byte address, byte[] parameters)
 	{
-		// TODO: Figure out if this is a good implementation.
 		byte[] buffer = new byte[parameters.length + 7];
 		buffer[0] = buffer[1] = INSTRUCTION_PREFIX;
 		buffer[2] = BCASTID;
