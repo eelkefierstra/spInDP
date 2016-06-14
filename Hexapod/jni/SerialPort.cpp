@@ -137,7 +137,7 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 	pigs << "w " << signalPin << " 0" << endl;
 	pigs.flush();
 	pigs.close();
-	if (res < 0)
+	/*if (res < 0)
 	{
 		close(serialPort);
 		serialPort = 0;
@@ -145,8 +145,8 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 		string mess  = "Failed to write to serial port";
 		//throw_java_exception(env, &clazz[0], &mess[0]);
 		return false;
-	}
-	return true;
+	}*/
+	return res >= 0;
 }
 
 JNIEXPORT jbyteArray JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeRead

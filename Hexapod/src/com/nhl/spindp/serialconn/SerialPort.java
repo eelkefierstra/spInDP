@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * A class to facilitate the serialport connection
+ * A class to facilitate the serial port connection
  * @author dudeCake
  *
  */
@@ -58,21 +58,50 @@ public class SerialPort
 		return true;
 	}
 	
+	/**
+	 * initializes native serial port
+	 * @param port
+	 */
 	private native void initPort(String port);
 	
+	/**
+	 * closes the native serial port
+	 */
 	private native void cleanupPort();
 	
+	/**
+	 * writes the given byte[] to the serial port
+	 * @param message message to be written
+	 * @return whether the write succeeded
+	 * @throws IOException
+	 */
 	private native boolean nativeWrite(byte[] message) throws IOException;
 	
+	/**
+	 * reads a message from the serial port
+	 * @return the read message
+	 * @throws IOException
+	 */
 	private native byte[] nativeRead() throws IOException;
 	
+	/**
+	 * writes the given byte[] to the serial port
+	 * @param message message to be written
+	 * @return whether the write succeeded
+	 * @throws IOException
+	 */
 	private native boolean nativeWriteBytes(byte[] message) throws IOException;
 	
+	/**
+	 * reads a message from the serial port
+	 * @return the read message
+	 * @throws IOException
+	 */
 	private native byte[] nativeReadBytes() throws IOException;
 	
 	/**
-	 * reads data from serial
-	 * @return data read
+	 * reads a message from the serial port
+	 * @return the read message
 	 * @throws IOException
 	 */
 	private byte[] readBits() throws IOException
@@ -89,9 +118,9 @@ public class SerialPort
 	}
 	
 	/**
-	 * reads data from serial file
-	 * @param len amount of bytes to read
-	 * @return data read
+	 * reads a message from the serial port
+	 * @param len the length of the message
+	 * @return the read message
 	 * @throws IOException
 	 */
 	private byte[] readBits(int len) throws IOException

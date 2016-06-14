@@ -119,9 +119,13 @@ public class AppConnection
 	 * @param input The input whichs asks for info
 	 * @return The construction to send to the App
 	 */
-	public String CreateDataToWrite(String input){
+	public String CreateDataToWrite(String input)
+	{
+		if(input == null)
+			return "";
 		String Result = "";
-		switch(input){
+		switch(input)
+		{
 			case "Heey":
 				Result = "Heey terug";
 				break;
@@ -144,7 +148,8 @@ public class AppConnection
 	 * create Adc info data
 	 * @return The data
 	 */
-	public String CreateADCInfo(){
+	public String CreateADCInfo()
+	{
 		String result = "";
 		result = String.valueOf(info.getAdc());
 		return result;
@@ -159,12 +164,12 @@ public class AppConnection
 		String result = "";
 		 Random randomGenerator = new Random();
 		 for(int i = 1; i <= 18; i++)
-			{
-				 int Id = i;
-				 int Hoek = randomGenerator.nextInt(90);
-				 int Temperatuur = randomGenerator.nextInt(90);
-				 result = "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";					
-			}
+		{
+			 int Id = i;
+			 int Hoek = randomGenerator.nextInt(90);
+			 int Temperatuur = randomGenerator.nextInt(90);
+			 result += "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";					
+		}
 		return result;
 	}
 	

@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import com.nhl.spindp.Main;
 import com.nhl.spindp.Utils;
 
 public class DistanceMeter
@@ -68,6 +69,7 @@ public class DistanceMeter
 	
 	/**
 	 * measure distance to object in front of sensor
+	 * @return 
 	 * @throws IOException
 	 */
 	private void distanceBoi() throws IOException 
@@ -77,6 +79,7 @@ public class DistanceMeter
 		int signalPin = 23;
 		long startTime = 0;
 		long stopTime = 0;
+		double microTime = 0;
 		
 		double a = 0;
 		double b = 0;
@@ -119,7 +122,7 @@ public class DistanceMeter
 				}	
 				
 				long estimatedTime = stopTime - startTime;
-				double microTime = (double) (estimatedTime/58000.0);
+				microTime = (double) (estimatedTime/58000.0);
 				if (microTime < 0)
 				{
 					continue;
@@ -155,11 +158,15 @@ public class DistanceMeter
 					microTime  = (a + b + c + d + e) / 3;
 					i = 0;
 				}
+				
 			}
+			
+			Main.getInstance().getInfo().setDistance(microTime);
 		}
 		
 		writer.close();
 		reader.close();
+		
 	}	
 }		
 

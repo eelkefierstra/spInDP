@@ -428,15 +428,20 @@ public class ServoConnection
 	public int readPresentLocation(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createReadDataInstruction(id, Servo.ADDRESS_PRESENT_POS);
-		byte[] res;
+		byte[] res = new byte[2];
+		int i = 0;
 		synchronized (this)
 		{
+			while (i < 15 && res[0] != 0)
+			{
 			if (!serialPort.writeBytes(buffer))
 			{
 				System.out.println("Send instruction failed");
 				LedStrip.throwError();
 			}
 			res = readData();
+			i++;
+			}
 		}
 		return (res[0] << 8) | res[1];
 	}

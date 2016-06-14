@@ -59,7 +59,7 @@ public class I2C
 	private void loop()
 	{
 		initI2c();
-		while (!Utils.shouldRun)
+		while (Utils.shouldRun)
 		{
 			loopI2c();
 			filter();
