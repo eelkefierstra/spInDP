@@ -82,7 +82,7 @@ public class SpiderJoint
 		if (Double.isNaN(val)) 
 		{
 			LedStrip.throwError();
-			throw new IllegalArgumentException("angle must not be NaN");
+			//throw new IllegalArgumentException("angle must not be NaN");
 		}
 		else
 		{

@@ -83,6 +83,7 @@ public class SpiderBody
 			//leg.getAll();
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
+		sharedParams.sync = false;
 	}
 	
 	public void setHeight(double height)

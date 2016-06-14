@@ -25,9 +25,9 @@ class SpiderLeg implements Runnable
 	//private static final double LACCENT  = Math.cos(A_RAD) * L;
 	//private static final double D        = F - LACCENT;
 	//private static final double B        = Math.sqrt(Math.pow(D, 2.0) + Math.pow(E, 2));
-	private static final double coxalimL =  15.0;
-	private static final double coxalimH =  75.0;
-	private static volatile double PAR_X =  50.0;
+	private static final double coxalimL =  30.0;
+	private static final double coxalimH =  60.0;
+	private static volatile double PAR_X =  35.0;
 	//private static volatile double PAR_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(L, 2.0) - Math.pow(LACCENT, 2.0)), 2.0);
 	
 	private ExecutorService executor;
@@ -185,7 +185,6 @@ class SpiderLeg implements Runnable
 	{
 		if (coxaChange >= coxalimH)
 		{
-			set = !set;
 			coxaChange = coxalimH;
 		}
 		if (coxaChange <= coxalimL)
@@ -199,21 +198,27 @@ class SpiderLeg implements Runnable
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
 		double lAccentAccent = lAccent / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
 		double d = lAccentAccent - F;
-		double h = 0;
+		double f_p = (coxalimH - coxalimL) / 2;
+		double f_a = (-PAR_X)/Math.pow(-f_p, 2);
+		double h = 0;// f_a * Math.pow(((coxaChange - coxalimL) - f_p), 2) + PAR_X;
 		step = Math.abs(Math.sqrt(Math.pow(lAccentAccent, 2.0) - Math.pow(lAccent, 2.0)));
 		if (coxaChange < 45) step *= -1;
-		if (set)
+		double t_e = e;
+		if (false)
 		{
-			double par_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(l, 2.0) - Math.pow(lAccent, 2.0)), 2.0);
-			h = (par_Y * -1) * Math.pow(step, 2.0) + PAR_X;
+			//double par_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(l, 2.0) - Math.pow(lAccent, 2.0)), 2.0);
+			//h = (par_Y * -1) * Math.pow(step, 2.0) + PAR_X;
+            t_e = e - h;
+           // t_e = 75;
 		}
 		//h *= 5;
-		int lepra = 0;
-		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(e - h, 2.0));
-		double delta = Math.atan(d / (e - h));
+		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(t_e - h, 2.0));
+		double delta = Math.atan(d / (t_e - h));
 		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = (test1 - test2 - test3) / (-2 * b * A);
-		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(270.0 - Math.toDegrees(delta) - Math.toDegrees(Math.acos(test4))));//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
+		if (!set || coxaChange < coxalimL + 5.0) servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(270.0 - Math.toDegrees(delta) - Math.toDegrees(Math.acos(test4))));//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
+		else servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(250.0 - Math.toDegrees(delta) - Math.toDegrees(Math.acos(test4))));//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
+		if (coxaChange >= coxalimH) set = !set;
 	}
 	/// <summary>
     /// Main method for making a turn
@@ -710,7 +715,8 @@ class SpiderLeg implements Runnable
         //if (id >= 3)
         	//set = !set;
             //servoAngle = 90-servoAngle; 
-            
+        if (id % 2 == 1)
+            servoAngle = 90 - servoAngle;  
         servos[SpiderJoint.COXA].setAngle(Math.toRadians(servoAngle));
         if (Double.isNaN(t_femur))
         	System.err.println("we have issues");

@@ -141,8 +141,8 @@ public class Main
 		{
 			Time.updateDeltaTime();
 			//body.moveToAngle(45, 118.7, 35.3);
-			body.setHeight(120.0);
-			body.setWidth(127.0);
+			body.setHeight(80.0);
+			body.setWidth(90.0);
 			//body.walk(0.25, 0.5);
 
 			body.walk(instance.forward, instance.right);

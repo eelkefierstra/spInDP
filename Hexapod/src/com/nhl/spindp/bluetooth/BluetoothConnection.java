@@ -30,7 +30,9 @@ public class BluetoothConnection
 					{
 						fReader.close();
 					}
-					catch (IOException e) { }
+					catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -68,7 +70,9 @@ public class BluetoothConnection
 							}
 						}
 					}
-					catch (Exception ex) { }
+					catch (Exception ex) { 
+						ex.printStackTrace();
+					}
 				}
 			}
 		};
