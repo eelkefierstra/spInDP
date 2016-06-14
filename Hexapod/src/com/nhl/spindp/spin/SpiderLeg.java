@@ -12,7 +12,7 @@ import com.nhl.spindp.spin.SpiderBody.SharedParams;
 class SpiderLeg implements Runnable
 {
 	private static final double MINE     =  35.0;
-	private static final double MAXE     = 150.0;
+	
 	private static final double MINL     =  75.0;
 	private static final double MAXL     = 150.0;
 	private static final double Weigth   =  24.525;
@@ -39,8 +39,10 @@ class SpiderLeg implements Runnable
 	private double beta    =   0.0;// Math.toRadians(Math.acos((Math.pow(B, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
 	private double epsilon =   0.0;// Math.toRadians(Math.atan(E / D));
 	private double step    =   0.0;
-	private double e       = 110.0;
+	private double e       =  110.0;
 	private boolean set    = false;
+	
+	private static final double MAXE     = Math.sqrt(Math.pow((A + C), 2) + Math.pow((127 - F), 2) ); //200;
 	
 	private double coxaChange = coxalimL;
 	
@@ -90,13 +92,20 @@ class SpiderLeg implements Runnable
 			coxaChange = coxalimH;
 			set = true;
 		}
+		/*
+		set = (startServoId % 2) == 0;
+		if (coxaChange > 90)
+		{
+			coxaChange -= 90;
+		}
+		 */
 		// 105, 240, 0
 		this.l = 127.0;
 		this.executor = executor;
 		this.sharedParams = sharedParams;
 		servos[SpiderJoint.COXA ] = new SpiderJoint(startServoId++, alpha, 105);//, 90, 210);
-		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 240);
-		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++, beta);
+		servos[SpiderJoint.FEMUR] = new SpiderJoint(startServoId++, gamma, 220);
+		servos[SpiderJoint.TIBIA] = new SpiderJoint(startServoId++,  beta,  20);
 	}
 	
 	public boolean walk(double forward, double right)
@@ -199,10 +208,11 @@ class SpiderLeg implements Runnable
 			h = (par_Y * -1) * Math.pow(step, 2.0) + PAR_X;
 		}
 		//h *= 5;
+		int lepra = 0;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(e - h, 2.0));
-		double delta   = Math.atan(d / (e - h));
-		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = Math.acos((test1 - test2 - test3) / (-2 * b * A));
-		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(270.0 - Math.toDegrees(delta) - Math.toDegrees(test4)));//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
+		double delta = Math.atan(d / (e - h));
+		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = (test1 - test2 - test3) / (-2 * b * A);
+		servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(270.0 - Math.toDegrees(delta) - Math.toDegrees(Math.acos(test4))));//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
 	}
 	/// <summary>

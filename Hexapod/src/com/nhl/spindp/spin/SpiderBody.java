@@ -63,7 +63,7 @@ public class SpiderBody
 	{
 		for (SpiderLeg leg : legs)
 		{
-			leg.setHeight(120.0);
+			//leg.setHeight(120.0);
 			if (leg.walk(forward, right))
 				futures.offer(leg.getFuture());
 		}
@@ -82,6 +82,22 @@ public class SpiderBody
 		{
 			//leg.getAll();
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+		}
+	}
+	
+	public void setHeight(double height)
+	{
+		for (SpiderLeg leg : legs)
+		{
+			leg.setHeight(height);
+		}
+	}
+	
+	public void setWidth(double width)
+	{
+		for (SpiderLeg leg : legs)
+		{
+			leg.setWidth(width);
 		}
 	}
 	
