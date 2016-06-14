@@ -9,6 +9,9 @@ public class LedStrip extends Thread
 	private static LedStrip instance;
 	private volatile boolean interrupted;
 	
+	/**
+	 * cycle through rgb colors
+	 */
 	@Override
 	public void run()
 	{
@@ -52,11 +55,21 @@ public class LedStrip extends Thread
 		}
 	}
 	
+	/**
+	 * make leds flash red
+	 */
 	public static void throwError()
 	{
 		instance.interrupted = true;
 	}
 
+	/**
+	 * Set led colours
+	 * @param r red value to set, in range: 0-255
+	 * @param g green value to set, in range: 0-255
+	 * @param b blue value to set, in range: 0-255
+	 * @throws IOException
+	 */
 	private static void setColourRgb(int r, int g, int b) throws IOException
 	{
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("/dev/pigpio"));

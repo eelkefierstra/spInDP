@@ -11,6 +11,7 @@ import java.util.Random;
 
 import com.nhl.spindp.Main;
 import com.nhl.spindp.Main.Info;
+import com.nhl.spindp.Utils;
 
 public class AppConnection
 {
@@ -20,17 +21,31 @@ public class AppConnection
 	
 	public AppConnection() throws IOException
 	{
-		serverSocket = new ServerSocket(1338);
+		this(1338);
 	}
 	
 	public AppConnection(int port) throws IOException
 	{
 		serverSocket = new ServerSocket(port);
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				if (serverSocket != null)
+				{
+					try
+					{
+						serverSocket.close();
+					}
+					catch (IOException e) { }
+				}
+			}
+		});
 	}
 	
 	/**
-	 * The mainloop of the server, it waits for a connection 
-	 * and sends instructions
+	 * Calls the mainloop of the server and starts it in a thread
 	 * @throws IOException
 	 */
 	public void start()
@@ -52,9 +67,13 @@ public class AppConnection
 		worker.start();
 	}
 	
+	/**
+	 * mainloop for connection, it waits for a connection and sends instructions
+	 * @throws IOException
+	 */
 	public void mainLoop() throws IOException
 	{
-		while (true)
+		while (Utils.shouldRun)
 		{
 			Socket clientSocket = null;
 			try
@@ -192,21 +211,6 @@ public class AppConnection
 		 }
 		 result =  "<X:"+Integer.toString(X)+",Y:"+Integer.toString(Y)+">";
 		 return result;
-	 }
-		 
-	 /**
-	  * Method to stop the serverSocket
-	  */
-	 public void stop()
-	 {
-		 try
-		 {
-			 serverSocket.close();
-		 }
-		 catch (IOException e)
-		 {
-			 e.printStackTrace();
-		 }	
 	 }
 }
 

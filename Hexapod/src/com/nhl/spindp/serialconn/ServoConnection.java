@@ -2,10 +2,8 @@ package com.nhl.spindp.serialconn;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import com.nhl.spindp.LedStrip;
 
@@ -39,13 +37,6 @@ public class ServoConnection
 				serialWorker.shutdown();
 			}
 		});
-	}
-	
-	@Deprecated
-	public synchronized Future<byte[]> submitInstruction(byte[] message)
-	{
-		//return instructions.offer(message);
-		return serialWorker.submit(new ServoInstruction(message));
 	}
 		
 	/**
@@ -321,7 +312,6 @@ public class ServoConnection
 	 */
 	public void moveMultiple(byte[] ids, short[] positions) throws IOException
 	{
-		// TODO: Figure out if this is a good implementation.
 		if (ids.length != positions.length) throw new IllegalArgumentException("Arrays must be same length");
 		byte[] parameters = new byte[ids.length * 3];
 		for (int i = 0; i < ids.length * 3; i+=3)
@@ -622,33 +612,7 @@ public class ServoConnection
 			{
 				System.err.println("checksum error!");
 				//LedStrip.throwError();
-				/*System.err.println(" .----------------.  .----------------.  .----------------.  .----------------.  .----------------. ");
-				System.err.println("| .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |");
-				System.err.println("| |  _________   | || |  _______     | || |  _______     | || |     ____     | || |  _______     | |");
-				System.err.println("| | |_   ___  |  | || | |_   __ \\    | || | |_   __ \\    | || |   .'    `.   | || | |_   __ \\    | |");
-				System.err.println("| |   | |_  \\_|  | || |   | |__) |   | || |   | |__) |   | || |  /  .--.  \\  | || |   | |__) |   | |");
-				System.err.println("| |   |  _|  _   | || |   |  __ /    | || |   |  __ /    | || |  | |    | |  | || |   |  __ /    | |");
-				System.err.println("| |  _| |___/ |  | || |  _| |  \\ \\_  | || |  _| |  \\ \\_  | || |  \\  `--'  /  | || |  _| |  \\ \\_  | |");
-				System.err.println("| | |_________|  | || | |____| |___| | || | |____| |___| | || |   `.____.'   | || | |____| |___| | |");
-				System.err.println("| |              | || |              | || |              | || |              | || |              | |");
-				System.err.println("| '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |");
-				System.err.println("'----------------'  '----------------'  '----------------'  '----------------'  '----------------' ");*/
-				/*
- .----------------.  .----------------.  .----------------.  .----------------.  .----------------. 
-| .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |
-| |  _________   | || |  _______     | || |  _______     | || |     ____     | || |  _______     | |
-| | |_   ___  |  | || | |_   __ \    | || | |_   __ \    | || |   .'    `.   | || | |_   __ \    | |
-| |   | |_  \_|  | || |   | |__) |   | || |   | |__) |   | || |  /  .--.  \  | || |   | |__) |   | |
-| |   |  _|  _   | || |   |  __ /    | || |   |  __ /    | || |  | |    | |  | || |   |  __ /    | |
-| |  _| |___/ |  | || |  _| |  \ \_  | || |  _| |  \ \_  | || |  \  `--'  /  | || |  _| |  \ \_  | |
-| | |_________|  | || | |____| |___| | || | |____| |___| | || |   `.____.'   | || | |____| |___| | |
-| |              | || |              | || |              | || |              | || |              | |
-| '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
- '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
-				 * This is an error warning!
-				 */
 			}
-			//System.out.println();
 		}
 		return data;
 	}
@@ -674,34 +638,5 @@ public class ServoConnection
 			offset += array.length;
 		}
 		return result;
-	}
-	
-	@Deprecated
-	public class ServoInstruction implements Callable<byte[]>
-	{
-		byte[] message;
-		
-		public ServoInstruction(byte[] message)
-		{
-			this.message = message;
-		}
-
-		@Override
-		public byte[] call() throws Exception
-		{
-			byte[] res = { 0, 0 , 0, 0 };
-			byte counter = 0;
-			//boolean success = true;
-			while (res[0] != (byte)0xFF && res[1] != (byte)0xFF && res[3] + 4 == res.length)// && !success)
-			{
-				serialPort.writeBytes(message);
-				res = serialPort.readBytes();
-				//success = Servo.compareChecksum(Arrays.copyOf(res, res.length - 1), res[res.length - 1]);
-				if (counter++ > 4)
-					break;
-			}
-			return res;
-		}
-		
 	}
 }

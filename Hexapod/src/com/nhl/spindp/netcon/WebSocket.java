@@ -54,10 +54,12 @@ public class WebSocket
 	public WebSocket(int port) throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException
 	{
 		SSLContext sslcontext = null;
-        if (port == 8443) {
+        if (port == 8443)
+        {
             // Initialize SSL context
             URL url = Main.class.getResource("/my.keystore");
-            if (url == null) {
+            if (url == null)
+            {
                 System.out.println("Keystore not found");
                 System.exit(1);
             }
@@ -79,21 +81,9 @@ public class WebSocket
                 .create();
 	}
 	
-	/*
-	public WebSocket() throws IOException
-	{
-		server = HttpServer.create(new InetSocketAddress(80), 0);
-		server.createContext("/test", new MyHandler());
-		server.setExecutor(null);
-	}
-	
-	public WebSocket(int port) throws IOException
-	{
-		server = HttpServer.create(new InetSocketAddress(port), 0);
-		server.createContext("/index", new MyHandler());
-		server.setExecutor(null);
-	}
-	*/
+	/**
+	 * start website thread
+	 */
 	public void start()
 	{
 		worker = new Thread()
@@ -113,19 +103,31 @@ public class WebSocket
 		worker.start();
 	}
 	
+	/**
+	 * initializes webserver
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	private void init() throws IOException, InterruptedException
 	{
 		server.start();
         server.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+        Runtime.getRuntime().addShutdownHook(new Thread()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 server.shutdown(5, TimeUnit.SECONDS);
             }
         });
 	}
 	
+	/**
+	 * stop webserver
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	public void stop() throws IOException, InterruptedException
 	{
 		server.shutdown(5, TimeUnit.SECONDS);
@@ -153,23 +155,13 @@ public class WebSocket
 	        // For some reason, just putting the incoming entity into
 	        // the response will not work. We have to buffer the message.
 	        String data = "";
-	        if (entity != null) {
+	        if (entity != null)
+	        {
 	            data = EntityUtils.toString(entity);
 	        }
 
 	        System.out.println(data);
-	        /*
-	        File file = new File(Main.class.getResource("/www/index.html").getPath());
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			StringBuilder builder = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null)
-			{
-				builder.append(line);
-				builder.append(System.lineSeparator());
-			}
-			reader.close();
-	        */
+	        
 	        HttpEntity responseEntity;
 	        RequestLine requestLine = request.getRequestLine();
 	        if (requestLine.getMethod().compareTo("GET") == 0)
@@ -214,42 +206,26 @@ public class WebSocket
 	        	response.setEntity(new StringEntity("dummy response"));
 	        }
 		}
-		/*
-		@Override
-		public void handle(HttpExchange exchange) throws IOException
-		{
-			File file = new File(Main.class.getResource("/www/index.html").getPath());
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			StringBuilder builder = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null)
-			{
-				builder.append(line);
-				builder.append(System.lineSeparator());
-			}
-			reader.close();
-			String response = builder.toString();
-			exchange.sendResponseHeaders(200, response.getBytes().length);
-			OutputStream outputStream = exchange.getResponseBody();
-			outputStream.write(response.getBytes());
-			outputStream.flush();
-			outputStream.close();
-		}
-		*/
 	}
 	
-	static class StdErrorExceptionLogger implements ExceptionLogger {
+	static class StdErrorExceptionLogger implements ExceptionLogger
+	{
 
         @Override
-        public void log(final Exception ex) {
-            if (ex instanceof SocketTimeoutException) {
+        public void log(final Exception ex)
+        {
+            if (ex instanceof SocketTimeoutException)
+            {
                 System.err.println("Connection timed out");
-            } else if (ex instanceof ConnectionClosedException) {
+            }
+            else if (ex instanceof ConnectionClosedException)
+            {
                 System.err.println(ex.getMessage());
-            } else {
+            }
+            else
+            {
                 ex.printStackTrace();
             }
         }
-
     }
 }
