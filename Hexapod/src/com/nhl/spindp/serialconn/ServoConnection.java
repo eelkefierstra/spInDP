@@ -620,7 +620,7 @@ public class ServoConnection
 			}*/
 			if(!checksum)
 			{
-				System.err.println("checksum error!");
+				//System.err.println("checksum error!");
 				//LedStrip.throwError();
 				/*System.err.println(" .----------------.  .----------------.  .----------------.  .----------------.  .----------------. ");
 				System.err.println("| .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |");

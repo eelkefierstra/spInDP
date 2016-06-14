@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.Future;
 
 import org.opencv.core.Core;
@@ -29,11 +28,11 @@ public class Main
 	private static LedStrip ledStrip;
 	public ObjectRecognition vision;
 	private static BluetoothConnection blue;
-	public DistanceMeter distance;
+	private DistanceMeter distance;
 	private static Info info;
 	private static boolean running = true;
 	public static List<Short> failedServos;
-	private volatile double forward = 0.0;
+	private volatile double forward = 0.25;
 	private volatile double right   = 0.0;
 	
 	static
@@ -122,6 +121,7 @@ public class Main
 		{
 			Time.updateDeltaTime();
 			body.walk(instance.forward, instance.right);
+			//body.walk(0.25,0.9);
 			/*double[] adc = info.getAdc();
 			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
 			double[] res = info.getGyro();
