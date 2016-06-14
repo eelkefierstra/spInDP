@@ -8,11 +8,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import static com.example.aldert.spindpappandroidstudio22.MainActivity.AcdInfoRunning;
+import static com.example.aldert.spindpappandroidstudio22.MainActivity.AdcThread;
 import static com.example.aldert.spindpappandroidstudio22.MainActivity.Connected;
+import static com.example.aldert.spindpappandroidstudio22.MainActivity.HellingThread;
+import static com.example.aldert.spindpappandroidstudio22.MainActivity.ServoInfoThread;
 import static com.example.aldert.spindpappandroidstudio22.MainActivity.conn;
+import static com.example.aldert.spindpappandroidstudio22.ServoInfo.ServoInfoRunning;
+
 public class HellingInfo extends AppCompatActivity {
-    private Canvas mCanvas;
-    Thread timer;
+    static boolean HellingInfoRunning = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +29,10 @@ public class HellingInfo extends AppCompatActivity {
         HellingXNegative.setRotation(180);
         final ProgressBar HellingYNegative = (ProgressBar) findViewById(R.id.YNegative);
         HellingYNegative.setRotation(180);
-        timer = new Thread()
+        HellingThread = new Thread()
         {
             public void run(){
-                while(true){
+                while(HellingInfoRunning){
                     UpdateHellingsHoek();
                     try {
                         Thread.sleep(1000);                 //1000 milliseconds is one second.
@@ -37,7 +42,23 @@ public class HellingInfo extends AppCompatActivity {
                 }
             }
         };
-        timer.start();
+        HellingThread.start();
+        if(ServoInfoThread.isAlive()){
+            ServoInfoRunning = false;
+            try{
+                ServoInfoThread.join();
+            }
+            catch(Exception e){
+            }
+        }
+        if(AdcThread.isAlive()){
+            AcdInfoRunning = false;
+            try{
+                AdcThread.join();
+            }
+            catch(Exception e){
+            }
+        }
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +74,8 @@ public class HellingInfo extends AppCompatActivity {
             drawHelling(conn.getHellingInfo());
         }
     }
+
+
 
 
 
