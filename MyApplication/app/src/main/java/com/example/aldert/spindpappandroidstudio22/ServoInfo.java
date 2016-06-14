@@ -7,10 +7,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import static com.example.aldert.spindpappandroidstudio22.HellingInfo.HellingInfoRunning;
+import static com.example.aldert.spindpappandroidstudio22.MainActivity.AcdInfoRunning;
+import static com.example.aldert.spindpappandroidstudio22.MainActivity.AdcThread;
 import static com.example.aldert.spindpappandroidstudio22.MainActivity.Connected;
+import static com.example.aldert.spindpappandroidstudio22.MainActivity.HellingThread;
+import static com.example.aldert.spindpappandroidstudio22.MainActivity.ServoInfoThread;
 import static com.example.aldert.spindpappandroidstudio22.MainActivity.conn;
 
 public class ServoInfo extends AppCompatActivity {
+    static boolean ServoInfoRunning = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +34,10 @@ public class ServoInfo extends AppCompatActivity {
         });
         ServoInfoRecieved(conn.getAllServoInfo());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        new Thread(new Runnable(){
+        ServoInfoThread = new Thread()
+        {
             public void run(){
-                while(true){
+                while(ServoInfoRunning){
                     UpdateServoInfo();
                     try {
                         Thread.sleep(1000);                 //1000 milliseconds is one second.
@@ -39,7 +46,29 @@ public class ServoInfo extends AppCompatActivity {
                     }
                 }
             }
-        }).start();
+        };
+        ServoInfoThread.start();
+        if(HellingThread.isAlive()){
+            HellingInfoRunning = false;
+            try{
+                HellingThread.join();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+
+        }
+        if(AdcThread.isAlive()){
+            AcdInfoRunning = false;
+            try{
+                AdcThread.join();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+
+            }
+
+        }
     }
 
     private void UpdateServoInfo(){

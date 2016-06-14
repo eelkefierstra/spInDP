@@ -15,9 +15,16 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
+import static com.example.aldert.spindpappandroidstudio22.HellingInfo.HellingInfoRunning;
+import static com.example.aldert.spindpappandroidstudio22.ServoInfo.ServoInfoRunning;
+
 public class MainActivity extends AppCompatActivity {
-    static final ServerConnection conn = new ServerConnection("10.42.1.1", 1338);
+    static final ServerConnection conn = new ServerConnection("141.252.236.145", 1338);
     static boolean Connected = false;
+    static Thread AdcThread = new Thread();
+    static Thread ServoInfoThread = new Thread();
+    static Thread HellingThread = new Thread();
+    static boolean AcdInfoRunning = true;
     Activity activity;
 
     Thread timer2;
@@ -28,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         if(!Connected){
             Connect();
         }
-        timer2 = new Thread()
+        AdcThread = new Thread()
         {
             public void run(){
-                while(true){
+                while(AcdInfoRunning){
                     askAdcInfo();
                     try {
                         Thread.sleep(1000);                 //1000 milliseconds is one second.
@@ -41,7 +48,24 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        timer2.start();
+        AdcThread.start();
+        if(HellingThread.isAlive()){
+
+            HellingInfoRunning = false;
+            try{
+                HellingThread.join();
+            }
+            catch(Exception e){
+            }
+        }
+        if(ServoInfoThread.isAlive()){
+            ServoInfoRunning = false;
+            try{
+                ServoInfoThread.join();
+            }
+            catch(Exception e){
+            }
+        }
         Button ServoInfoBtn = (Button) findViewById(R.id.ServoInfoBtn);
         ServoInfoBtn.setOnClickListener(new View.OnClickListener(){
             @Override
