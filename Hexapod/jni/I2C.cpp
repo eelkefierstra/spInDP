@@ -3,10 +3,8 @@
 #include <fstream>
 #include <iomanip>
 #include <unistd.h>
-//#include <linux/i2c-dev.h>
 #include "I2Cdev.h"
 #include "MPU6050.h"
-//#include <sys/ioctl.h>
 #include <thread>
 #include <chrono>
 #include <vector>
@@ -49,9 +47,9 @@ short readADC(int channel)
 	if(channel > 1)
 		return -1;
 	else if(channel == 0)
-		buf = 0xC383;
+		buf = 0xC183;
 	else if(channel == 1)
-		buf = 0xD383;
+		buf = 0xD183;
 	else
 		return -1;
 	//write what input to get
@@ -115,16 +113,16 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_sensors_I2C_initI2c
 		env->ThrowNew(ex, &mess[0]);
 		return false;
 	}
-	cout<< "bools= adc: "<<adc<<" gyro: "<<gyro<<endl;
+	cout<< "I2C online= adc: "<<adc<<" gyro: "<<gyro<<endl;
 	return true;
 }
 
 JNIEXPORT void JNICALL Java_com_nhl_spindp_sensors_I2C_loopI2c
   (JNIEnv *env, jobject thisObj)
 {
-	jclass dataCls = env->FindClass("com/nhl/spindp/i2c/I2C$I2CData");
+	jclass dataCls = env->FindClass("com/nhl/spindp/sensors/I2C$I2CData");
 	if (env->ExceptionCheck()) return;
-	jfieldID dataField = env->GetFieldID( env->GetObjectClass(thisObj), "data", "Lcom/nhl/spindp/i2c/I2C$I2CData;");
+	jfieldID dataField = env->GetFieldID( env->GetObjectClass(thisObj), "data", "Lcom/nhl/spindp/sensors/I2C$I2CData;");
 	if (env->ExceptionCheck()) return;
 	jobject dataObj = env->GetObjectField( thisObj, dataField);
 	if (env->ExceptionCheck()) return;

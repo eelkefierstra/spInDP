@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * A class to facilitate the serialport connection
+ * A class to facilitate the serial port connection
  * @author dudeCake
  *
  */
@@ -16,7 +16,7 @@ public class SerialPort
 	private static final File serialInFile  = new File("/tmp/S_IN");
 	private static final File serialOutFile = new File("/tmp/S_OUT");
 	
-	SerialPort()
+	public SerialPort()
 	{
 		initPort("/dev/serial0");
 		Runtime.getRuntime().addShutdownHook(new Thread()
@@ -30,7 +30,7 @@ public class SerialPort
 	}
 	
 	/**
-	 * Writes message to serialOutFile
+	 * Writes message to native method
 	 * @param message The message to send
 	 * @return True when no Exceptions occur
 	 * @throws IOException
@@ -40,6 +40,13 @@ public class SerialPort
 		return nativeWrite(message);
 	}
 	
+	/**
+	 * Writes message to serial file
+	 * @param message The message to send
+	 * @return True when no Exceptions occur
+	 * @throws IOException
+	 */
+	@Deprecated
 	private boolean writeBits(byte[] message) throws IOException
 	{
 		//System.out.print("Sent: ");
@@ -51,34 +58,71 @@ public class SerialPort
 		return true;
 	}
 	
+	/**
+	 * initializes native serial port
+	 * @param port
+	 */
 	private native void initPort(String port);
 	
+	/**
+	 * closes the native serial port
+	 */
 	private native void cleanupPort();
 	
+	/**
+	 * writes the given byte[] to the serial port
+	 * @param message message to be written
+	 * @return whether the write succeeded
+	 * @throws IOException
+	 */
 	private native boolean nativeWrite(byte[] message) throws IOException;
 	
+	/**
+	 * reads a message from the serial port
+	 * @return the read message
+	 * @throws IOException
+	 */
 	private native byte[] nativeRead() throws IOException;
 	
+	/**
+	 * writes the given byte[] to the serial port
+	 * @param message message to be written
+	 * @return whether the write succeeded
+	 * @throws IOException
+	 */
 	private native boolean nativeWriteBytes(byte[] message) throws IOException;
 	
+	/**
+	 * reads a message from the serial port
+	 * @return the read message
+	 * @throws IOException
+	 */
 	private native byte[] nativeReadBytes() throws IOException;
 	
+	/**
+	 * reads a message from the serial port
+	 * @return the read message
+	 * @throws IOException
+	 */
 	private byte[] readBits() throws IOException
 	{
-		//System.out.print("Received: ");
 		byte[] buffer = new byte[32];
 		FileInputStream reader = new FileInputStream(serialInFile);
 		int read = reader.read(buffer);
-		//System.out.println(DatatypeConverter.printHexBinary(buffer));
 		reader.close();
 		if (read < 0)
 		{
-			//throw new IOException("No reaction from servo" + String.valueOf(id) + '!');
 			System.err.println("No reaction from servo!");
 		}
 		return Arrays.copyOf(buffer, read);
 	}
 	
+	/**
+	 * reads a message from the serial port
+	 * @param len the length of the message
+	 * @return the read message
+	 * @throws IOException
+	 */
 	private byte[] readBits(int len) throws IOException
 	{
 		byte[] buffer = new byte[len];

@@ -2,7 +2,7 @@ package com.nhl.spindp.spin;
 
 import java.util.concurrent.Future;
 
-import com.nhl.spindp.Main;
+import com.nhl.spindp.LedStrip;
 
 public class SpiderJoint
 {
@@ -80,18 +80,23 @@ public class SpiderJoint
 		else
 			val += offset;
 		if (Double.isNaN(val)) 
+		{
+			LedStrip.throwError();
 			throw new IllegalArgumentException("angle must not be NaN");
+		}
 		else
 		{
 			if (val > upperRange)
             {
                 System.err.println("val of servo " + servoId + " clamped");
                 val = upperRange;
+                LedStrip.throwError();
             }
-            if (val < lowerRange)
+			else if (val < lowerRange)
             {
             	System.err.println("val of servo " + servoId + " clamped");
                 val = lowerRange;
+                LedStrip.throwError();
             }
 			this.angle = val;
 		}

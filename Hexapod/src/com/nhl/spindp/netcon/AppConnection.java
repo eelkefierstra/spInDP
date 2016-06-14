@@ -11,6 +11,7 @@ import java.util.Random;
 
 import com.nhl.spindp.Main;
 import com.nhl.spindp.Main.Info;
+import com.nhl.spindp.Utils;
 
 public class AppConnection
 {
@@ -20,21 +21,33 @@ public class AppConnection
 	
 	public AppConnection() throws IOException
 	{
-		serverSocket = new ServerSocket(1338);
+		this(1338);
 	}
 	
 	public AppConnection(int port) throws IOException
 	{
 		serverSocket = new ServerSocket(port);
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				if (serverSocket != null)
+				{
+					try
+					{
+						serverSocket.close();
+					}
+					catch (IOException e) { }
+				}
+			}
+		});
 	}
 	
-<<<<<<< HEAD
 	/**
-	 * The mainloop of the server, it waits for a connection 
-	 * and sends instructions
+	 * Calls the mainloop of the server and starts it in a thread
 	 * @throws IOException
 	 */
-=======
 	public void start()
 	{
 		worker = new Thread()
@@ -50,13 +63,17 @@ public class AppConnection
 			}
 		};
 		worker.setDaemon(true);
+		worker.setName("AppThread");
 		worker.start();
 	}
 	
->>>>>>> 808def41906e52a9f528e7fc17de7c35c31dd43b
+	/**
+	 * mainloop for connection, it waits for a connection and sends instructions
+	 * @throws IOException
+	 */
 	public void mainLoop() throws IOException
 	{
-		while (true)
+		while (Utils.shouldRun)
 		{
 			Socket clientSocket = null;
 			try
@@ -102,9 +119,13 @@ public class AppConnection
 	 * @param input The input whichs asks for info
 	 * @return The construction to send to the App
 	 */
-	public String CreateDataToWrite(String input){
+	public String CreateDataToWrite(String input)
+	{
+		if(input == null)
+			return "";
 		String Result = "";
-		switch(input){
+		switch(input)
+		{
 			case "Heey":
 				Result = "Heey terug";
 				break;
@@ -127,9 +148,10 @@ public class AppConnection
 	 * create Adc info data
 	 * @return The data
 	 */
-	public String CreateADCInfo(){
+	public String CreateADCInfo()
+	{
 		String result = "";
-		result = Short.toString(info.getAdc());
+		result = String.valueOf(info.getAdc());
 		return result;
 	}
 	
@@ -142,12 +164,12 @@ public class AppConnection
 		String result = "";
 		 Random randomGenerator = new Random();
 		 for(int i = 1; i <= 18; i++)
-			{
-				 int Id = i;
-				 int Hoek = randomGenerator.nextInt(90);
-				 int Temperatuur = randomGenerator.nextInt(90);
-				 result = "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";					
-			}
+		{
+			 int Id = i;
+			 int Hoek = randomGenerator.nextInt(90);
+			 int Temperatuur = randomGenerator.nextInt(90);
+			 result += "<Servo><Id>"+ Integer.toString(Id) + "</Id><Hoek>" + Integer.toString(Hoek) + "</Hoek><Temperatuur>" + Integer.toString(Temperatuur)+ "</Temperatuur></Servo>";					
+		}
 		return result;
 	}
 	
@@ -194,21 +216,6 @@ public class AppConnection
 		 }
 		 result =  "<X:"+Integer.toString(X)+",Y:"+Integer.toString(Y)+">";
 		 return result;
-	 }
-		 
-	 /**
-	  * Method to stop the serverSocket
-	  */
-	 public void stop()
-	 {
-		 try
-		 {
-			 serverSocket.close();
-		 }
-		 catch (IOException e)
-		 {
-			 e.printStackTrace();
-		 }	
 	 }
 }
 

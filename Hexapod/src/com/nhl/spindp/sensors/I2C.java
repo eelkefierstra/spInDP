@@ -2,6 +2,7 @@ package com.nhl.spindp.sensors;
 
 import com.nhl.spindp.Main;
 import com.nhl.spindp.Main.Info;
+import com.nhl.spindp.Utils;
 
 /**
  * Communicate with I2C device with native methods
@@ -18,11 +19,12 @@ public class I2C
 	private double rx = -1.0, ry = -1.0, rz = -1.0;    //filtered info
 	private boolean done = true;
 	private Info info;
-	private Thread t1;
+	private Thread worker;
 	
 	public I2C()
 	{
 		data = new I2CData();
+		info = Main.getInstance().getInfo();
 		initI2c();
 		Runtime.getRuntime().addShutdownHook(new Thread()
 		{
@@ -32,8 +34,8 @@ public class I2C
 				cleanupI2c();
 			}
 		});
-		info = Main.getInstance().getInfo();
 	}
+	
 	/**
 	 * Setup gyro and ADC before use
 	 * @return false if both fail
@@ -57,7 +59,7 @@ public class I2C
 	private void loop()
 	{
 		initI2c();
-		while (!done)
+		while (Utils.shouldRun)
 		{
 			loopI2c();
 			filter();
@@ -71,8 +73,7 @@ public class I2C
 	 */
 	public void start()
 	{
-		done = false;
-		t1 = new Thread()
+		worker = new Thread()
 		{
 			@Override
 			public void run()
@@ -80,36 +81,9 @@ public class I2C
 				loop();
 			}
 		};
-		t1.setDaemon(true);
-		t1.start();
-	}
-	
-	/**
-	 * stop i2c thread
-	 */
-	public void stop()
-	{
-		done = true;
-		try
-		{
-			if(t1 != null)
-			    t1.join();
-		}
-		catch (InterruptedException e)
-		{
-			
-		}
-	}
-	
-	/**
-	 * scale gyroscope values
-	 */
-	private void scale()
-	{
-		//scale gyro values
-		gsx = (double) data.gyroX / 131;
-		gsy = (double) data.gyroY / 131;
-		gsz = (double) data.gyroZ / 131;
+		worker.setDaemon(true);
+		worker.setName("I2CWorker");
+		worker.start();
 	}
 	
 	/**
@@ -136,57 +110,6 @@ public class I2C
 		info.setGyro(new double[] {rx, ry});
 	}
 	
-	@Deprecated
-	/**
-	 * get gyro angle
-	 * @return array with angles[ x, y, z]
-	 */
-	public double[] getGyroInfo()
-	{
-		double[] res = { -1, -1, -1};
-		synchronized (locker)
-		{
-			res[0] = rx;
-			res[1] = ry;
-			res[2] = rz;
-		}
-		return res;
-	}
-	
-	@Deprecated
-	/**
-	 * get the gyro values once
-	 * @return array with angles[ x, y, z]
-	 */
-	public double[] runOnceAndGetGyroInfo()
-	{
-		initI2c();
-		loopI2c();
-		filter();
-		cleanupI2c();
-		
-		double[] res = { -1, -1, -1};
-		res[0] = rx;
-		res[1] = ry;
-		res[2] = rz;
-		return res;
-	}
-	
-	@Deprecated
-	/**
-	 * get adc value
-	 * @return short with value from adc
-	 */
-	public short getADCInfo()
-	{
-		short res = -1;
-		synchronized (locker)
-		{
-			res = data.adcVal0;
-		}
-		return res;
-	}
-	
 	/**
 	 * get data class with i2c info
 	 * @return data class object
@@ -201,6 +124,7 @@ public class I2C
 	 * @author eelkef
 	 *
 	 */
+	@SuppressWarnings("unused")
 	public class I2CData
 	{
 		private short adcVal0  = -1;
