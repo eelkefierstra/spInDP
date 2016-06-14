@@ -9,13 +9,22 @@ stand3=50
 endID=18
 id=1
 while(id<=endID):
-	servo.move(id,stand)
-	print('moved '+str(id))
+	try:
+		servo.move(id,stand)
+		print('moved '+str(id))
+	except:
+		s=0
 	sleep(0.4)
-	servo.move(id+1,stand2)
+	try:
+		servo.move(id+1,stand2)
+	except:
+		s=0
 	sleep(0.4)
 	print('moved '+str(id+1))
-	servo.move(id+2,stand3)
+	try:
+		servo.move(id+2,stand3)
+	except:
+		s=0
 	print('moved '+str(id+2))
 	sleep(0.04)
 	id=id+3

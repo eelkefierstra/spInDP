@@ -394,7 +394,7 @@ class SpiderLeg implements Runnable
     	
         double f_p = 45.0;
         if(Math.abs(right) > 0.9)
-        	f_p = 45.0/2.0;
+        	f_p = 52.0/2.0;
         double f_a = (-PAR_X)/Math.pow(-f_p, 2);
         double f_h = f_a * Math.pow((sharedParams.servoAngle_rv - f_p), 2) + PAR_X;
         //Debug.Log("y:"+f_h+",x:"+sharedParams.servoAngle_rv + ",a:"+f_a);
