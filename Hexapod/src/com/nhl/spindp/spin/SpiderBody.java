@@ -115,8 +115,8 @@ public class SpiderBody
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
 		Thread.sleep(500);
-		legs[0].moveToDegrees(120.0, 145.0, 135.0);
-		legs[3].moveToDegrees(120.0, 145.0, 135.0);
+		legs[0].moveToDegrees(-30.0, 145.0, 135.0);
+		legs[3].moveToDegrees(-30.0, 145.0, 135.0);
 		for (SpiderLeg leg : legs)
 		{
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
@@ -143,7 +143,7 @@ public class SpiderBody
 		return res;
 	}
 	
-	public void moveToAngle(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException
+	public void moveToDegrees(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException
 	{
 		//SpiderLeg leg = legs[0];
 		for (SpiderLeg leg : legs)
