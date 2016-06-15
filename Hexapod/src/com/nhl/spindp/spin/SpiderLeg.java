@@ -4,8 +4,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import javax.xml.bind.DatatypeConverter;
-
 import com.nhl.spindp.Time;
 import com.nhl.spindp.spin.SpiderBody.SharedParams;
 
@@ -87,7 +85,6 @@ class SpiderLeg implements Runnable
 	SpiderLeg(ExecutorService executor, SharedParams sharedParams, byte startServoId)
 	{
 		//coxaChange += 30 * (startServoId / 3);
-		set = (startServoId % 2) == 0;
 		if (startServoId % 2 == 0)
 		{
 			coxaChange = coxalimH;
@@ -116,8 +113,10 @@ class SpiderLeg implements Runnable
 		if (sharedParams.sync)
 		{
 			if (getFirstId() % 2 == 0)
-				 coxaChange = coxalimH;
-			else coxaChange = coxalimL;
+				coxaChange = coxalimH;
+			else
+				coxaChange = coxalimL;
+			
 			sharedParams.sync = false;
 		}
 		if (forward == 0 && right == 0)
@@ -125,11 +124,13 @@ class SpiderLeg implements Runnable
 			future = executor.submit(this);
 			res = true;
 		}
-		else if (right <= -.25 || .25 <= right)
+		else if (right <= -.25 || right >= .25)
 		{
 			if (!set)
-				 coxaChange += ((90.0 * Time.deltaTime) * forward);
-			else coxaChange -= ((90.0 * Time.deltaTime) * forward);
+				coxaChange += ((90.0 * Time.deltaTime) * forward);
+			else
+				coxaChange -= ((90.0 * Time.deltaTime) * forward);
+			
 			if(right <= -0.9 || right >= 0.9)
 				noscope360(right);
 			else
@@ -228,13 +229,13 @@ class SpiderLeg implements Runnable
 		step = Math.abs(Math.sqrt(Math.pow(lAccentAccent, 2.0) - Math.pow(lAccent, 2.0)));
 		if (coxaChange < 45) step *= -1;
 		double t_e = e;
-		if (false)
+		/*if (false)
 		{
 			//double par_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(l, 2.0) - Math.pow(lAccent, 2.0)), 2.0);
 			//h = (par_Y * -1) * Math.pow(step, 2.0) + PAR_X;
             t_e = e - h;
            // t_e = 75;
-		}
+		}*/
 		//h *= 5;
 		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(t_e - h, 2.0));
 		double delta = Math.atan(d / (t_e - h));
@@ -244,9 +245,11 @@ class SpiderLeg implements Runnable
 		servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
 		if (coxaChange >= coxalimH) set = !set;
 	}
-	/// <summary>
-    /// Main method for making a turn
-    /// </summary>
+	
+	/**
+	 * calculate angles for turning
+	 * @param right how far to turn to the right
+	 */
 	private void turn(double right)
 	{
 		final double scale = 500.0;
@@ -398,8 +401,8 @@ class SpiderLeg implements Runnable
         if (id % 2 == 1)
             servoAngle = 90 - servoAngle;
         // t_tibia += 145;
-       //  t_femur += -40;
-         //servoAngle = 0;
+        //t_femur += -40;
+        //servoAngle = 0;
         servos[SpiderJoint.COXA].setAngle(Math.toRadians(servoAngle));
         if (Double.isNaN(t_femur))
         	System.err.println("we have issues");
@@ -473,7 +476,8 @@ class SpiderLeg implements Runnable
             smallestBeta = betaD2;
         */
     }
-    private void turnCentter(double right)
+    
+    private void turnCenter(double right)
 	{
     	
 		final double scale = 500.0;
@@ -641,9 +645,10 @@ class SpiderLeg implements Runnable
     }
 
 
-    /// <summary>
-    /// Main method for turning around his Y axis
-    /// </summary>
+    /**
+     * turn around center
+     * @param right how far to turn to right
+     */
 	private void noscope360(double right)
     {    //coxalimH =45.0;   
         int id = getFirstId() / 3;
@@ -704,7 +709,7 @@ class SpiderLeg implements Runnable
             	servoAngle = coxaChange;
                 sharedParams.servoAngle_rv = servoAngle; 
                 if(id == 5)// if LA
-                	servoAngle = 90-servoAngle;
+                	servoAngle = 90 - servoAngle;
                 gamma = 360 - (Math.atan((0.5 * Length) / (0.5 * Width))*(180 / Math.PI) + (135 + servoAngle));
                 alpha = Math.asin((Math.sin(gamma*(Math.PI/180)) * l4) / r4)*(180 / Math.PI);
                 beta = 180 - gamma - alpha;
@@ -720,7 +725,7 @@ class SpiderLeg implements Runnable
                 gamma = 180 - alpha - beta;
                 servoAngle = gamma - 135;
                 if(id == 4)// if LM
-                	servoAngle = 90-servoAngle;
+                	servoAngle = 90 - servoAngle;
                 break;
 
             case 2://RA
@@ -740,7 +745,7 @@ class SpiderLeg implements Runnable
         	//set = !set;
             //servoAngle = 90-servoAngle; 
         if (id % 2 == 1)
-            servoAngle = 90 - servoAngle;  
+            servoAngle -= 90;  
         servos[SpiderJoint.COXA].setAngle(Math.toRadians(servoAngle));
         if (Double.isNaN(t_femur))
         	System.err.println("we have issues");
