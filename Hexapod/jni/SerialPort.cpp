@@ -131,10 +131,14 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 		cout << "servo would've changed id" << endl;
 		return false;
 	}
-
 	if (messPntr[4] == 0x03 && messPntr[5] == 0x04)
 	{
 		cout << "servo would've changed baudrate" << endl;
+		return false;
+	}
+	if (messPntr[4] == 0x03 && messPntr[5] == 0x0E)
+	{
+		cout << "servo would've changed max torque" << endl;
 		return false;
 	}
 	if (messPntr[4] == 0x06)

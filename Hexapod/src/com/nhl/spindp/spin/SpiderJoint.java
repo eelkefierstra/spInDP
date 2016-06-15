@@ -69,6 +69,8 @@ public class SpiderJoint
 	void setAngle(double angle)
 	{
 		double val = Math.toDegrees(angle);// + offset;
+		/*if (servoId == 2 || servoId == 3)
+			System.out.println();*/
 		if (servoId >= 10 && servoId % 3 == 1)
 		{
 			val = 200 - val;

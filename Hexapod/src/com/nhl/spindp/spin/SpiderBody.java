@@ -165,6 +165,7 @@ public class SpiderBody
         public double servoAngle_rv;
         public double b_turn;
         public double beta_RV;
+        public int legSetID;
         
         public SharedParams()
         { 
@@ -183,7 +184,8 @@ public class SpiderBody
             this.firstCoxaChange = firstCoxaChange;
             this.servoAngle_rv = servoAngle_rv;
             this.b_turn = b_turn;
-            this.beta_RV = beta_RV;
+            this.beta_RV = beta_RV; 
+            this.legSetID = 0;
         }
 		
 	}

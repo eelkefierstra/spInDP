@@ -65,7 +65,7 @@ public class BluetoothConnection
 							}
 							else if ((char)c == '>')
 							{
-								System.out.println("Complete instruction: "+ buff);
+								//System.out.println("Complete instruction: "+ buff);
 								Commandc.controller(buff);
 							}
 						}
