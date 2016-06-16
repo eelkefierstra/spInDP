@@ -7,7 +7,6 @@ import com.nhl.spindp.Utils;
 public class Commandc
 {
 	//for each value an object
-	private static boolean isMoving = true;
 	private static int a  = 0; //button a
 	private static int b  = 0; //button b
 	private static int c  = 0; //button c
@@ -69,6 +68,7 @@ public class Commandc
 		//b is pressed, which kills all actions "killswitch"
 		if (b == 1)
 		{
+			Main.getInstance().vision.stop();
 			ss = 0;
 		}
 		
@@ -98,18 +98,15 @@ public class Commandc
 				break;
 			case 3://Follow the line
 				Main.getInstance().vision.start("line");
-				isMoving = true;
 				break;
 			case 5://search balloon
 				Main.getInstance().vision.start("balloon");
-				isMoving = true;
 				break;
 			case 1://Spinnijdig race
 			case 2://Spider Race
 			case 4://Spider Gap
 			case 8://Walking the gate
 				Main.getInstance().setDirection(0, Utils.map(y, 0, 1023, -1.0, 1.0), Utils.map(x, 0, 1023, -1.0, 1.0));
-				isMoving = true;
 				break;
 			case 6://De paringsdans
 				

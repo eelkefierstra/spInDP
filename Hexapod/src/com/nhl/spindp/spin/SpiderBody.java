@@ -45,7 +45,7 @@ public class SpiderBody
 		long start = System.currentTimeMillis();
 		for (SpiderLeg leg : legs)
 		{
-			leg.walk(0, 0, false);
+			leg.walk(0, 0);
 			futures.offer(leg.getFuture());
 		}
 		System.out.println("Calculated in: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
@@ -59,12 +59,12 @@ public class SpiderBody
 	 * @throws IOException 
 	 * @throws ExecutionException 
 	 */
-	public void walk(double forward, double right, boolean crab) throws IOException, InterruptedException, ExecutionException
+	public void walk(double forward, double right) throws IOException, InterruptedException, ExecutionException
 	{
 		for (SpiderLeg leg : legs)
 		{
 			//leg.setHeight(120.0);
-			if (leg.walk(forward, right, crab))
+			if (leg.walk(forward, right))
 				futures.offer(leg.getFuture());
 		}
 		while (!futures.isEmpty())
