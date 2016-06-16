@@ -30,6 +30,9 @@ public class ServoInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 UpdateServoInfo();
+                if(!ServoInfoThread.isAlive()){
+                    ServoInfoThread.start();
+                }
             }
         });
         ServoInfoRecieved(conn.getAllServoInfo());
