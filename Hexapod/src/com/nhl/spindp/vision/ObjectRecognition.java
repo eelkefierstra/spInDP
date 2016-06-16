@@ -33,6 +33,11 @@ public class ObjectRecognition
 	// a flag to change the button behavior
 	private boolean cameraActive = false;
 	
+	public ObjectRecognition() throws IOException
+	{
+		conn = new VideoConnection();
+	}
+	
 	/**
 	 * Get x coordinate of found object
 	 * @return
@@ -61,7 +66,10 @@ public class ObjectRecognition
 			type = "balloon";
 		
 		if(!cameraActive)
+		{
 			startCamera();
+			conn.start();
+		}
 	}
 	
 	/**
@@ -162,7 +170,6 @@ public class ObjectRecognition
 				// if the frame is not empty, process it
 				if (!frame.empty())
 				{
-					sendFrame(frame);
 					// init
 					Mat blurredImage = new Mat();
 					Mat hsvImage = new Mat();
@@ -229,6 +236,7 @@ public class ObjectRecognition
 		
 					// find the tennis ball(s) contours and show them
 					frame = findAndDraw(morphOutput, frame);
+					sendFrame(frame);
 				}
 				
 			}

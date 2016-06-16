@@ -10,6 +10,7 @@ import java.util.List;
 public class VideoConnection
 {
 	private ServerSocket serverSocket;
+	private Thread worker;
 	private List<Socket> clients;
 	
 	public VideoConnection() throws IOException
@@ -36,6 +37,29 @@ public class VideoConnection
 				}
 			}
 		});
+	}
+	
+	public void start()
+	{
+		worker = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					clients.add(serverSocket.accept());
+				}
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		worker.setDaemon(true);
+		worker.setName("streaming thread");
+		worker.start();
 	}
 	
 	public void sendBytes(byte[] message) throws IOException
