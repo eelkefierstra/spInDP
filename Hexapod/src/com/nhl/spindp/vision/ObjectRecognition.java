@@ -1,5 +1,6 @@
 package com.nhl.spindp.vision;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -7,18 +8,22 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 
 import com.nhl.spindp.Main;
 import com.nhl.spindp.Utils;
+import com.nhl.spindp.netcon.VideoConnection;
 
 public class ObjectRecognition
 {
 	private Object locker;
+	private VideoConnection conn;
 	private int x = 0;
 	private String type = "balloon";
 	// a timer for acquiring the video stream
@@ -27,6 +32,11 @@ public class ObjectRecognition
 	private VideoCapture capture = new VideoCapture(0);
 	// a flag to change the button behavior
 	private boolean cameraActive = false;
+	
+	public ObjectRecognition() throws IOException
+	{
+		conn = new VideoConnection();
+	}
 	
 	/**
 	 * Get x coordinate of found object
@@ -56,7 +66,10 @@ public class ObjectRecognition
 			type = "balloon";
 		
 		if(!cameraActive)
+		{
 			startCamera();
+			conn.start();
+		}
 	}
 	
 	/**
@@ -121,6 +134,20 @@ public class ObjectRecognition
 			
 			// release the camera
 			capture.release();
+		}
+	}
+	
+	private void sendFrame(Mat mat)
+	{
+		MatOfByte matOfByte = new MatOfByte();
+		Imgcodecs.imencode(".jpg", mat, matOfByte);
+		try
+		{
+			conn.sendBytes(matOfByte.toArray());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 	}
 	
@@ -209,6 +236,7 @@ public class ObjectRecognition
 		
 					// find the tennis ball(s) contours and show them
 					frame = findAndDraw(morphOutput, frame);
+					sendFrame(frame);
 				}
 				
 			}
