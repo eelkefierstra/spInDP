@@ -13,24 +13,25 @@ import com.nhl.spindp.sensors.DistanceMeter;
 import com.nhl.spindp.netcon.AppConnection;
 import com.nhl.spindp.netcon.WebSocket;
 import com.nhl.spindp.serialconn.ServoConnection;
+import com.nhl.spindp.spin.Dans;
 import com.nhl.spindp.spin.SpiderBody;
 import com.nhl.spindp.vision.ObjectRecognition;
 
 public class Main
 {
-	public static final boolean IS_ARM = System.getProperty("os.arch").equals("arm");
+	public  static final boolean IS_ARM = System.getProperty("os.arch").equals("arm");
 	private static Main instance;
 	private static ServoConnection conn;
 	private static WebSocket sock;
 	private static AppConnection appConn;
 	private static LedStrip ledStrip;
-	public ObjectRecognition vision;
+	public  static ObjectRecognition vision;
 	private static BluetoothConnection blue;
-	public static DistanceMeter distance;
+	public  static DistanceMeter distance;
 	private static SpiderBody body;
 	private static Info info;
 	private static boolean running = true;
-	public static List<Short> failedServos;
+	public  static List<Short> failedServos;
 	private volatile double forward = .5;
 	private volatile double right   = 0.0;
 	private volatile boolean crab   = false;
@@ -99,6 +100,7 @@ public class Main
 		instance = new Main();
 		info = instance.new Info();
 		
+		body = new SpiderBody((byte) 1);
 		if (IS_ARM)
 		{
 			//start led strip color thread
@@ -112,7 +114,7 @@ public class Main
 			//distance.start();
 			
 			//create vision object
-			//instance.vision = new ObjectRecognition();
+			vision = new ObjectRecognition();
 			
 			//create and strat I2C communication
 			I2C i2c = new I2C();
@@ -128,17 +130,23 @@ public class Main
 			
 			//connect to servo's
 			conn = new ServoConnection();
+
+			//Dans moves object
+			Dans dans = new Dans();
+			dans.doDanceMoves();
 		}
+		
 		//start web server
 		sock = new WebSocket(8000);
 		sock.start();
 		
 		failedServos = new ArrayList<>();
 		Time.updateDeltaTime();
-		body = new SpiderBody((byte) 1);
+		
 		//byte[] ids    = new byte[]  { 1  , 4  , 2  , 5  , 3 , 6 };
 		//short[] stand = new short[] { 512, 512, 650, 650, 50, 50};
 		//conn.moveMultiple(ids, stand);
+		
 		
 		//body.stabbyStab();
 		while (Utils.shouldRun)
@@ -147,15 +155,16 @@ public class Main
 			//body.moveToAngle(45, 118.7, 35.3);
 			body.setHeight(80.0);
 			body.setWidth(90.0);
-			//body.walk(0.25, 0.91, true);
 
-			body.walk(instance.forward, instance.right, false);//instance.crab);
+			body.walk(instance.forward, instance.right);
+			
 			/*double[] adc = info.getAdc();
 			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
 			double[] res = info.getGyro();
 			System.out.println("x: "+res[0]+" y: "+res[1]);
 			System.out.println();*/
-			Thread.sleep(1);
+			
+			//Thread.sleep(1);
 			/*if(scan.hasNext())
 			{
 				if((input = scan.next().toLowerCase()).equals("exit"))
@@ -165,6 +174,7 @@ public class Main
 			}*/
 		}
         Utils.shouldRun = false;
+        
 	}
 	
 	/**
@@ -206,6 +216,25 @@ public class Main
 			try
 			{
 				conn.moveServo((byte)ids[i], (short)angles[i]);
+				//System.out.println(conn.readPresentLocation((byte)i));
+				//Thread.sleep(5);
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+		}
+			//Thread.sleep(1000);
+	}
+	
+	public void driveServo(int[] ids, int[] angles, int[] speeds)
+	{
+		if (ids.length != angles.length) throw new IllegalArgumentException("Arrays must have the same length");
+		for (int i = 0; i < ids.length; i++)
+		{
+			try
+			{
+				conn.moveServo((byte)ids[i], (short)angles[i], (short) speeds[i]);
 				//System.out.println(conn.readPresentLocation((byte)i));
 				//Thread.sleep(5);
 			}

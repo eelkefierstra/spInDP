@@ -276,7 +276,7 @@ public class ObjectRecognition
 			for (int idx = 0; idx >= 0; idx = (int) hierarchy.get(0, idx)[0])
 			{
 				x = Imgproc.boundingRect(contours.get(idx)).x + Imgproc.boundingRect(contours.get(idx)).width/2;				
-				//System.out.println(x);
+				System.out.println(x);
 				Main.getInstance().setDirection(0,1.0 , Utils.map((double)x, 0.0, 1280.0, -1.0, 1.0));
 			}
 		}

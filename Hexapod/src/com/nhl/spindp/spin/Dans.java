@@ -1,81 +1,89 @@
 package com.nhl.spindp.spin;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 import com.nhl.spindp.Main;
 
-public class Dans {
-	private static int[] servoStanden = new int[19];
+public class Dans
+{
+	private  int[] servoStanden = new int[18];
+	private int[] servoNumbers = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18};
+	boolean first = true;
 	
-	/*public Dans(){
-		doDanceMoves();
-	}*/
-	
-	public static void doDanceMoves(){
-		
+	public void doDanceMoves()
+	{
 		BufferedReader br = null;
-		try {
+		
+		try
+		{
 			//br = new BufferedReader(new FileReader("D:\\IDPgit\\python\\Dans.txt"));
-			br = new BufferedReader(new FileReader("C:\\Users\\Aldert\\Documents\\School\\NHL\\SpInDP\\SpInDP\\python\\Dans.txt"));
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
+			br = new BufferedReader(new FileReader("/home/pi/git/spInDP/python/Dans.txt"));
 		    String line = br.readLine();
 
-		    while (line != null) {
+		    while (line != null)
+		    {
 		    	checkString(line);
 		        line = br.readLine();
 		    }
 		} 
-		catch(Exception e){
+		catch(Exception e)
+		{
 			e.printStackTrace();
-		}finally {
-		    try {
-				br.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+		}
+		
+		finally
+		{
+		    try
+		    {
+		    	if (br != null)
+		    		br.close();
+			}
+		    catch (IOException e)
+		    {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public static void checkString(String input){
-		if(input.contains(":")){
+	public void checkString(String input)
+	{
+		if(input.contains(":"))
+		{
 			setServoStand(input);
 		}
-		else{
+		else
+		{
 			moveServos();
 			delay(input);
 		}
 	}
 	
-	public static void setServoStand(String input){
+	public void setServoStand(String input)
+	{
 		String [] parts = input.split(":");
 		int i = 0;
-		i = Integer.parseInt(parts [0]);
+		i = Integer.parseInt(parts [0])-1;
 		servoStanden [i] = Integer.parseInt(parts [1]);
 	}
 	
-	public static void delay(String input){
+	public void delay(String input)
+	{
 		String[] parts = input.split("/");
-		try {
+		try
+		{
 			Thread.sleep(Integer.parseInt(parts[0]));
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 	}
 	
-	public static void moveServos(){
-		Main.getInstance().driveServo(new int[] {1, 2, 3}, servoStanden);
+	public void moveServos()
+	{
+		Main.getInstance().driveServo(servoNumbers, servoStanden);
 		
 	}
 }
