@@ -18,6 +18,7 @@ import com.nhl.spindp.vision.ObjectRecognition;
 
 public class Main
 {
+	public static final boolean IS_ARM = System.getProperty("os.arch").equals("arm");
 	private static Main instance;
 	private static ServoConnection conn;
 	private static WebSocket sock;
@@ -98,37 +99,39 @@ public class Main
 		instance = new Main();
 		info = instance.new Info();
 		
-		//start led strip color thread
-		ledStrip = new LedStrip();
-		ledStrip.setDaemon(true);
-		ledStrip.setName("LedThread");
-		ledStrip.start();
-		
-		//start distance meter
-		distance = new DistanceMeter();
-		//distance.start();
-		
+		if (IS_ARM)
+		{
+			//start led strip color thread
+			ledStrip = new LedStrip();
+			ledStrip.setDaemon(true);
+			ledStrip.setName("LedThread");
+			ledStrip.start();
+			
+			//start distance meter
+			distance = new DistanceMeter();
+			//distance.start();
+			
+			//create vision object
+			//instance.vision = new ObjectRecognition();
+			
+			//create and strat I2C communication
+			I2C i2c = new I2C();
+			i2c.start();
+			
+			//start listening to bluetooth info
+			blue = new BluetoothConnection();
+			blue.start();
+			
+			//start app connection server
+			appConn = new AppConnection(1338);
+			appConn.start();
+			
+			//connect to servo's
+			conn = new ServoConnection();
+		}
 		//start web server
 		sock = new WebSocket(8000);
 		sock.start();
-		
-		//create vision object
-		//instance.vision = new ObjectRecognition();
-		
-		//create and strat I2C communication
-		I2C i2c = new I2C();
-		i2c.start();
-		
-		//start listening to bluetooth info
-		blue = new BluetoothConnection();
-		blue.start();
-		
-		//start app connection server
-		appConn = new AppConnection(1338);
-		appConn.start();
-		
-		//connect to servo's
-		conn = new ServoConnection();
 		
 		failedServos = new ArrayList<>();
 		Time.updateDeltaTime();

@@ -81,7 +81,8 @@ public class SpiderBody
 		for (SpiderLeg leg : legs)
 		{
 			//leg.getAll();
-			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			if (Main.IS_ARM)
+				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
 		sharedParams.sync = false;
 	}
@@ -112,14 +113,16 @@ public class SpiderBody
 		legs[5].moveToDegrees(45.0, 115.0, 135.0);
 		for (SpiderLeg leg : legs)
 		{
-			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			if (Main.IS_ARM)
+				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
 		Thread.sleep(500);
 		legs[0].moveToDegrees(-30.0, 145.0, 135.0);
 		legs[3].moveToDegrees(-30.0, 145.0, 135.0);
 		for (SpiderLeg leg : legs)
 		{
-			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			if (Main.IS_ARM)
+				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
 	}
 	
@@ -153,8 +156,16 @@ public class SpiderBody
 		for (SpiderLeg leg : legs)
 		{
 			//leg.getAll();
-			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
+			if (Main.IS_ARM)
+				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
+	}
+	
+	public void moveTo(byte id, short coxa, short femur, short tibia)
+	{
+		legs[id].moveTo(coxa, femur, tibia);
+		if (Main.IS_ARM)
+			Main.getInstance().driveServo(legs[id].getIds(), legs[id].getAngles());
 	}
 	
 	public class SharedParams

@@ -60,7 +60,8 @@ public class LedStrip extends Thread
 	 */
 	public static void throwError()
 	{
-		instance.interrupted = true;
+		if (instance != null)
+			instance.interrupted = true;
 	}
 
 	/**

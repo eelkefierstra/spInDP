@@ -3,6 +3,7 @@ package com.nhl.spindp.spin;
 import java.util.concurrent.Future;
 
 import com.nhl.spindp.LedStrip;
+import com.nhl.spindp.Utils;
 
 public class SpiderJoint
 {
@@ -11,9 +12,9 @@ public class SpiderJoint
 	private static final double MIN_SERVO_ANGLE =    0.0;
 	private static final double MAX_SERVO_ANGLE = 1023.0;
 	
-	public static final int COXA  = 0;
-	public static final int FEMUR = 1;
-	public static final int TIBIA = 2;
+	static final int COXA  = 0;
+	static final int FEMUR = 1;
+	static final int TIBIA = 2;
 	
 	private byte servoId;
 	private double angle;
@@ -46,22 +47,27 @@ public class SpiderJoint
 		this.upperRange = upperRange;
 	}
 	
-	public byte getId()
+	byte getId()
 	{
 		return servoId;
 	}
 	
-	public short getServoAngle()
+	void setServoAngle(short pos)
 	{
-		return mapPosition(angle, MIN_ANGLE, MAX_ANGLE, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE);
+		Utils.map(pos, 0, 1023, 0, 300);
 	}
 	
-	public double getAngle()
+	short getServoAngle()
+	{
+		return Utils.mapServoPosition(angle, MIN_ANGLE, MAX_ANGLE, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE);
+	}
+	
+	double getAngle()
 	{
 		return angle;
 	}
 	
-	public Future<byte[]> getFuture()
+	Future<byte[]> getFuture()
 	{
 		return future;
 	}
@@ -103,12 +109,6 @@ public class SpiderJoint
 			this.angle = val;
 		}
 		//future = Main.submitInstruction(Servo.createMoveServoInstruction(getId(), getServoAngle()));
-	}
-	
-	private static short mapPosition(double x, double in_min, double in_max, double out_min, double out_max)
-	{
-		if (x > in_max || x < in_min) throw new IllegalArgumentException("Input not between min and max");
-		return (short)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 	}
 	
 	@Override
