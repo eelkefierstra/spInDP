@@ -1,17 +1,21 @@
+package com.nhl.spindp.spin;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class Main {
-	private int[] servoStanden = new int[18];
+import com.nhl.spindp.Main;
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		new Main().doDanceMoves();
-	}
+public class Dans {
+	private static int[] servoStanden = new int[19];
 	
-	public void doDanceMoves(){
+	/*public Dans(){
+		doDanceMoves();
+	}*/
+	
+	public static void doDanceMoves(){
+		
 		BufferedReader br = null;
 		try {
 			//br = new BufferedReader(new FileReader("D:\\IDPgit\\python\\Dans.txt"));
@@ -40,7 +44,7 @@ public class Main {
 		}
 	}
 	
-	public void checkString(String input){
+	public static void checkString(String input){
 		if(input.contains(":")){
 			setServoStand(input);
 		}
@@ -50,16 +54,14 @@ public class Main {
 		}
 	}
 	
-	public void setServoStand(String input){
+	public static void setServoStand(String input){
 		String [] parts = input.split(":");
-		
 		int i = 0;
 		i = Integer.parseInt(parts [0]);
 		servoStanden [i] = Integer.parseInt(parts [1]);
-		
 	}
 	
-	public void delay(String input){
+	public static void delay(String input){
 		String[] parts = input.split("/");
 		try {
 			Thread.sleep(Integer.parseInt(parts[0]));
@@ -72,9 +74,8 @@ public class Main {
 		}
 	}
 	
-	public void moveServos(){
+	public static void moveServos(){
+		Main.getInstance().driveServo(new int[] {1, 2, 3}, servoStanden);
 		
 	}
-		
-
 }
