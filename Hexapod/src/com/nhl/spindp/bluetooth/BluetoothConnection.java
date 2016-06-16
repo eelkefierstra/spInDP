@@ -30,7 +30,9 @@ public class BluetoothConnection
 					{
 						fReader.close();
 					}
-					catch (IOException e) { }
+					catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -63,12 +65,14 @@ public class BluetoothConnection
 							}
 							else if ((char)c == '>')
 							{
-								System.out.println("Complete instruction: "+ buff);
+								//System.out.println("Complete instruction: "+ buff);
 								Commandc.controller(buff);
 							}
 						}
 					}
-					catch (Exception ex) { }
+					catch (Exception ex) { 
+						ex.printStackTrace();
+					}
 				}
 			}
 		};

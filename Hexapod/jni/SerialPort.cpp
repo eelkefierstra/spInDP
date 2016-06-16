@@ -125,15 +125,35 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 		string mess  = "message can't be empty";
 		throw_java_exception(env, &clazz[0], &mess[0]);
 	}
+	jbyte *messPntr = env->GetByteArrayElements(message, NULL);
+	if (messPntr[4] == 0x03 && messPntr[5] == 0x03)
+	{
+		cout << "servo would've changed id" << endl;
+		return false;
+	}
+	if (messPntr[4] == 0x03 && messPntr[5] == 0x04)
+	{
+		cout << "servo would've changed baudrate" << endl;
+		return false;
+	}
+	if (messPntr[4] == 0x03 && messPntr[5] == 0x0E)
+	{
+		cout << "servo would've changed max torque" << endl;
+		return false;
+	}
+	if (messPntr[4] == 0x06)
+	{
+		cout << "servo would've reset" << endl;
+		return false;
+	}
 	ofstream pigs;
 	int signalPin = 18;
 	pigs.open(PIGPIO);
 	pigs << "w " << signalPin << " 1" << endl;
-	this_thread::sleep_for(chrono::microseconds(25));
-	jbyte *messPntr = env->GetByteArrayElements(message, NULL);
+	this_thread::sleep_for(chrono::microseconds(50));
 	//cout << "sending: " << messPntr << endl;
 	int res = write(serialPort, messPntr, length);
-	this_thread::sleep_for(chrono::microseconds(25));
+	this_thread::sleep_for(chrono::microseconds(50));
 	pigs << "w " << signalPin << " 0" << endl;
 	pigs.flush();
 	pigs.close();

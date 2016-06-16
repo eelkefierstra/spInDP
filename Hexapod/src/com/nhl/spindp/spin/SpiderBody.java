@@ -45,7 +45,7 @@ public class SpiderBody
 		long start = System.currentTimeMillis();
 		for (SpiderLeg leg : legs)
 		{
-			leg.walk(0, 0);
+			leg.walk(0, 0, false);
 			futures.offer(leg.getFuture());
 		}
 		System.out.println("Calculated in: " + String.valueOf(System.currentTimeMillis() - start) + "ms");
@@ -59,12 +59,12 @@ public class SpiderBody
 	 * @throws IOException 
 	 * @throws ExecutionException 
 	 */
-	public void walk(double forward, double right) throws IOException, InterruptedException, ExecutionException
+	public void walk(double forward, double right, boolean crab) throws IOException, InterruptedException, ExecutionException
 	{
 		for (SpiderLeg leg : legs)
 		{
-			leg.setHeight(120.0);
-			if (leg.walk(forward, right))
+			//leg.setHeight(120.0);
+			if (leg.walk(forward, right, crab))
 				futures.offer(leg.getFuture());
 		}
 		while (!futures.isEmpty())
@@ -83,6 +83,23 @@ public class SpiderBody
 			//leg.getAll();
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
+		sharedParams.sync = false;
+	}
+	
+	public void setHeight(double height)
+	{
+		for (SpiderLeg leg : legs)
+		{
+			leg.setHeight(height);
+		}
+	}
+	
+	public void setWidth(double width)
+	{
+		for (SpiderLeg leg : legs)
+		{
+			leg.setWidth(width);
+		}
 	}
 	
 	public void stabbyStab() throws InterruptedException
@@ -98,8 +115,8 @@ public class SpiderBody
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
 		Thread.sleep(500);
-		legs[0].moveToDegrees(120.0, 145.0, 135.0);
-		legs[3].moveToDegrees(120.0, 145.0, 135.0);
+		legs[0].moveToDegrees(-30.0, 145.0, 135.0);
+		legs[3].moveToDegrees(-30.0, 145.0, 135.0);
 		for (SpiderLeg leg : legs)
 		{
 			Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
@@ -126,7 +143,7 @@ public class SpiderBody
 		return res;
 	}
 	
-	public void moveToAngle(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException
+	public void moveToDegrees(double coxa, double femur, double tibia) throws InterruptedException, ExecutionException
 	{
 		//SpiderLeg leg = legs[0];
 		for (SpiderLeg leg : legs)
@@ -148,6 +165,7 @@ public class SpiderBody
         public double servoAngle_rv;
         public double b_turn;
         public double beta_RV;
+        public int legSetID;
         
         public SharedParams()
         { 
@@ -166,7 +184,8 @@ public class SpiderBody
             this.firstCoxaChange = firstCoxaChange;
             this.servoAngle_rv = servoAngle_rv;
             this.b_turn = b_turn;
-            this.beta_RV = beta_RV;
+            this.beta_RV = beta_RV; 
+            this.legSetID = 0;
         }
 		
 	}

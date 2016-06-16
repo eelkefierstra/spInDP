@@ -30,8 +30,9 @@ public class Main
 	private static Info info;
 	private static boolean running = true;
 	public static List<Short> failedServos;
-	private volatile double forward = 0.25;
+	private volatile double forward = .5;
 	private volatile double right   = 0.0;
+	private volatile boolean crab   = false;
 	
 	static
 	{
@@ -140,9 +141,12 @@ public class Main
 		while (Utils.shouldRun)
 		{
 			Time.updateDeltaTime();
-			//body.walk(instance.forward, instance.right);
-			//body.walk(0.25,0.9);
-			body.moveToAngle(45, 118.7, 35.3);
+			//body.moveToAngle(45, 118.7, 35.3);
+			body.setHeight(80.0);
+			body.setWidth(90.0);
+			//body.walk(0.25, 0.91, true);
+
+			body.walk(instance.forward, instance.right, false);//instance.crab);
 			/*double[] adc = info.getAdc();
 			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
 			double[] res = info.getGyro();
