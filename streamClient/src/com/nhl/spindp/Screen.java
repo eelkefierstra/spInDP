@@ -26,11 +26,12 @@ public class Screen extends JFrame
 		try
 		{
 			image = ImageIO.read(getClass().getResource("/images/Konachan.com - 199548 atha braids brown_eyes brown_hair hat long_hair original ponytail.png"));
-			screen = new JLabel(new ImageIcon(image.getScaledInstance(-1, 360, 0)));
+			screen = new JLabel(new ImageIcon(image.getScaledInstance(-1, 720, 0)));
 	    }
 		catch (IOException ex)
 		{
 			Logger.getLogger(Screen.class.getName()).log(Level.SEVERE, null, ex);
+			System.exit(1);
 	    }
 
 		this.add(screen);
