@@ -32,7 +32,7 @@ public class Main
 		
 		while (true)
 		{
-			InputStream in = instance.socket.getInputStream();
+			DataInputStream in = new DataInputStream(instance.socket.getInputStream());
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			int remainingBytes = imageSize;
 			byte[] buff = new byte[1024];
