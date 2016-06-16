@@ -1,4 +1,4 @@
-1000/Stabby stab start:
+1000/Stabby stab start
 1:358
 2:320
 3:525
@@ -17,7 +17,7 @@
 16:411
 17:415
 18:230
-1000/Stabby stab PRik:
+1000/Stabby stab PRik
 1:358
 2:320
 3:525
