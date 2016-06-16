@@ -1,4 +1,4 @@
-Stabby stab start:
+Stabby stab start
 1:358
 2:320
 3:525
@@ -18,7 +18,7 @@ Stabby stab start:
 17:415
 18:230
 
-Stabby stab PRik:
+Stabby stab PRik
 1:358
 2:320
 3:525

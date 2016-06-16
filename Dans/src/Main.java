@@ -6,15 +6,15 @@ import java.io.IOException;
 public class Main {
 	private int[] servoStanden = new int[18];
 
-	public void main(String[] args) {
+	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		doDanceMoves();
+		new Main().doDanceMoves();
 	}
 	
 	public void doDanceMoves(){
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader("C:\\Users\\Aldert\\Documents\\School\\NHL\\SpInDP\\SpInDP\\python\\Dans.txt"));
+			br = new BufferedReader(new FileReader("D:\\IDPgit\\python\\Dans.txt"));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -49,6 +49,11 @@ public class Main {
 	}
 	
 	public void setServoStand(String input){
+		String [] parts = input.split(":");
+		
+		int i = 0;
+		i = Integer.parseInt(parts [0]);
+		servoStanden [i] = Integer.parseInt(parts [1]);
 		
 	}
 
