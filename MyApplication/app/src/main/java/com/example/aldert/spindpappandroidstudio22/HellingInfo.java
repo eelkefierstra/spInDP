@@ -64,6 +64,9 @@ public class HellingInfo extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 UpdateHellingsHoek();
+                if(!HellingThread.isAlive()){
+                    HellingThread.start();
+                }
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
