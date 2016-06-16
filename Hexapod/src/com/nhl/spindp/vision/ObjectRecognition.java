@@ -1,5 +1,6 @@
 package com.nhl.spindp.vision;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -7,18 +8,22 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 
 import com.nhl.spindp.Main;
 import com.nhl.spindp.Utils;
+import com.nhl.spindp.netcon.VideoConnection;
 
 public class ObjectRecognition
 {
 	private Object locker;
+	private VideoConnection conn;
 	private int x = 0;
 	private String type = "balloon";
 	// a timer for acquiring the video stream
@@ -124,6 +129,20 @@ public class ObjectRecognition
 		}
 	}
 	
+	private void sendFrame(Mat mat)
+	{
+		MatOfByte matOfByte = new MatOfByte();
+		Imgcodecs.imencode(".jpg", mat, matOfByte);
+		try
+		{
+			conn.sendBytes(matOfByte.toArray());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Get a frame from the opened video stream (if any)
 	 */
@@ -143,6 +162,7 @@ public class ObjectRecognition
 				// if the frame is not empty, process it
 				if (!frame.empty())
 				{
+					sendFrame(frame);
 					// init
 					Mat blurredImage = new Mat();
 					Mat hsvImage = new Mat();
