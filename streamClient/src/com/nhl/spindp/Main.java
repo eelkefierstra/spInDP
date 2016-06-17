@@ -1,27 +1,20 @@
 package com.nhl.spindp;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 
 import com.nhl.spindp.vision.Frame;
 
-//import org.opencv.core.Core;
-
 public class Main 
 {
-	static
-	{
-		//System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	}
 	
 	private static Main instance;
 	private Screen screen;
@@ -32,7 +25,7 @@ public class Main
 		instance = new Main();
 		try
 		{
-			instance.socket = new Socket("customchrome", 1339);
+			instance.socket = new Socket("localhost", 1339);
 		}
 		catch (ConnectException ex)
 		{
@@ -40,29 +33,48 @@ public class Main
 			System.exit(-1);
 		}
 		instance.screen = new Screen();
-		int imageSize = 52227;
-		//DataInputStream in = new DataInputStream(instance.socket.getInputStream());
+		
+		DecimalFormat format = new DecimalFormat("#.##");
+		FPSCounter counter = instance.new FPSCounter();
+		counter.setDaemon(true);
+		counter.start();
 		
 		while (true)
 		{
-			/*ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			int remainingBytes = imageSize;
-			byte[] buff = new byte[4096];
-			
-			while (remainingBytes > 0)
-			{
-				int bytesRead = in.read(buff);
-		    	if (bytesRead < 0)
-		    	{
-		    		throw new IOException("Unexpected end of data");
-		    	}
-		    	baos.write(buff, 0, bytesRead);
-		    	remainingBytes -= bytesRead;
-			}*/
 			ObjectInputStream in = new ObjectInputStream(instance.socket.getInputStream());
 			InputStream inputStream = new ByteArrayInputStream(((Frame)in.readObject()).getFrameBuff());//baos.toByteArray());
 			//baos.close();
 			instance.screen.SetImage(ImageIO.read(inputStream));
+			counter.interrupt();
+			instance.screen.setTitle("CustomChrome stream: " + format.format(counter.getFPS()) + " fps");
+		}
+	}
+	
+	private class FPSCounter extends Thread
+	{
+		private long lastTime;
+		private double fps;
+		
+		@Override
+		public void run()
+		{
+			for(;;)
+			{
+				lastTime = System.nanoTime();
+				try
+				{
+					Thread.sleep(5000);
+				}
+				catch (Exception e)
+				{ }
+				fps = 1000000000.0 / (System.nanoTime() - lastTime);
+				lastTime = System.nanoTime();
+			}
+		}
+		
+		public double getFPS()
+		{
+			return fps;
 		}
 	}
 }

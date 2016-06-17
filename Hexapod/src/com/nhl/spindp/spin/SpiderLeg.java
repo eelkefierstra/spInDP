@@ -688,11 +688,11 @@ class SpiderLeg implements Runnable
         servos[SpiderJoint.TIBIA].setAngle(Math.toRadians(tibia));
 	}
 	
-	void moveTo(short coxa, short femur, short tibia)
+	void moveTo(int coxa, int femur, int tibia)
 	{
-		servos[SpiderJoint.COXA ].setServoAngle(coxa);
-        servos[SpiderJoint.FEMUR].setServoAngle(femur);
-        servos[SpiderJoint.TIBIA].setServoAngle(tibia);
+		servos[SpiderJoint.COXA ].setServoAngle((short)coxa);
+        servos[SpiderJoint.FEMUR].setServoAngle((short)femur);
+        servos[SpiderJoint.TIBIA].setServoAngle((short)tibia);
 	}
 	
 	int[] getAngles()

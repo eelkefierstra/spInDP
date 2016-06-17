@@ -105,20 +105,28 @@ public class SpiderBody
 	
 	public void stabbyStab() throws InterruptedException
 	{
-		legs[0].moveToDegrees(45.0, 145.0, 135.0);
+		legs[0].moveTo(358, 320, 525);
+		legs[1].moveTo(382, 457, 128);
+		legs[2].moveTo(639, 424, 231);
+		legs[3].moveTo(663, 359, 460);
+		legs[4].moveTo(674, 462, 105);
+		legs[5].moveTo(411, 415, 230);
+		/*legs[0].moveToDegrees(45.0, 145.0, 135.0);
 		legs[1].moveToDegrees( 0.0, 115.0,  45.0);
 		legs[2].moveToDegrees(90.0, 115.0,  45.0);
 		legs[3].moveToDegrees(45.0, 145.0,  90.0);
 		legs[4].moveToDegrees( 0.0, 115.0,  45.0);
-		legs[5].moveToDegrees(45.0, 115.0, 135.0);
+		legs[5].moveToDegrees(45.0, 115.0, 135.0);*/
 		for (SpiderLeg leg : legs)
 		{
 			if (Main.IS_ARM)
 				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
-		Thread.sleep(500);
-		legs[0].moveToDegrees(-30.0, 145.0, 135.0);
-		legs[3].moveToDegrees(-30.0, 145.0, 135.0);
+		Thread.sleep(1000);
+		legs[0].moveTo(200, 320, 525);
+		legs[3].moveTo(800, 359, 460);
+		/*legs[0].moveToDegrees(-30.0, 145.0, 135.0);
+		legs[3].moveToDegrees(-30.0, 145.0, 135.0);*/
 		for (SpiderLeg leg : legs)
 		{
 			if (Main.IS_ARM)
