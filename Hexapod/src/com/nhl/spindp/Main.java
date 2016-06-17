@@ -138,7 +138,7 @@ public class Main
 		
 		//create vision object
 		vision = new ObjectRecognition();
-		vision.start("run");
+		//vision.start("balloon");
 		
 		//start web server
 		sock = new WebSocket(8000);

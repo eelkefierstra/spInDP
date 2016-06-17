@@ -79,7 +79,7 @@ class SpiderLeg implements Runnable
     
     //NIET VERWIJDEREN!!!!!!
     private final int[][] legPairs = {{0,5},{1,4},{2,3}};
-    private String walkType = "3pair";
+    private String walkType = "3leg";
     //EINDE NIET VERWIJDEREN!!!!
 	
 	SpiderJoint[] servos = new SpiderJoint[3];
@@ -113,18 +113,20 @@ class SpiderLeg implements Runnable
 			if (sharedParams.servoAngle_rv >= coxalimH)
 			{
 				sharedParams.servoAngle_rv = coxalimH -1;
-				setNextPair(walkType);
+				sharedParams.set_rv = !sharedParams.set_rv;
+				
 				
 			}
 			else if (sharedParams.servoAngle_rv <= coxalimL)
 			{			
 				sharedParams.servoAngle_rv = coxalimL -1;
-				setNextPair(walkType);
+				sharedParams.set_rv = !sharedParams.set_rv;
+				
 			}
 			if (set)
-				sharedParams.servoAngle_rv += ((90.0 * Time.deltaTime));
+				sharedParams.servoAngle_rv += ((90.0 * Time.deltaTime)*0.1);
 			else
-				sharedParams.servoAngle_rv -= ((90.0 * Time.deltaTime));
+				sharedParams.servoAngle_rv -= ((90.0 * Time.deltaTime)*0.1);
 			System.out.println("coxa:"+(int)sharedParams.servoAngle_rv+",set:"+set);
 
 		}
@@ -179,7 +181,7 @@ class SpiderLeg implements Runnable
 		else if (type == "3leg")
 		{
 			sharedParams.set_rv = !sharedParams.set_rv;
-			System.out.println("WOLLAH, IK NEUK JULLIE ALLEMAAL DE KANDER MOEDER");
+			System.out.println("WOLLAH, IK NEUK JULLIE ALLEMAAL DE KANKER MOEDER");
 		}		
 	}
 	
@@ -233,8 +235,8 @@ class SpiderLeg implements Runnable
 		for (int i = 0; i < res.length; i++)
 		{
 			res[i] = servos[i].getFuture().get();
-			if (res[i][0] != (byte)0xFF || res[i][1] != (byte)0xFF)
-				System.out.println();//DatatypeConverter.printHexBinary(res[i]));
+			//if (res[i][0] != (byte)0xFF || res[i][1] != (byte)0xFF)
+				//System.out.println();//DatatypeConverter.printHexBinary(res[i]));
 		}
 		return res;
 	}
@@ -259,7 +261,7 @@ class SpiderLeg implements Runnable
 		if(sharedParams.firstId/3 == 0)
 		{			
 			sharedParams.set_rv = set;
-			
+			//lekker aan het werk?
 		}
 		
 		if(set == sharedParams.set_rv)
@@ -461,8 +463,8 @@ class SpiderLeg implements Runnable
 
         //Debug.Log("C:"+ (int)servoAngle +",F:"+ (int)t_femur +",T:"+ (int)t_tibia +",e:"+ (int)t_e);
 
-        if (coxaChange >= coxalimH) set = !set;
-        if (coxaChange <= coxalimL) set = !set;
+       // if (coxaChange >= coxalimH) set = !set;
+       // if (coxaChange <= coxalimL) set = !set;
     }
 
     public void turn2( double right)
