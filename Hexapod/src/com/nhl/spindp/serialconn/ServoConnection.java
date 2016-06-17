@@ -51,9 +51,11 @@ public class ServoConnection
 	
 	// /dev/ttyAMA0	
 	/**
+	 * Does nothing, reset instruction is in blacklist
 	 * Sends a reset instruction to all possible servos
 	 * @throws IOException
 	 */
+	@Deprecated
 	public void sendResetToAll() throws IOException
 	{
 		synchronized (this)
@@ -122,11 +124,13 @@ public class ServoConnection
 	
 
 	/**
+	 * Does nothing, reset instruction is in blacklist
 	 * Sends a reset instruction to a servo and reads the data it gets back from the servo
 	 * @param id The id of the servo to be reset
 	 * @return Whether the servo returns a status packet
 	 * @throws IOException
 	 */
+	@Deprecated
 	public boolean resetServo(byte id) throws IOException
 	{
 		byte[] buffer = Servo.createResetInstruction(id);
@@ -136,12 +140,14 @@ public class ServoConnection
 	}
 	
 	/**
+	 * Does nothing, set id instruction is in blacklist
 	 * Sets the id of a servo  and reads the data it gets back from the servo
 	 * @param id The current id of the servo
 	 * @param newId The desired new id of the servo
 	 * @return Whether the servo returns a status packet
 	 * @throws IOException
 	 */
+	@Deprecated
 	public boolean setServoId(byte id, byte newId) throws IOException
 	{
 		byte[] buffer = Servo.createWriteDataInstruction(id, Servo.ADDRESS_ID, newId);
@@ -325,12 +331,14 @@ public class ServoConnection
 	
 	
 	/**
+	 * Does nothing, set torque instruction is in blacklist
 	 * Sets the torque limit of the given servo
 	 * @param id The id of the servo to be limited
 	 * @param limit The desired limit
 	 * @return Whether the servo returns a status packet
 	 * @throws IOException
 	 */
+	@Deprecated
 	public boolean setTorqueLimit(byte id, short limit) throws IOException
 	{
 		byte[] buffer = Servo.createSetTorqueLimitInstruction(id, limit);
@@ -545,28 +553,5 @@ public class ServoConnection
 			}
 		}
 		return data;
-	}
-	
-	/**
-	 * Combines a list of arrays into one byte array
-	 * @param first the first array
-	 * @param rest the rest of the arrays
-	 * @return
-	 */
-	public static byte[] concat(byte[] first, byte[]... rest)
-	{
-		int totalLength = first.length;
-		for (byte[] array : rest)
-		{
-			totalLength += array.length;
-		}
-		byte[] result = Arrays.copyOf(first, totalLength);
-		int offset = first.length;
-		for (byte[] array : rest)
-		{
-			System.arraycopy(array, 0, result, offset, array.length);
-			offset += array.length;
-		}
-		return result;
 	}
 }

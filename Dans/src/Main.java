@@ -14,7 +14,8 @@ public class Main {
 	public void doDanceMoves(){
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader("D:\\IDPgit\\python\\Dans.txt"));
+			//br = new BufferedReader(new FileReader("D:\\IDPgit\\python\\Dans.txt"));
+			br = new BufferedReader(new FileReader("C:\\Users\\Aldert\\Documents\\School\\NHL\\SpInDP\\SpInDP\\python\\Dans.txt"));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -44,7 +45,8 @@ public class Main {
 			setServoStand(input);
 		}
 		else{
-			
+			moveServos();
+			delay(input);
 		}
 	}
 	
@@ -56,5 +58,23 @@ public class Main {
 		servoStanden [i] = Integer.parseInt(parts [1]);
 		
 	}
+	
+	public void delay(String input){
+		String[] parts = input.split("/");
+		try {
+			Thread.sleep(Integer.parseInt(parts[0]));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void moveServos(){
+		
+	}
+		
 
 }
