@@ -143,7 +143,7 @@ public class ObjectRecognition
 		Imgcodecs.imencode(".jpg", mat, matOfByte);
 		try
 		{
-			conn.sendBytes(matOfByte.toArray());
+			conn.sendObject(new Frame(matOfByte.toArray()));
 		}
 		catch (IOException e)
 		{

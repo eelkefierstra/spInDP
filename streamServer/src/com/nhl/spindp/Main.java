@@ -3,8 +3,10 @@ package com.nhl.spindp;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 import javax.imageio.ImageIO;
 
@@ -13,6 +15,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
+
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class Main
 {
@@ -53,12 +57,21 @@ public class Main
 			
 			try
 			{
-				new DataOutputStream(client.getOutputStream()).write(matOfByte.toArray());
-				instance.screen.SetImage(ImageIO.read(new ByteArrayInputStream(matOfByte.toArray())));
+				byte[] message = matOfByte.toArray();
+				System.out.println("message lenght: " + String.valueOf(message.length));
+				instance.screen.SetImage(ImageIO.read(new ByteArrayInputStream(message)));
+				ObjectOutputStream stream = new ObjectOutputStream(client.getOutputStream());
+				stream.writeObject(new Frame(message));
+				stream.flush();
+			}
+			catch (SocketException ex)
+			{
+				System.out.println("Socket closed");
 			}
 			catch (IOException ex)
 			{
 				ex.printStackTrace();
+				System.exit(-1);
 			}
 		}
 	}

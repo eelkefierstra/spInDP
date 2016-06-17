@@ -2,6 +2,7 @@ package com.nhl.spindp.netcon;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -60,6 +61,14 @@ public class VideoConnection
 		worker.setDaemon(true);
 		worker.setName("streaming thread");
 		worker.start();
+	}
+	
+	public void sendObject(Object obj) throws IOException
+	{
+		for (Socket s : clients)
+		{
+			new ObjectOutputStream(s.getOutputStream()).writeObject(obj);
+		}
 	}
 	
 	public void sendBytes(byte[] message) throws IOException
