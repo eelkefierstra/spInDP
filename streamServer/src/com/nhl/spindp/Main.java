@@ -1,7 +1,6 @@
 package com.nhl.spindp;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -16,7 +15,7 @@ import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
+import com.nhl.spindp.vision.Frame;
 
 public class Main
 {

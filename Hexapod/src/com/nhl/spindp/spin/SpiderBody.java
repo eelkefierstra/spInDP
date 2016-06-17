@@ -177,6 +177,7 @@ public class SpiderBody
         public double b_turn;
         public double beta_RV;
         public int legSetID;
+        public boolean set_rv;
         
         public SharedParams()
         { 
@@ -197,6 +198,7 @@ public class SpiderBody
             this.b_turn = b_turn;
             this.beta_RV = beta_RV; 
             this.legSetID = 0;
+            this.set_rv = true;
         }
 		
 	}

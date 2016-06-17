@@ -22,7 +22,6 @@ import com.nhl.spindp.netcon.VideoConnection;
 
 public class ObjectRecognition
 {
-	private Object locker;
 	private VideoConnection conn;
 	private int x = 0;
 	private String type = "balloon";
@@ -39,31 +38,23 @@ public class ObjectRecognition
 	}
 	
 	/**
-	 * Get x coordinate of found object
-	 * @return
-	 */
-	public int getX()
-	{
-		int res = 0;
-		synchronized (locker)
-		{
-			res = x;
-		}
-		return res;
-	}
-	
-	/**
 	 * start vision
 	 * @param sort "line" to search for line and "balloon" to search for balloon
 	 */
 	public void start(String sort)
 	{
-		if (sort.equals("line"))
-			type = "line";
-		else if(sort.equals("balloon"))
-			type = "balloon";
-		else
-			type = "balloon";
+		switch (sort)
+		{
+			case "line":
+				type = "line";
+				break;
+			case "balloon":
+				type = "balloon";
+				break;
+			default:
+				type = "run";
+				break;
+		}
 		
 		if(!cameraActive)
 		{
@@ -183,32 +174,37 @@ public class ObjectRecognition
 					Imgproc.cvtColor(blurredImage, hsvImage, Imgproc.COLOR_BGR2HSV);
 					
 					//thresholding values					
-					int hMin = 0;
-					int hMax = 17;
-					int sMin = 86;
-					int sMax = 255;
-					int vMin = 80;
-					int vMax = 188;
+					int hMin, hMax, sMin, sMax, vMin, vMax;
 					
-					if(type == "balloon")
+					switch (type)
 					{
-						//threshold for the balloon
-						hMin = 0;
-						hMax = 17;
-						sMin = 86;
-						sMax = 255;
-						vMin = 80;
-						vMax = 188;
-					}
-					else // type = "line"
-					{
-						//threshold for the line
-						hMin = 0;
-						hMax = 17;
-						sMin = 86;
-						sMax = 255;
-						vMin = 80;
-						vMax = 188;
+						case "balloon":
+							//threshold for the balloon
+							hMin = 0;
+							hMax = 17;
+							sMin = 86;
+							sMax = 255;
+							vMin = 80;
+							vMax = 188;
+							break;
+						case "line":
+							//threshold for the line
+							hMin = 0;
+							hMax = 17;
+							sMin = 86;
+							sMax = 255;
+							vMin = 80;
+							vMax = 188;
+							break;
+						case "run":
+						default:
+							hMin = 0;
+							hMax = 0;
+							sMin = 0;
+							sMax = 0;
+							vMin = 0;
+							vMax = 0;
+							break;
 					}
 					
 					Scalar minValues = new Scalar(hMin, sMin,vMin);
@@ -276,7 +272,7 @@ public class ObjectRecognition
 			for (int idx = 0; idx >= 0; idx = (int) hierarchy.get(0, idx)[0])
 			{
 				x = Imgproc.boundingRect(contours.get(idx)).x + Imgproc.boundingRect(contours.get(idx)).width/2;				
-				System.out.println(x);
+				Main.getInstance().getInfo().setX(x);
 				Main.getInstance().setDirection(0,1.0 , Utils.map((double)x, 0.0, 1280.0, -1.0, 1.0));
 			}
 		}

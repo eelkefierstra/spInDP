@@ -1,4 +1,4 @@
-package com.nhl.spindp;
+package com.nhl.spindp.vision;
 
 import java.io.Serializable;
 

@@ -71,6 +71,7 @@ public class Dans
 	public void delay(String input)
 	{
 		String[] parts = input.split("/");
+		if (parts[0].isEmpty()) return;
 		try
 		{
 			Thread.sleep(Integer.parseInt(parts[0]));

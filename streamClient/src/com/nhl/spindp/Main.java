@@ -12,6 +12,8 @@ import java.net.UnknownHostException;
 
 import javax.imageio.ImageIO;
 
+import com.nhl.spindp.vision.Frame;
+
 //import org.opencv.core.Core;
 
 public class Main 

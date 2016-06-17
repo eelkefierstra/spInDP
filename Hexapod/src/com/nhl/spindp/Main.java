@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
+import jdk.nashorn.internal.ir.WhileNode;
 
 import org.opencv.core.Core;
 
@@ -113,9 +116,6 @@ public class Main
 			distance = new DistanceMeter();
 			//distance.start();
 			
-			//create vision object
-			vision = new ObjectRecognition();
-			
 			//create and strat I2C communication
 			I2C i2c = new I2C();
 			i2c.start();
@@ -133,8 +133,12 @@ public class Main
 
 			//Dans moves object
 			Dans dans = new Dans();
-			dans.doDanceMoves();
+			//dans.doDanceMoves();
 		}
+		
+		//create vision object
+		vision = new ObjectRecognition();
+		vision.start("run");
 		
 		//start web server
 		sock = new WebSocket(8000);
@@ -147,6 +151,30 @@ public class Main
 		//short[] stand = new short[] { 512, 512, 650, 650, 50, 50};
 		//conn.moveMultiple(ids, stand);
 		
+		Thread stopper = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				Scanner scan = new Scanner(System.in);
+				while (true)
+				{
+					if(scan.hasNext())
+					{
+						if(scan.next().toLowerCase().equals("exit"))
+						{
+			        		Utils.shouldRun = false;
+			        		break;
+						}
+					}
+				}
+				scan.close();
+				vision.stop();
+			}
+		};
+		stopper.setDaemon(true);
+		stopper.setName("closer");
+		stopper.start();
 		
 		//body.stabbyStab();
 		while (Utils.shouldRun)
@@ -163,15 +191,10 @@ public class Main
 			double[] res = info.getGyro();
 			System.out.println("x: "+res[0]+" y: "+res[1]);
 			System.out.println();*/
+			//System.out.println(vision.getX());
 			
 			//Thread.sleep(1);
-			/*if(scan.hasNext())
-			{
-				if((input = scan.next().toLowerCase()).equals("exit"))
-				{
-	        		running = false;
-				}
-			}*/
+			
 		}
         Utils.shouldRun = false;
         
@@ -272,9 +295,10 @@ public class Main
 	public class Info
 	{
 		private Object locker = new Object();
-		private double gyroX, gyroY;
-		private double adcSpanning, adcStroom; //spanning: V, stroom: A
-		private double distance;
+		private double gyroX = 360, gyroY = 360;
+		private double adcSpanning = 0, adcStroom = 0; //spanning: V, stroom: A
+		private double distance = 999999;
+		private int x = 0;
 		
 		/**
 		 * Get gyroscope angles
@@ -359,6 +383,22 @@ public class Main
 			synchronized (locker)
 			{
 				distance = data;
+			}
+		}
+		
+		public int getX()
+		{ 
+			synchronized (locker)
+			{
+				return x;
+			}
+		}
+		
+		public void setX(int value)
+		{
+			synchronized (locker)
+			{
+				x = value;
 			}
 		}
 	}
