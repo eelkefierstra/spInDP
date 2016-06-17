@@ -32,7 +32,7 @@ public class Main
 		instance = new Main();
 		try
 		{
-			instance.socket = new Socket("localhost", 1339);
+			instance.socket = new Socket("customchrome", 1339);
 		}
 		catch (ConnectException ex)
 		{

@@ -84,6 +84,7 @@ public class VideoConnection
 			}
 			catch (SocketException ex)
 			{
+				System.out.println(s.getInetAddress().toString() + " disconnected");
 				s.close();
 				clients.remove(i);
 				i--;
