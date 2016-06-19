@@ -36,6 +36,7 @@ public class Screen extends JFrame
 
 		this.add(screen);
 		this.setSize(1280,720);
+		this.setTitle("CustomChrome stream");
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);

@@ -19,8 +19,9 @@ public class Dans
 		try
 		{
 			//br = new BufferedReader(new FileReader("D:\\IDPgit\\python\\Dans.txt"));
-			br = new BufferedReader(new FileReader("/home/pi/git/spInDP/python/Dans.txt"));
-		    String line = br.readLine();
+			//br = new BufferedReader(new FileReader("/home/pi/git/spInDP/python/Dans.txt"));
+		    br = new BufferedReader(new FileReader(Main.class.getResource("Dans.txt").getFile()));
+			String line = br.readLine();
 
 		    while (line != null)
 		    {
@@ -75,6 +76,7 @@ public class Dans
 	public void delay(String input)
 	{
 		String[] parts = input.split("/");
+		if (parts[0].isEmpty()) return;
 		try
 		{
 			Thread.sleep(Integer.parseInt(parts[0]));

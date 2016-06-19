@@ -106,7 +106,7 @@ public class AppConnection
 				}
 				catch(Exception e)
 				{
-					e.printStackTrace();
+					//e.printStackTrace();
 					clientSocket.close();
 					break;
 				}

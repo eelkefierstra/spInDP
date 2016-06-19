@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.nhl.spindp.Utils;
 
 public class VideoConnection
 {
@@ -47,14 +50,21 @@ public class VideoConnection
 			@Override
 			public void run()
 			{
-				try
+				while (Utils.shouldRun)
 				{
-					clients.add(serverSocket.accept());
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					try
+					{
+						Socket s = serverSocket.accept();
+						System.out.println(s.getInetAddress().toString() + " connected");
+						synchronized (this)
+						{
+							clients.add(s);
+						}
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		};
@@ -65,9 +75,20 @@ public class VideoConnection
 	
 	public void sendObject(Object obj) throws IOException
 	{
-		for (Socket s : clients)
+		for (int i = 0; i < clients.size(); i++)
 		{
-			new ObjectOutputStream(s.getOutputStream()).writeObject(obj);
+			Socket s = clients.get(i);
+			try
+			{
+				new ObjectOutputStream(s.getOutputStream()).writeObject(obj);
+			}
+			catch (SocketException ex)
+			{
+				System.out.println(s.getInetAddress().toString() + " disconnected");
+				s.close();
+				clients.remove(i);
+				i--;
+			}
 		}
 	}
 	
