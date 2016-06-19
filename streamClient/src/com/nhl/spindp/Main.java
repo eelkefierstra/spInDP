@@ -16,11 +16,6 @@ import javax.imageio.ImageIO;
 
 public class Main 
 {
-	static
-	{
-		//System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	}
-	
 	private static Main instance;
 	private Screen screen;
 	private Socket socket;
@@ -39,27 +34,11 @@ public class Main
 		}
 		instance.screen = new Screen();
 		int imageSize = 52227;
-		//DataInputStream in = new DataInputStream(instance.socket.getInputStream());
 		
 		while (true)
 		{
-			/*ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			int remainingBytes = imageSize;
-			byte[] buff = new byte[4096];
-			
-			while (remainingBytes > 0)
-			{
-				int bytesRead = in.read(buff);
-		    	if (bytesRead < 0)
-		    	{
-		    		throw new IOException("Unexpected end of data");
-		    	}
-		    	baos.write(buff, 0, bytesRead);
-		    	remainingBytes -= bytesRead;
-			}*/
 			ObjectInputStream in = new ObjectInputStream(instance.socket.getInputStream());
-			InputStream inputStream = new ByteArrayInputStream(((Frame)in.readObject()).getFrameBuff());//baos.toByteArray());
-			//baos.close();
+			InputStream inputStream = new ByteArrayInputStream(((Frame)in.readObject()).getFrameBuff());
 			instance.screen.SetImage(ImageIO.read(inputStream));
 		}
 	}

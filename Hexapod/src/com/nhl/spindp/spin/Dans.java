@@ -53,10 +53,14 @@ public class Dans
 		{
 			setServoStand(input);
 		}
-		else
+		else if(input.contains("/"))
 		{
 			moveServos();
 			delay(input);
+		}
+		else if(input.contains(","))
+		{
+			changeColorLedStrip(input);
 		}
 	}
 	
@@ -84,6 +88,20 @@ public class Dans
 	public void moveServos()
 	{
 		Main.getInstance().driveServo(servoNumbers, servoStanden);
-		
+		servoStanden = null;
+	}
+	
+	public void changeColorLedStrip(String input)
+	{
+		String[] parts = input.split(",");
+		int r = Integer.parseInt(parts[1]);
+		int g = Integer.parseInt(parts[2]);
+		int b = Integer.parseInt(parts[3]);
+		try {
+			Main.getInstance().getLedstrip().setColourRgb(r,g,b);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

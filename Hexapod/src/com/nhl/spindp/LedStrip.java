@@ -71,7 +71,7 @@ public class LedStrip extends Thread
 	 * @param b blue value to set, in range: 0-255
 	 * @throws IOException
 	 */
-	private static void setColourRgb(int r, int g, int b) throws IOException
+	public static void setColourRgb(int r, int g, int b) throws IOException
 	{
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("/dev/pigpio"));
 		writer.write("p 6 "+ String.valueOf(r) +" p 13 "+ String.valueOf(g) +" p 5 " + String.valueOf(b) + '\n');
