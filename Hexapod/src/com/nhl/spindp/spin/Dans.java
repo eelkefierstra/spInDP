@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import com.nhl.spindp.LedStrip;
 import com.nhl.spindp.Main;
 
 public class Dans
@@ -100,7 +101,7 @@ public class Dans
 		int g = Integer.parseInt(parts[2]);
 		int b = Integer.parseInt(parts[3]);
 		try {
-			Main.getInstance().getLedstrip().setColourRgb(r,g,b);
+			LedStrip.setColourRgb(r,g,b);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
