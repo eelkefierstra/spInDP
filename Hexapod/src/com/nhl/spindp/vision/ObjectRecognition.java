@@ -245,6 +245,11 @@ public class ObjectRecognition
 		}
 	}
 	
+	public boolean isActive()
+	{
+		return cameraActive;
+	}
+	
 	/**
 	 * Given a binary image containing one or more closed surfaces, use it as a
 	 * mask to find and highlight the objects contours

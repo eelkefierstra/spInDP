@@ -128,37 +128,28 @@ public class DistanceMeter
 					continue;
 				}
 				
-				if (i == 0)
+				switch (i)
 				{
-					a = microTime;
+					case 0:
+						a = microTime;
+						break;
+					case 1:
+						b = microTime;
+						break;
+					case 2:
+						c = microTime;
+						break;
+					case 3:
+						d = microTime;
+						break;
+					case 4:
+						e = microTime;
+						break;
+					case 5:
+						microTime  = (a + b + c + d + e) / 3;
+						i = 0;
+						break;
 				}
-				
-				else if (i == 1)
-				{
-					b = microTime;
-				}
-				
-				else if (i == 2)
-				{
-					c = microTime;
-				}
-				
-				else if (i == 3)
-				{
-					d = microTime;
-				}
-				
-				else if (i == 4)
-				{
-					e = microTime;
-				}
-				
-				else if (i == 5)
-				{
-					microTime  = (a + b + c + d + e) / 3;
-					i = 0;
-				}
-				
 			}
 			
 			Main.getInstance().getInfo().setDistance(microTime);

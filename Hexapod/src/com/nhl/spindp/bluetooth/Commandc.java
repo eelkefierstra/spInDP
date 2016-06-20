@@ -70,7 +70,7 @@ public class Commandc
 		//b is pressed, which kills all actions "killswitch"
 		if (b == 1)
 		{
-			Main.getInstance().vision.stop();
+			Main.vision.stop();
 			ss = 0;
 		}
 		
@@ -99,10 +99,10 @@ public class Commandc
 				Main.getInstance().setDirection(0, 0, 0);
 				break;
 			case 3://Follow the line
-				Main.getInstance().vision.start("line");
+				Main.vision.start("line");
 				break;
 			case 5://search balloon
-				Main.getInstance().vision.start("balloon");
+				Main.vision.start("balloon");
 				break;
 			case 1://Spinnijdig race
 			case 2://Spider Race
