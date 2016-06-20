@@ -218,6 +218,11 @@ class SpiderLeg implements Runnable
 		return future;
 	}
 	
+	public double[] geteLocal()
+	{
+		return new double[]{e,eLocal};
+	}
+	
 	public void setHeight(double height)
 	{
 		if (height < MINE)
@@ -273,7 +278,7 @@ class SpiderLeg implements Runnable
 			
 		//compensate for walking at an angle
 		int id = getFirstId() / 3;
-		/*
+		
 		if (sharedParams.currentAngleX <= 0)
 		{
 			switch (id)
@@ -314,7 +319,7 @@ class SpiderLeg implements Runnable
 					break;
 			}
 		}
-		*/
+		
 		System.out.println("id:"+sharedParams.firstId/3+", coxa:"+(int)coxaChange); //TODO: clean sys out
 		double lAccent = Math.cos(A_RAD) * l;
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
@@ -528,7 +533,7 @@ class SpiderLeg implements Runnable
         // a = (-q)/(-p)^2
         //double t_a = 80.0;
         //double t_c = 160.0;
-        /*int id = getFirstId() / 3;
+        int id = getFirstId() / 3;
 		if (sharedParams.currentAngleX <= 0)
 		{
 			switch (id)
@@ -568,7 +573,7 @@ class SpiderLeg implements Runnable
 					eLocal = e;
 					break;
 			}
-		}*/
+		}
 		
         if (set)
         {
