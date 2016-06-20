@@ -117,6 +117,13 @@ class SpiderLeg implements Runnable
 	{
 		if (getFirstId()/3 == 0)
 		{
+			if (!set)
+				sharedParams.servoAngle_rv += 90.0 * Time.deltaTime * (forward * Math.abs(1/forward)) ;
+			else
+				sharedParams.servoAngle_rv -= 90.0 * Time.deltaTime  * (forward * Math.abs(1/forward));
+			//System.out.println("coxa:"+(int)sharedParams.servoAngle_rv+",set:"+set);
+			
+			
 			
 			if (sharedParams.servoAngle_rv >= coxalimH)
 			{
@@ -130,13 +137,8 @@ class SpiderLeg implements Runnable
 				sharedParams.set_rv = false;
 				
 			}
-			if (!set)
-				sharedParams.servoAngle_rv += 180.0 * Time.deltaTime; //(forward * Math.abs(1/forward)) ;
-			else
-				sharedParams.servoAngle_rv -= 180.0 * Time.deltaTime;
-			//System.out.println("coxa:"+(int)sharedParams.servoAngle_rv+",set:"+set);
-			
 			set = sharedParams.set_rv;
+			
 
 		}
 		// set all Legs in right set

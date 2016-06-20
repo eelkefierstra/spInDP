@@ -33,8 +33,8 @@ public class Main
 	private static Info info;
 	private static boolean running = true;
 	public  static List<Short> failedServos;
-	private volatile double forward = 0.3;
-	private volatile double right   = 0.3;
+	private volatile double forward = 0.0;
+	private volatile double right   = 0.0;
 	private volatile boolean crab   = false;
 	
 	public LedStrip getLedstrip()
