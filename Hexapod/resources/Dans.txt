@@ -1,4 +1,3 @@
-1000/dans 1 startpositie
 1:529
 2:594
 3:82

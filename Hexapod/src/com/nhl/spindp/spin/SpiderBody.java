@@ -63,7 +63,6 @@ public class SpiderBody
 	{
 		for (SpiderLeg leg : legs)
 		{
-			//leg.setHeight(120.0);
 			if (leg.walk(forward, right))
 				futures.offer(leg.getFuture());
 		}
@@ -179,7 +178,7 @@ public class SpiderBody
 	public void updateAngle(double x, double y)
 	{
 		if ( Math.abs(x)> 5)
-			sharedParams.currentAngleX += x;
+			sharedParams.currentAngleX = x;
 	}
 	
 	public class SharedParams
