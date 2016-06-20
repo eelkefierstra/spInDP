@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import com.nhl.spindp.LedStrip;
 import com.nhl.spindp.Main;
 
 public class Dans
@@ -15,18 +16,17 @@ public class Dans
 	public void doDanceMoves()
 	{
 		BufferedReader br = null;
-		
+		LedStrip.danceStart();
 		try
 		{
 			//br = new BufferedReader(new FileReader("D:\\IDPgit\\python\\Dans.txt"));
 			//br = new BufferedReader(new FileReader("/home/pi/git/spInDP/python/Dans.txt"));
 		    br = new BufferedReader(new FileReader(Main.class.getResource("Dans.txt").getFile()));
-			String line = br.readLine();
+			String line = "";
 
-		    while (line != null)
+		    while ((line = br.readLine()) != null)
 		    {
 		    	checkString(line);
-		        line = br.readLine();
 		    }
 		} 
 		catch(Exception e)

@@ -8,6 +8,7 @@ public class LedStrip extends Thread
 {
 	private static LedStrip instance;
 	private volatile boolean interrupted;
+	private volatile boolean dancing;
 	
 	/**
 	 * cycle through rgb colors
@@ -17,6 +18,7 @@ public class LedStrip extends Thread
 	{
 		instance         = this;
 		this.interrupted = false;
+		this.dancing     = false;
 		int[] rgbColour  = new int[3];
 		// Start off with red.
 		rgbColour[0] = 255;
@@ -44,6 +46,10 @@ public class LedStrip extends Thread
 							Thread.sleep(1000);
 							interrupted = false;
 						}
+						else if (dancing)
+						{
+							Thread.sleep(125000);
+						}
 						else Thread.sleep(25);
 					}
 					catch (Exception e)
@@ -62,6 +68,12 @@ public class LedStrip extends Thread
 	{
 		if (instance != null)
 			instance.interrupted = true;
+	}
+	
+	public static void danceStart()
+	{
+		if (instance != null)
+			instance.dancing = true;
 	}
 
 	/**
