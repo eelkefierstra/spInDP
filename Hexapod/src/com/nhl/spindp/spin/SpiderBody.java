@@ -177,8 +177,13 @@ public class SpiderBody
 	
 	public void updateAngle(double x, double y)
 	{
-		if ( Math.abs(x)> 5)
-			sharedParams.currentAngleX = x;
+		double angle2;
+		double temp[] = legs[1].geteLocal();
+		double heightnormal = temp[0], height = temp[1];
+		
+		angle2 = Math.tan((height-heightnormal)/150.0);
+		
+		sharedParams.currentAngleX = (x + angle2);
 	}
 	
 	public class SharedParams
