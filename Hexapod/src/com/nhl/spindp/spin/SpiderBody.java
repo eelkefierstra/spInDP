@@ -176,6 +176,12 @@ public class SpiderBody
 			Main.getInstance().driveServo(legs[id].getIds(), legs[id].getAngles());
 	}
 	
+	public void updateAngle(double x, double y)
+	{
+		if ( Math.abs(x)> 5)
+			sharedParams.currentAngleX += x;
+	}
+	
 	public class SharedParams
 	{
 		public boolean sync;
@@ -186,6 +192,7 @@ public class SpiderBody
         public double beta_RV;
         public int legSetID;
         public boolean set_rv;
+        public double currentAngleX;
         
         public SharedParams()
         { 

@@ -134,7 +134,7 @@ class SpiderLeg implements Runnable
 		
 		// set all Legs in right set
 		selectSet(walkType);
-		System.out.println("");
+		//System.out.println("");
 		boolean res = false;		
 		if (forward == 0 && right == 0)
 		{
@@ -181,7 +181,6 @@ class SpiderLeg implements Runnable
 		else if (type == "3leg")
 		{
 			sharedParams.set_rv = !sharedParams.set_rv;
-			System.out.println("WOLLAH, IK NEUK JULLIE ALLEMAAL DE KANKER MOEDER");
 		}		
 	}
 	
@@ -261,7 +260,6 @@ class SpiderLeg implements Runnable
 		if(sharedParams.firstId/3 == 0)
 		{			
 			sharedParams.set_rv = set;
-			//lekker aan het werk?
 		}
 		
 		if(set == sharedParams.set_rv)
@@ -269,6 +267,50 @@ class SpiderLeg implements Runnable
 		else
 			coxaChange = coxalimH - sharedParams.servoAngle_rv;
 			
+		//compensate for walking at an angle
+		int id = getFirstId() / 3;
+		double eLocal;
+		if (sharedParams.currentAngleX <= 0)
+		{
+			switch (id)
+			{
+				case 0:
+				case 3:
+					eLocal = e;
+					break;
+				case 1:
+				case 4:
+					eLocal = e + 150 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				case 2:
+				case 5:
+					eLocal = e + 300 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				default:
+					eLocal = e;
+					break;
+			}
+		}
+		else
+		{
+			switch (id)
+			{
+				case 0:
+				case 3:
+					eLocal = e + 300 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				case 1:
+				case 4:
+					eLocal = e + 150 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				case 2:
+				case 5:
+				default:
+					eLocal = e;
+					break;
+			}
+		}
+		
 		double lAccent = Math.cos(A_RAD) * l;
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(sharedParams.servoAngle_rv));
 		double lAccentAccent = lAccent / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
@@ -278,7 +320,7 @@ class SpiderLeg implements Runnable
 		double h = 0;// f_a * Math.pow(((coxaChange - coxalimL) - f_p), 2) + PAR_X;
 		step = Math.abs(Math.sqrt(Math.pow(lAccentAccent, 2.0) - Math.pow(lAccent, 2.0)));
 		if (coxaChange < 45) step *= -1;
-		double t_e = e;
+		double t_e = eLocal;
 		/*if (false)
 		{
 			//double par_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(l, 2.0) - Math.pow(lAccent, 2.0)), 2.0);
@@ -481,17 +523,59 @@ class SpiderLeg implements Runnable
         // a = (-q)/(-p)^2
         //double t_a = 80.0;
         //double t_c = 160.0;
-        double t_e = e;
+        int id = getFirstId() / 3;
+		double eLocal;
+		if (sharedParams.currentAngleX <= 0)
+		{
+			switch (id)
+			{
+				case 0:
+				case 3:
+					eLocal = e;
+					break;
+				case 1:
+				case 4:
+					eLocal = e + 150 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				case 2:
+				case 5:
+					eLocal = e + 300 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				default:
+					eLocal = e;
+					break;
+			}
+		}
+		else
+		{
+			switch (id)
+			{
+				case 0:
+				case 3:
+					eLocal = e + 300 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				case 1:
+				case 4:
+					eLocal = e + 150 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				case 2:
+				case 5:
+				default:
+					eLocal = e;
+					break;
+			}
+		}
+		
         if (set)
         {
-            t_e = e - f_h;
+            eLocal = eLocal - f_h;
            // t_e = 75;
         }
 
         
         //double t_f = 35;
         double t_d = laccent - F;
-        double t_b = Math.sqrt(t_d*t_d + t_e*t_e);
+        double t_b = Math.sqrt(t_d*t_d + eLocal*eLocal);
         if (t_b < 80)
             t_b = 80;
         double t_delta = Math.asin(t_d / t_b)*(180 / Math.PI);

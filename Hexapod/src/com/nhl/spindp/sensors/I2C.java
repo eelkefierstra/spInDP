@@ -108,6 +108,7 @@ public class I2C
 		rx = Math.toDegrees(Math.atan2(accYscale, dist(accXscale, accZscale)));
 		ry = Math.toDegrees(Math.atan2(accXscale, dist(accYscale, accZscale)));
 		info.setGyro(new double[] {rx, ry});
+		Main.getInstance().updateAngle();
 	}
 	
 	/**

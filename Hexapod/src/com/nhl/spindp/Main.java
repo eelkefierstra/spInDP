@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import jdk.nashorn.internal.ir.WhileNode;
-
 import org.opencv.core.Core;
 
 import com.nhl.spindp.bluetooth.BluetoothConnection;
@@ -282,6 +280,14 @@ public class Main
 		catch (InterruptedException e) { }
 	}
 	
+	public void updateAngle()
+	{
+		double[] arr = info.getGyro();
+		double x = arr[0];
+		double y = arr[1];
+		body.updateAngle( x, y);
+	}
+	
 	public Info getInfo()
 	{
 		return info;
@@ -295,7 +301,7 @@ public class Main
 	public class Info
 	{
 		private Object locker = new Object();
-		private double gyroX = 360, gyroY = 360;
+		private double gyroX = 0, gyroY = 0;
 		private double adcSpanning = 0, adcStroom = 0; //spanning: V, stroom: A
 		private double distance = 999999;
 		private int x = 0;
