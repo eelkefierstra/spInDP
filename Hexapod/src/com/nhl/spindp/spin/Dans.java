@@ -100,7 +100,7 @@ public class Dans
 		int g = Integer.parseInt(parts[2]);
 		int b = Integer.parseInt(parts[3]);
 		try {
-			Main.getInstance().getLedstrip().setColourRgb(r,g,b);
+			LedStrip.setColourRgb(r,g,b);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
