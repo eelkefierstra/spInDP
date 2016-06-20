@@ -131,9 +131,9 @@ class SpiderLeg implements Runnable
 				
 			}
 			if (!set)
-				sharedParams.servoAngle_rv += ((90.0 * Time.deltaTime));
+				sharedParams.servoAngle_rv += 180.0 * Time.deltaTime; //(forward * Math.abs(1/forward)) ;
 			else
-				sharedParams.servoAngle_rv -= ((90.0 * Time.deltaTime));
+				sharedParams.servoAngle_rv -= 180.0 * Time.deltaTime;
 			//System.out.println("coxa:"+(int)sharedParams.servoAngle_rv+",set:"+set);
 			
 			set = sharedParams.set_rv;
@@ -158,9 +158,9 @@ class SpiderLeg implements Runnable
 				coxaChange -= ((90.0 * Time.deltaTime));
 			*/
 			
-			if(right <= -0.9 || right >= 0.9)
-				noscope360(right);
-			else
+			//if(right <= -0.9 || right >= 0.9)
+				//noscope360(right);
+			//else
 				turn(right);
 		}
 		else if (forward <= -.25 || .25 <= forward)
@@ -438,7 +438,7 @@ class SpiderLeg implements Runnable
         {
             case 0:
                 //RV (leidend)   
-                servoAngle = sharedParams.servoAngle_rv = coxaChange;
+                servoAngle = sharedParams.servoAngle_rv;
                 gamma = servoAngle + gamma_a;
                 alpha = Math.toDegrees(Math.asin((Math.sin(Math.toRadians(gamma)) * l4) / r4));
                 beta = 180 - gamma - alpha;
@@ -497,11 +497,17 @@ class SpiderLeg implements Runnable
         // set right COXA, FEMUR and TIBIA
         turn2(right);
      
+        if(set == sharedParams.set_rv)
+        	servoAngle = sharedParams.servoAngle_rv;
+		else
+			servoAngle = coxalimH - sharedParams.servoAngle_rv;
         //if (id % 2 == 1)
         //   servoAngle = 90 - servoAngle;
         // t_tibia += 145;
         //t_femur += -40;
         //servoAngle = 0;
+        if(id == 0)
+           System.out.println("A:"+(int)servoAngle);
         servos[SpiderJoint.COXA].setAngle(Math.toRadians(servoAngle));
         if (Double.isNaN(t_femur))
         	System.err.println("we have issues");
@@ -517,7 +523,7 @@ class SpiderLeg implements Runnable
     public void turn2( double right)
     {
         //calculate hight of legg depending on the servoAngle (aX^2 + b)
-    	
+    	double t_e = 90;
         double f_p = 45.0;
         if(Math.abs(right) > 0.9)
         	f_p = 52.0/2.0;
@@ -572,14 +578,16 @@ class SpiderLeg implements Runnable
 		
         if (set)
         {
-            eLocal = eLocal - f_h;
+            t_e = eLocal - f_h;
            // t_e = 75;
         }
+        else
+        	t_e = 90;
 
         
         //double t_f = 35;
         double t_d = laccent - F;
-        double t_b = Math.sqrt(t_d*t_d + eLocal*eLocal);
+        double t_b = Math.sqrt(t_d*t_d + t_e*t_e);
         if (t_b < 80)
             t_b = 80;
         double t_delta = Math.asin(t_d / t_b)*(180 / Math.PI);

@@ -38,6 +38,8 @@ public class Commandc
 		
 		for (String subStr : strArr)
 		{
+			if (subStr.isEmpty())
+				continue;
 			char start = subStr.charAt(0);
 			
 			switch (start)
