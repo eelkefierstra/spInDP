@@ -1,6 +1,7 @@
 package com.nhl.spindp.spin;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -20,8 +21,8 @@ public class Dans
 		try
 		{
 			//br = new BufferedReader(new FileReader("D:\\IDPgit\\python\\Dans.txt"));
-			//br = new BufferedReader(new FileReader("/home/pi/git/spInDP/python/Dans.txt"));
-		    br = new BufferedReader(new FileReader(Main.class.getResource("Dans.txt").getFile()));
+			//br = new BufferedReader(new FileReader("/home/pi/git/spInDP/Hexapod/resources/Dans.txt"));
+		    br = new BufferedReader(new FileReader(new File(Main.class.getResource("/Dans.txt").getPath()).getAbsolutePath()));
 			String line = "";
 
 		    while ((line = br.readLine()) != null)
@@ -50,7 +51,9 @@ public class Dans
 	
 	public void checkString(String input)
 	{
-		if(input.contains(":"))
+		if(input.isEmpty())
+			return;
+		else if(input.contains(":"))
 		{
 			setServoStand(input);
 		}

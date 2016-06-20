@@ -33,7 +33,7 @@ public class Main
 	private static Info info;
 	private static boolean running = true;
 	public  static List<Short> failedServos;
-	private volatile double forward = 0.5;
+	private volatile double forward = 0.3;
 	private volatile double right   = 0.0;
 	private volatile boolean crab   = false;
 	
@@ -188,8 +188,7 @@ public class Main
 			body.setHeight(80.0);
 			body.setWidth(90.0);
 
-			//body.walk(instance.forward, instance.right);
-			body.walk(0.25, 0.0);
+			body.walk(instance.forward, instance.right);
 			
 			/*double[] adc = info.getAdc();
 			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
