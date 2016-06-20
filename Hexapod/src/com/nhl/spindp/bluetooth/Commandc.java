@@ -101,8 +101,11 @@ public class Commandc
 			case 3://Follow the line
 				Main.getInstance().vision.start("line");
 				break;
-			case 5://search balloon
+			case 5://search balloon				
 				Main.getInstance().vision.start("balloon");
+				Main.getInstance().setDirection(0, 1.0,(Utils.map(Main.getInstance().getInfo().getX(), 0, 640, -1.0, 1.0) ));
+				
+				
 				break;
 			case 1://Spinnijdig race
 			case 2://Spider Race
