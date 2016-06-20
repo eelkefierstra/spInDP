@@ -37,6 +37,10 @@ public class Main
 	private volatile double right   = 0.0;
 	private volatile boolean crab   = false;
 	
+	public LedStrip getLedstrip() {
+		return this.ledStrip;
+	}
+	
 	static
 	{
 		File lib = new File(Main.class.getResource("/libs/").getPath(), "libHexapod.so");
@@ -72,6 +76,7 @@ public class Main
 	{
 		return instance;
 	}
+	
 	
 	
 	/**
@@ -408,4 +413,6 @@ public class Main
 			}
 		}
 	}
+
+	
 }

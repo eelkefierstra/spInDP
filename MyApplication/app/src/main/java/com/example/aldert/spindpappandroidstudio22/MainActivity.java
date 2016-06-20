@@ -19,7 +19,8 @@ import static com.example.aldert.spindpappandroidstudio22.HellingInfo.HellingInf
 import static com.example.aldert.spindpappandroidstudio22.ServoInfo.ServoInfoRunning;
 
 public class MainActivity extends AppCompatActivity {
-    static final ServerConnection conn = new ServerConnection("141.252.236.145", 1338);
+    static String ipAdress = "141.252.236.130";
+    static final ServerConnection conn = new ServerConnection(ipAdress, 1338);
     static boolean Connected = false;
     static Thread AdcThread = new Thread();
     static Thread ServoInfoThread = new Thread();

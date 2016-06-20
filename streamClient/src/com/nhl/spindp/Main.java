@@ -15,7 +15,7 @@ import com.nhl.spindp.vision.Frame;
 
 public class Main 
 {
-	
+
 	private static Main instance;
 	private Screen screen;
 	private Socket socket;
@@ -33,6 +33,9 @@ public class Main
 			System.exit(-1);
 		}
 		instance.screen = new Screen();
+
+		int imageSize = 52227;
+
 		
 		DecimalFormat format = new DecimalFormat("#.##");
 		FPSCounter counter = instance.new FPSCounter();
@@ -42,8 +45,7 @@ public class Main
 		while (true)
 		{
 			ObjectInputStream in = new ObjectInputStream(instance.socket.getInputStream());
-			InputStream inputStream = new ByteArrayInputStream(((Frame)in.readObject()).getFrameBuff());//baos.toByteArray());
-			//baos.close();
+			InputStream inputStream = new ByteArrayInputStream(((Frame)in.readObject()).getFrameBuff());
 			instance.screen.SetImage(ImageIO.read(inputStream));
 			counter.interrupt();
 			instance.screen.setTitle("CustomChrome stream: " + format.format(counter.getFPS()) + " fps");
