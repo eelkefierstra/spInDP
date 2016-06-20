@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.nhl.spindp.LedStrip;
 import com.nhl.spindp.Main;
@@ -93,7 +94,7 @@ public class Dans
 	public void moveServos()
 	{
 		Main.getInstance().driveServo(servoNumbers, servoStanden);
-		servoStanden = null;
+		Arrays.fill(servoStanden, 0);
 	}
 	
 	public void changeColorLedStrip(String input)
