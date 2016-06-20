@@ -33,11 +33,12 @@ public class Main
 	private static Info info;
 	private static boolean running = true;
 	public  static List<Short> failedServos;
-	private volatile double forward = .5;
+	private volatile double forward = 0.5;
 	private volatile double right   = 0.0;
 	private volatile boolean crab   = false;
 	
-	public LedStrip getLedstrip() {
+	public LedStrip getLedstrip()
+	{
 		return this.ledStrip;
 	}
 	
@@ -77,8 +78,6 @@ public class Main
 		return instance;
 	}
 	
-	
-	
 	/**
 	 * Implementation of the main program.
 	 * @param args
@@ -103,10 +102,12 @@ public class Main
 				catch (IOException e) { }
 			}
 		});*/
+		
 		instance = new Main();
 		info = instance.new Info();
 		
 		body = new SpiderBody((byte) 1);
+		
 		if (IS_ARM)
 		{
 			//start led strip color thread
@@ -183,24 +184,19 @@ public class Main
 		while (Utils.shouldRun)
 		{
 			Time.updateDeltaTime();
-			//body.moveToAngle(45, 118.7, 35.3);
+			
 			body.setHeight(80.0);
 			body.setWidth(90.0);
 
-			body.walk(instance.forward, instance.right);
+			//body.walk(instance.forward, instance.right);
+			body.walk(0.25, 0.0);
 			
 			/*double[] adc = info.getAdc();
 			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
 			double[] res = info.getGyro();
-			System.out.println("x: "+res[0]+" y: "+res[1]);
-			System.out.println();*/
+			System.out.println("x: "+res[0]+" y: "+res[1]);*/
 			//System.out.println(vision.getX());
-			
-			//Thread.sleep(1);
-			
 		}
-        Utils.shouldRun = false;
-        
 	}
 	
 	/**

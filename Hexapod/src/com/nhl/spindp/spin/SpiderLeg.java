@@ -77,10 +77,8 @@ class SpiderLeg implements Runnable
     private double test1; //TODO: need name still
     private double B_MAX;
     
-    //NIET VERWIJDEREN!!!!!!
     private final int[][] legPairs = {{0,5},{1,4},{2,3}};
     private String walkType = "3leg";
-    //EINDE NIET VERWIJDEREN!!!!
 	
 	SpiderJoint[] servos = new SpiderJoint[3];
 		
@@ -112,34 +110,31 @@ class SpiderLeg implements Runnable
 		{
 			if (sharedParams.servoAngle_rv >= coxalimH)
 			{
-				sharedParams.servoAngle_rv = coxalimH -1;
-				sharedParams.set_rv = !sharedParams.set_rv;
-				
+				sharedParams.servoAngle_rv = coxalimH;
+				sharedParams.set_rv = !sharedParams.set_rv;				
 				
 			}
 			else if (sharedParams.servoAngle_rv <= coxalimL)
 			{			
-				sharedParams.servoAngle_rv = coxalimL -1;
+				sharedParams.servoAngle_rv = coxalimL;
 				sharedParams.set_rv = !sharedParams.set_rv;
 				
 			}
-			if (set)
-				sharedParams.servoAngle_rv += ((90.0 * Time.deltaTime)*0.1);
+			if (!set)
+				sharedParams.servoAngle_rv += ((90.0 * Time.deltaTime));
 			else
-				sharedParams.servoAngle_rv -= ((90.0 * Time.deltaTime)*0.1);
-			System.out.println("coxa:"+(int)sharedParams.servoAngle_rv+",set:"+set);
+				sharedParams.servoAngle_rv -= ((90.0 * Time.deltaTime));
+			//System.out.println("coxa:"+(int)sharedParams.servoAngle_rv+",set:"+set);
 
 		}
-		
-		
 		// set all Legs in right set
 		selectSet(walkType);
 		//System.out.println("");
 		boolean res = false;		
 		if (forward == 0 && right == 0)
 		{
-			future = executor.submit(this);
-			res = true;
+			//future = executor.submit(this);
+			//res = true;
 		}
 		else if (right <= -.25 || right >= .25)
 		{
@@ -162,15 +157,15 @@ class SpiderLeg implements Runnable
 			else
 				coxaChange -= ((90.0 * Time.deltaTime) * forward);
 				*/
-			future = executor.submit(this);
-			res = true;
+			run();
+			//future = executor.submit(this);
+			res = false;
 		}
 		return res;
 	}
 	
 	private void setNextPair(String type)
 	{
-		int id = getFirstId() / 3;
 		// type 3 = 3 legs grouped
 		if(type == "2leg")
 		{
@@ -258,8 +253,8 @@ class SpiderLeg implements Runnable
 		}*/
 		
 		if(sharedParams.firstId/3 == 0)
-		{			
-			sharedParams.set_rv = set;
+		{
+			set = sharedParams.set_rv;
 		}
 		
 		if(set == sharedParams.set_rv)
@@ -311,8 +306,9 @@ class SpiderLeg implements Runnable
 			}
 		}
 		
+		System.out.println("id:"+sharedParams.firstId/3+", coxa:"+(int)coxaChange); //TODO: clean sys out
 		double lAccent = Math.cos(A_RAD) * l;
-		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(sharedParams.servoAngle_rv));
+		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
 		double lAccentAccent = lAccent / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
 		double d = lAccentAccent - F;
 		double f_p = (coxalimH - coxalimL) / 2;
@@ -655,7 +651,6 @@ class SpiderLeg implements Runnable
                 B_MAX = beta_a - beta_b;
                 double C_MAX = test2 - test1;
                 break;
-
             case 1:
             case 4:
                 l4 = (3.0 / 2.0) * Width;
