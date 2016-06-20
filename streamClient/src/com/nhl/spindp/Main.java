@@ -25,7 +25,7 @@ public class Main
 		instance = new Main();
 		try
 		{
-			instance.socket = new Socket("localhost", 1339);
+			instance.socket = new Socket("customchrome", 1339);
 		}
 		catch (ConnectException ex)
 		{
@@ -34,9 +34,6 @@ public class Main
 		}
 		instance.screen = new Screen();
 
-		int imageSize = 52227;
-
-		
 		DecimalFormat format = new DecimalFormat("#.##");
 		FPSCounter counter = instance.new FPSCounter();
 		counter.setDaemon(true);

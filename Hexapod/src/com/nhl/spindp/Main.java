@@ -37,11 +37,6 @@ public class Main
 	private volatile double right   = 0.0;
 	private volatile boolean crab   = false;
 	
-	public LedStrip getLedstrip()
-	{
-		return this.ledStrip;
-	}
-	
 	static
 	{
 		File lib = new File(Main.class.getResource("/libs/").getPath(), "libHexapod.so");
@@ -189,6 +184,11 @@ public class Main
 			body.setWidth(90.0);
 
 			body.walk(instance.forward, instance.right);
+			
+			if ((info.getDistance() <= 10.0) && vision.isActive())
+			{
+				body.stabbyStab();
+			}
 			
 			/*double[] adc = info.getAdc();
 			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
