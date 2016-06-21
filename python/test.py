@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18,GPIO.OUT)
-port = serial.Serial("/dev/ttyAMA0", baudrate=1000000, timeout=3.0)
+port = serial.Serial("/dev/serial0", baudrate=1000000, timeout=3.0)
 
 while True:
     

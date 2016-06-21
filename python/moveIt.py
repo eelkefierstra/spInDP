@@ -5,8 +5,8 @@ servo = Ax12();
 speed=500
 startStand=450
 endStand=550
-startID=1
-endID=18
+startID=2
+endID=19
 
 stand=startStand
 id=startID

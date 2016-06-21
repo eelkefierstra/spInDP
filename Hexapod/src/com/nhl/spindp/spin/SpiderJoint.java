@@ -54,7 +54,7 @@ public class SpiderJoint
 	
 	void setServoAngle(short pos)
 	{
-		Utils.map(pos, 0, 1023, 0, 300);
+		this.angle = Utils.map(pos, 0.0, 1023.0, 0.0, 300.0);
 	}
 	
 	short getServoAngle()

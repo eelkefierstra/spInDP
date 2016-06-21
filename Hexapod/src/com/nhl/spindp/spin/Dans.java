@@ -8,15 +8,18 @@ import java.util.Arrays;
 
 import com.nhl.spindp.LedStrip;
 import com.nhl.spindp.Main;
+import com.nhl.spindp.Utils;
 
 public class Dans
 {
+	private boolean dancing;
 	private  int[] servoStanden = new int[18];
 	private int[] servoNumbers = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18};
 	boolean first = true;
 	
 	public void doDanceMoves()
 	{
+		dancing = true;
 		BufferedReader br = null;
 		LedStrip.danceStart();
 		try
@@ -29,6 +32,8 @@ public class Dans
 		    while ((line = br.readLine()) != null)
 		    {
 		    	checkString(line);
+		    	if (!Utils.shouldRun)
+		    		break;
 		    }
 		} 
 		catch(Exception e)
@@ -48,6 +53,7 @@ public class Dans
 				e.printStackTrace();
 			}
 		}
+		dancing = false;
 	}
 	
 	public void checkString(String input)
@@ -89,6 +95,11 @@ public class Dans
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isDancing()
+	{
+		return dancing;
 	}
 	
 	public void moveServos()

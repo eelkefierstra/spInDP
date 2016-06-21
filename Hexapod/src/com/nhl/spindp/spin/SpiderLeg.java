@@ -118,9 +118,9 @@ class SpiderLeg implements Runnable
 		if (getFirstId()/3 == 0)
 		{
 			if (!set)
-				sharedParams.servoAngle_rv += 90.0 * Time.deltaTime * (forward * Math.abs(1/forward)) ;
+				sharedParams.servoAngle_rv += 90.0 * Time.deltaTime ;//* (forward * Math.abs(1/forward)) ;
 			else
-				sharedParams.servoAngle_rv -= 90.0 * Time.deltaTime  * (forward * Math.abs(1/forward));
+				sharedParams.servoAngle_rv -= 90.0 * Time.deltaTime  ;//* (forward * Math.abs(1/forward));
 			//System.out.println("coxa:"+(int)sharedParams.servoAngle_rv+",set:"+set);
 			
 			
@@ -203,7 +203,7 @@ class SpiderLeg implements Runnable
 			if(id%2 == 0)
 				set = sharedParams.set_rv;
 			else
-				set = !sharedParams.set_rv;			
+				set = !sharedParams.set_rv;	
 		}
 		else if(type.equals("2leg"))// pairs of 2
 		{
@@ -280,7 +280,7 @@ class SpiderLeg implements Runnable
 			
 		//compensate for walking at an angle
 		int id = getFirstId() / 3;
-		
+		/*
 		if (sharedParams.currentAngleX <= 0)
 		{
 			switch (id)
@@ -321,6 +321,7 @@ class SpiderLeg implements Runnable
 					break;
 			}
 		}
+		*/
 		
 		System.out.println("id:"+sharedParams.firstId/3+", coxa:"+(int)coxaChange); //TODO: clean sys out
 		double lAccent = Math.cos(A_RAD) * l;
@@ -332,7 +333,7 @@ class SpiderLeg implements Runnable
 		double h = 0;// f_a * Math.pow(((coxaChange - coxalimL) - f_p), 2) + PAR_X;
 		step = Math.abs(Math.sqrt(Math.pow(lAccentAccent, 2.0) - Math.pow(lAccent, 2.0)));
 		if (coxaChange < 45) step *= -1;
-		double t_e = eLocal;
+		double t_e = 90;//eLocal;
 		/*if (false)
 		{
 			//double par_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(l, 2.0) - Math.pow(lAccent, 2.0)), 2.0);
@@ -362,9 +363,9 @@ class SpiderLeg implements Runnable
 		final double scale = 1500.0;
 		int id = getFirstId() / 3;
 		// check if turn is right
- 		if(right < 0)
+ 		if(right > 0)
  		{   // select the right id for a right turn
- 			if (id + 3 > 5)
+ 			if (id > 2)
  			    id -= 3; // 3 -> 0, 4 -> 1 , 5 -> 2
  			else
  			    id += 3; // 0 -> 3, 1 -> 4, 2 -> 5      
@@ -542,6 +543,7 @@ class SpiderLeg implements Runnable
         //double t_a = 80.0;
         //double t_c = 160.0;
         int id = getFirstId() / 3;
+        /*
 		if (sharedParams.currentAngleX <= 0)
 		{
 			switch (id)
@@ -582,7 +584,7 @@ class SpiderLeg implements Runnable
 					break;
 			}
 		}
-		
+		*/
         if (set)
         {
             t_e = eLocal - f_h;
