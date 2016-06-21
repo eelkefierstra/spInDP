@@ -18,6 +18,8 @@ import com.nhl.spindp.spin.Dans;
 import com.nhl.spindp.spin.SpiderBody;
 import com.nhl.spindp.vision.ObjectRecognition;
 
+import sun.print.DialogOwner;
+
 public class Main
 {
 	public  static final boolean IS_ARM = System.getProperty("os.arch").equals("arm");
@@ -150,7 +152,68 @@ public class Main
 		//byte[] ids    = new byte[]  { 1  , 4  , 2  , 5  , 3 , 6 };
 		//short[] stand = new short[] { 512, 512, 650, 650, 50, 50};
 		//conn.moveMultiple(ids, stand);
+		startStopper();
 		
+		body.stabbyStab();
+		Thread.sleep(1000);
+		while (Utils.shouldRun)
+		{
+			while (dans.isDancing())
+				Thread.sleep(100);
+			
+			Time.updateDeltaTime();
+			
+			body.setHeight(80.0);
+			body.setWidth(90.0);
+
+			body.walk(instance.forward, instance.right);
+			
+			if ((info.getDistance() <= 10.0) && vision.isActive())
+			{
+				body.stabbyStab();
+			}
+			
+			/*double[] adc = info.getAdc();
+			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
+			double[] res = info.getGyro();
+			System.out.println("x: "+res[0]+" y: "+res[1]);*/
+			//System.out.println(vision.getX());
+			
+			
+			try
+			{
+				if (conn.pingServo((byte) 1))
+				{
+					List<Byte> down = new ArrayList<>();
+					for (byte i = 0; i <= 19; i++) //19 is max servo ID
+					{
+						if (conn.pingServo(i))
+						{
+							down.add(i);
+						}
+						
+					}
+					
+					if (down.size()==1)
+					{
+						conn.setServoId((byte) 1, down.get(0));
+					}
+					else
+					{
+						System.err.println("Multiple servo ID's changed");
+					}
+				}
+			}
+			catch (Exception e) { }
+		}
+	}
+	
+	/**
+	 * starts thread to monitor input
+	 * if exit is typed program will be stopped
+	 */
+	private static void startStopper()
+	{
 		Thread stopper = new Thread()
 		{
 			@Override
@@ -172,34 +235,8 @@ public class Main
 				vision.stop();
 			}
 		};
-		stopper.setDaemon(true);
 		stopper.setName("closer");
 		stopper.start();
-		
-		body.stabbyStab();
-		Thread.sleep(1000);
-		while (Utils.shouldRun)
-		{
-			while (dans.isDancing())
-				Thread.sleep(100);
-			Time.updateDeltaTime();
-			
-			body.setHeight(80.0);
-			body.setWidth(90.0);
-
-			body.walk(instance.forward, instance.right);
-			
-			if ((info.getDistance() <= 10.0) && vision.isActive())
-			{
-				body.stabbyStab();
-			}
-			
-			/*double[] adc = info.getAdc();
-			System.out.println("0: "+adc[0]+" 1: "+adc[1]);
-			double[] res = info.getGyro();
-			System.out.println("x: "+res[0]+" y: "+res[1]);*/
-			//System.out.println(vision.getX());
-		}
 	}
 	
 	/**
