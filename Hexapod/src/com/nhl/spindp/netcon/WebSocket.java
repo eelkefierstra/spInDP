@@ -164,7 +164,7 @@ public class WebSocket
 	        
 	        HttpEntity responseEntity;
 	        RequestLine requestLine = request.getRequestLine();
-	        if (requestLine.getMethod().compareTo("GET") == 0)
+	        if (requestLine.getMethod().equals("GET"))
 	        {
 	        	File resource = new File(Main.class.getResource("/www" + requestLine.getUri()).getPath());
 				if (!resource.isFile())
@@ -190,16 +190,23 @@ public class WebSocket
 				}
 				response.setEntity(responseEntity);
 	        }
-	        else if (requestLine.getMethod().compareTo("POST") == 0)
+	        else if (requestLine.getMethod().equals("POST"))
 	        {
 	        	int id;
 	        	double forward, right;
 	        	String[] arr = data.split("&");
-	        	id = Integer.valueOf(arr[0].substring(arr[0].lastIndexOf("=")+1));
-	        	forward = Utils.map(Double.valueOf(arr[1].substring(arr[1].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
-	        	right = Utils.map(Double.valueOf(arr[2].substring(arr[2].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
-	        	Main.getInstance().setDirection(id, forward, right);
-	        	response.setEntity(new StringEntity(data));
+	        	if (arr[0].startsWith("stab"))
+	        	{
+	        		Main.getInstance().stab(0);
+	        	}
+	        	else
+	        	{
+	        		id = Integer.valueOf(arr[0].substring(arr[0].lastIndexOf("=")+1));
+		        	forward = Utils.map(Double.valueOf(arr[1].substring(arr[1].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
+		        	right = Utils.map(Double.valueOf(arr[2].substring(arr[2].lastIndexOf("=")+1)), 0.0, 1023.0, -1.0, 1.0);
+		        	Main.getInstance().setDirection(id, forward, right);
+		        	response.setEntity(new StringEntity(data));
+	        	}
 	        }
 	        else
 	        {

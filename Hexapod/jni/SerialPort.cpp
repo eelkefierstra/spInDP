@@ -126,11 +126,11 @@ JNIEXPORT jboolean JNICALL Java_com_nhl_spindp_serialconn_SerialPort_nativeWrite
 		throw_java_exception(env, &clazz[0], &mess[0]);
 	}
 	jbyte *messPntr = env->GetByteArrayElements(message, NULL);
-	if (messPntr[4] == 0x03 && messPntr[5] == 0x03)
+	/*if (messPntr[4] == 0x03 && messPntr[5] == 0x03)
 	{
 		cout << "servo would've changed id" << endl;
 		return false;
-	}
+	}*/
 	if (messPntr[4] == 0x03 && messPntr[5] == 0x04)
 	{
 		cout << "servo would've changed baudrate" << endl;

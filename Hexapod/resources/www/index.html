@@ -10,13 +10,14 @@
 	<body>
 		<h1>Hoi</h1>
 		<form action="" method="post">
-			<input type="checkbox" name="walk" id="walk" />
-			<input id="forward" type="range" name="forward" id="forward" value="512" min="0" max="1023" />
-			<input id="right" type="range" name="right" id="right" value="512" min="0" max="1023"/>
+			<input id="forward" type="range" name="forward" value="512" min="0" max="1023" />
+			<input id="right" type="range" name="right" value="512" min="0" max="1023"/>
+			<input id="stab" type="button" name="stab" value="stab!" />
 			<textarea id="sliderText"></textarea>
 			<script type="text/javascript">
 				document.getElementById('forward').addEventListener('change', setValue);
 				document.getElementById('right').addEventListener('change', setValue);
+				document.getElementById('stab').addEventListener('click', stab);
 				function setValue()
 				{
 					var button  = $('input[name=walk]').val();
@@ -45,6 +46,24 @@
 			            },
 			            dataType: "json"
 			        });
+				}
+				function stab()
+				{
+					var mess = {
+						state: "stab",
+					};
+					$.ajax({
+						type: "POST",
+						url: "index.html",
+						data: mess,
+						success: function (Data) {
+							$('#sliderText').text(Data);
+						},
+						error: function (errorData) {
+							//alert('An error occured');
+						},
+						dataType: "json"
+					});
 				}
 			</script>
 		</form>
