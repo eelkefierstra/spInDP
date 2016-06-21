@@ -185,9 +185,9 @@ public class Main
 				if (conn.pingServo((byte) 1))
 				{
 					List<Byte> down = new ArrayList<>();
-					for (byte i = 0; i <= 19; i++) //19 is max servo ID
+					for (byte i = 2; i <= 19; i++) //19 is max servo ID
 					{
-						if (conn.pingServo(i))
+						if (!conn.pingServo(i))
 						{
 							down.add(i);
 						}
@@ -197,6 +197,7 @@ public class Main
 					if (down.size()==1)
 					{
 						conn.setServoId((byte) 1, down.get(0));
+						System.err.println("fixed ID: "+down.get(0));
 					}
 					else
 					{
