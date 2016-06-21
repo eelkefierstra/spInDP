@@ -17,20 +17,22 @@ public class Dans
 	private int[] servoNumbers = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18};
 	boolean first = true;
 	
+	
+	//Do all the dance mover
 	public void doDanceMoves()
 	{
 		dancing = true;
 		BufferedReader br = null;
 		LedStrip.danceStart();
+		//read the file with all the moves programmed in it
 		try
 		{
-			//br = new BufferedReader(new FileReader("D:\\IDPgit\\python\\Dans.txt"));
-			//br = new BufferedReader(new FileReader("/home/pi/git/spInDP/Hexapod/resources/Dans.txt"));
 		    br = new BufferedReader(new FileReader(new File(Main.class.getResource("/Dans.txt").getPath()).getAbsolutePath()));
 			String line = "";
 
 		    while ((line = br.readLine()) != null)
 		    {
+		    	//for evrye string in the file check what it is
 		    	checkString(line);
 		    	if (!Utils.shouldRun)
 		    		break;
@@ -56,6 +58,7 @@ public class Dans
 		dancing = false;
 	}
 	
+	//Check if a string contains : or / or , Denpending on that char it needs to set a servostand or change the collor of the ledstrip, or moves all the servo's
 	public void checkString(String input)
 	{
 		if(input.isEmpty())
@@ -75,6 +78,7 @@ public class Dans
 		}
 	}
 	
+	//Set the servo stand good
 	public void setServoStand(String input)
 	{
 		String [] parts = input.split(":");
@@ -83,6 +87,7 @@ public class Dans
 		servoStanden [i] = Integer.parseInt(parts [1]);
 	}
 	
+	//sleep for the time that is programmed in the dance text
 	public void delay(String input)
 	{
 		String[] parts = input.split("/");
@@ -97,17 +102,14 @@ public class Dans
 		}
 	}
 	
-	public boolean isDancing()
-	{
-		return dancing;
-	}
-	
+	//Move all the servo's with there standen
 	public void moveServos()
 	{
 		Main.getInstance().driveServo(servoNumbers, servoStanden);
 		Arrays.fill(servoStanden, 0);
 	}
 	
+	//change the color of the ledstrip
 	public void changeColorLedStrip(String input)
 	{
 		String[] parts = input.split(",");
@@ -117,8 +119,14 @@ public class Dans
 		try {
 			LedStrip.setColourRgb(r,g,b);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	//returns true when is dancing
+	public boolean isDancing()
+	{
+		return dancing;
+	}
+	
 }
