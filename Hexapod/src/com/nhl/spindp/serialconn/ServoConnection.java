@@ -140,14 +140,12 @@ public class ServoConnection
 	}
 	
 	/**
-	 * Does nothing, set id instruction is in blacklist
 	 * Sets the id of a servo  and reads the data it gets back from the servo
 	 * @param id The current id of the servo
 	 * @param newId The desired new id of the servo
 	 * @return Whether the servo returns a status packet
 	 * @throws IOException
 	 */
-	@Deprecated
 	public boolean setServoId(byte id, byte newId) throws IOException
 	{
 		byte[] buffer = Servo.createWriteDataInstruction(id, Servo.ADDRESS_ID, newId);
