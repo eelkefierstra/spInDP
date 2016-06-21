@@ -117,7 +117,7 @@ public class Commandc
 				
 				break;
 			case 7://Dance
-				
+				Main.getDans().doDanceMoves();
 				break;
 			default:
 				break;

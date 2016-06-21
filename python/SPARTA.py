@@ -6,8 +6,8 @@ speed=500
 stand=512
 stand2=650
 stand3=50
-endID=18
-id=1
+endID=19
+id=2
 while(id<=endID):
 	try:
 		servo.move(id,stand)

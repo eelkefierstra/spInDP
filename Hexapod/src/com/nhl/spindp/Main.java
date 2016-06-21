@@ -32,6 +32,7 @@ public class Main
 	private static SpiderBody body;
 	private static Info info;
 	private static boolean running = true;
+	private static Dans dans;
 	public  static List<Short> failedServos;
 	private volatile double forward = 0.0;
 	private volatile double right   = 0.0;
@@ -131,7 +132,7 @@ public class Main
 			conn = new ServoConnection();
 
 			//Dans moves object
-			Dans dans = new Dans();
+			dans = new Dans();
 			//dans.doDanceMoves();
 		}
 		
@@ -175,9 +176,12 @@ public class Main
 		stopper.setName("closer");
 		stopper.start();
 		
-		//body.stabbyStab();
+		body.stabbyStab();
+		Thread.sleep(1000);
 		while (Utils.shouldRun)
 		{
+			while (dans.isDancing())
+				Thread.sleep(100);
 			Time.updateDeltaTime();
 			
 			body.setHeight(80.0);
@@ -212,6 +216,11 @@ public class Main
 		failedServos.sort(null);
 	}
 	
+	public static Dans getDans()
+	{
+		return dans;
+	}
+	
 	/**
 	 * set direction parameters for walking
 	 * @param id spider ID
@@ -236,7 +245,7 @@ public class Main
 		{
 			try
 			{
-				conn.moveServo((byte)ids[i], (short)angles[i]);
+				conn.moveServo((byte)(ids[i] + 1), (short)angles[i]);
 				//System.out.println(conn.readPresentLocation((byte)i));
 				//Thread.sleep(5);
 			}
@@ -255,7 +264,7 @@ public class Main
 		{
 			try
 			{
-				conn.moveServo((byte)ids[i], (short)angles[i], (short) speeds[i]);
+				conn.moveServo((byte)(ids[i] + 1), (short)angles[i], (short)speeds[i]);
 				//System.out.println(conn.readPresentLocation((byte)i));
 				//Thread.sleep(5);
 			}
