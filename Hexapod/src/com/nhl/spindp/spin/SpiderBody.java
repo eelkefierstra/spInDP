@@ -141,6 +141,7 @@ public class SpiderBody
 			if (Main.IS_ARM)
 				Main.getInstance().driveServo(leg.getIds(), leg.getAngles());
 		}
+		Thread.sleep(1000);
 	}
 	
 	public int[] getIds()

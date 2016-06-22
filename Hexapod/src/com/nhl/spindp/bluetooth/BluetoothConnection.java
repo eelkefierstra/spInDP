@@ -1,6 +1,5 @@
 package com.nhl.spindp.bluetooth;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import com.nhl.spindp.Utils;
@@ -14,10 +13,16 @@ public class BluetoothConnection
 	/**
 	 * create new bluetooth listener
 	 * has shutdownhook to automatically clean up
-	 * @throws FileNotFoundException
+	 * @throws IOException 
 	 */
-	public BluetoothConnection() throws FileNotFoundException
+	public BluetoothConnection() throws IOException
 	{
+		try
+		{
+			Process p = new ProcessBuilder("truncate", "-s0", "/tmp/BT_IN").start();
+			p.waitFor();
+		}
+		catch (Exception e1) { }
 		fReader = new FileReader(btFile);
 		Runtime.getRuntime().addShutdownHook(new Thread()
 		{
@@ -30,7 +35,8 @@ public class BluetoothConnection
 					{
 						fReader.close();
 					}
-					catch (IOException e) {
+					catch (IOException e)
+					{
 						e.printStackTrace();
 					}
 				}

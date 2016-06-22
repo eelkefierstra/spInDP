@@ -5,4 +5,6 @@ import sys
 servo=Ax12()
 oldId=sys.argv[1]
 id=sys.argv[2]
-servo.setID(int(oldId),int(id))
+servo.factoryReset(int(oldId), True)
+sleep(1)
+servo.setID(1,int(id))

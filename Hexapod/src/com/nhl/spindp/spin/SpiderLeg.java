@@ -93,7 +93,6 @@ class SpiderLeg implements Runnable
 		
 		sharedParams.set_rv = true;
 		
-				
 		/*coxaChange += 30 * (startServoId / 3);
 		set = (startServoId % 2) == 0;
 		if (coxaChange > 90)
@@ -115,66 +114,64 @@ class SpiderLeg implements Runnable
 	
 	public boolean walk(double forward, double right)
 	{
+		boolean res = false;
+		if(forward > 0.25 || forward < -0.25)
+		{
 		if (getFirstId()/3 == 0)
 		{
 			if (!set)
-				sharedParams.servoAngle_rv += 90.0 * Time.deltaTime ;//* (forward * Math.abs(1/forward)) ;
+				sharedParams.servoAngle_rv += 180.0 * Time.deltaTime * forward;//* (forward * Math.abs(1/forward)) ;
 			else
-				sharedParams.servoAngle_rv -= 90.0 * Time.deltaTime  ;//* (forward * Math.abs(1/forward));
+				sharedParams.servoAngle_rv -= 180.0 * Time.deltaTime * forward ;//* (forward * Math.abs(1/forward));
 			//System.out.println("coxa:"+(int)sharedParams.servoAngle_rv+",set:"+set);
-			
-			
 			
 			if (sharedParams.servoAngle_rv >= coxalimH)
 			{
 				sharedParams.servoAngle_rv = coxalimH;
-				sharedParams.set_rv = true;				
-				
+				sharedParams.set_rv = !sharedParams.set_rv;				
 			}
 			else if (sharedParams.servoAngle_rv <= coxalimL)
 			{			
 				sharedParams.servoAngle_rv = coxalimL;
-				sharedParams.set_rv = false;
-				
+				sharedParams.set_rv = !sharedParams.set_rv;
 			}
 			set = sharedParams.set_rv;
-			
-
 		}
 		// set all Legs in right set
 		selectSet(walkType);
-		
+		run2(right);
 		//System.out.println("");
-		boolean res = false;		
-		if (forward == 0 && right == 0)
-		{
-			//future = executor.submit(this);
-			//res = true;
-		}
-		else if (right <= -.25 || right >= .25)
-		{
-			/*
-			if (!set)
-				coxaChange += ((90.0 * Time.deltaTime));
-			else
-				coxaChange -= ((90.0 * Time.deltaTime));
-			*/
 			
-			//if(right <= -0.9 || right >= 0.9)
-				//noscope360(right);
-			//else
-				turn(right);
-		}
-		else if (forward <= -.25 || .25 <= forward)
-		{
-			/*if (!set)
-				coxaChange += ((90.0 * Time.deltaTime) * forward);
-			else
-				coxaChange -= ((90.0 * Time.deltaTime) * forward);
-				*/
-			run();
-			//future = executor.submit(this);
-			res = false;
+//		if (forward == 0 && right == 0)
+//		{
+//			//future = executor.submit(this);
+//			//res = true;
+//		}
+//		else if (right <= -.25 || right >= .25)
+//		{
+//			/*
+//			if (!set)
+//				coxaChange += ((90.0 * Time.deltaTime));
+//			else
+//				coxaChange -= ((90.0 * Time.deltaTime));
+//			*/
+//			
+//			//if(right <= -0.9 || right >= 0.9)
+//				//noscope360(right);
+//			//else
+//				turn(right);
+//		}
+//		else if (forward <= -.25 || .25 <= forward)
+//		{
+//			/*if (!set)
+//				coxaChange += ((90.0 * Time.deltaTime) * forward);
+//			else
+//				coxaChange -= ((90.0 * Time.deltaTime) * forward);
+//				*/
+//			run();
+//			//future = executor.submit(this);
+//			res = false;
+//		}
 		}
 		return res;
 	}
@@ -272,7 +269,6 @@ class SpiderLeg implements Runnable
 				//sharedParams.sync = true;
 		}*/		
 		
-		
 		if(set == sharedParams.set_rv)
 			coxaChange = sharedParams.servoAngle_rv;
 		else
@@ -323,7 +319,7 @@ class SpiderLeg implements Runnable
 		}
 		*/
 		
-		System.out.println("id:"+sharedParams.firstId/3+", coxa:"+(int)coxaChange); //TODO: clean sys out
+		//System.out.println("id:"+sharedParams.firstId/3+", coxa:"+(int)coxaChange); //TODO: clean sys out
 		double lAccent = Math.cos(A_RAD) * l;
 		servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
 		double lAccentAccent = lAccent / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
@@ -353,6 +349,112 @@ class SpiderLeg implements Runnable
 		//if (coxaChange >= coxalimH) 
 		//	set = !set;
 	}
+	public void run2(double right)
+	{/*
+		
+		if (coxaChange >= coxalimH)
+		{
+			coxaChange = coxalimH;
+		}
+		if (coxaChange <= coxalimL)
+		{
+			set = !set;
+			//setNextPair(2);
+			coxaChange = coxalimL;
+			//if (getFirstId() == 1)
+				//sharedParams.sync = true;
+		}*/		
+		
+		if(set == sharedParams.set_rv)
+			coxaChange = sharedParams.servoAngle_rv;
+		else
+			coxaChange = (coxalimH + 22.5) - sharedParams.servoAngle_rv;
+			
+		//compensate for walking at an angle
+		int id = getFirstId() / 3;
+		/*
+		if (sharedParams.currentAngleX <= 0)
+		{
+			switch (id)
+			{
+				case 0:
+				case 3:
+					eLocal = e;
+					break;
+				case 1:
+				case 4:
+					eLocal = e + 150 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				case 2:
+				case 5:
+					eLocal = e + 300 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				default:
+					eLocal = e;
+					break;
+			}
+		}
+		else
+		{
+			switch (id)
+			{
+				case 0:
+				case 3:
+					eLocal = e + 300 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				case 1:
+				case 4:
+					eLocal = e + 150 * Math.atan(Math.abs(sharedParams.currentAngleX));
+					break;
+				case 2:
+				case 5:
+				default:
+					eLocal = e;
+					break;
+			}
+		}
+		*/
+		
+		//System.out.println("id:"+sharedParams.firstId/3+", coxa:"+(int)coxaChange); //TODO: clean sys out
+		double lAccent = Math.cos(A_RAD) * l;
+		
+		double lAccentAccent = lAccent / Math.cos(alpha  = Math.toRadians(Math.abs(coxaChange - (.5 * A_MAX))));
+		double d = lAccentAccent - F;
+		double f_p = (coxalimH - coxalimL) / 2;
+		double f_a = (-PAR_X)/Math.pow(-f_p, 2);
+		double h = 0;// f_a * Math.pow(((coxaChange - coxalimL) - f_p), 2) + PAR_X;
+		step = Math.abs(Math.sqrt(Math.pow(lAccentAccent, 2.0) - Math.pow(lAccent, 2.0)));
+		if (coxaChange < 45) step *= -1;
+		double t_e = 90;//eLocal;
+		/*if (false)
+		{
+			//double par_Y = PAR_X / Math.pow(Math.sqrt(Math.pow(l, 2.0) - Math.pow(lAccent, 2.0)), 2.0);
+			//h = (par_Y * -1) * Math.pow(step, 2.0) + PAR_X;
+            t_e = e - h;
+           // t_e = 75;
+		}*/
+		//h *= 5;
+		double b = Math.sqrt(Math.pow(d, 2.0) + Math.pow(t_e - h, 2.0));
+		double delta = Math.atan(d / (t_e - h));
+		double test1 = Math.pow(C, 2.0), test2 = Math.pow(b, 2.0), test3 = Math.pow(A, 2.0), test4 = (test1 - test2 - test3) / (-2 * b * A);
+		if((id == 1 && right > 0.25) || (id == 4 && right < -0.25))
+		{
+			//servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(45));
+			servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians((coxaChange - 45.0) * -.25 + 45.0));
+		}
+		else
+		{
+			servos[SpiderJoint.COXA ].setAngle(alpha = Math.toRadians(coxaChange));
+		}
+		   if (!set || coxaChange < coxalimL + 5.0) 
+		      	servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(270.0 - Math.toDegrees(delta) - Math.toDegrees(Math.acos(test4))));//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
+		   else 
+		    	servos[SpiderJoint.FEMUR].setAngle(gamma = Math.toRadians(230.0 - Math.toDegrees(delta) - Math.toDegrees(Math.acos(test4))));//Math.acos((Math.pow(C, 2.0) - Math.pow(b, 2.0) - Math.pow(A, 2.0)) / (-2 * b * A)));
+		   
+		   servos[SpiderJoint.TIBIA].setAngle(beta  = Math.acos((Math.pow(b, 2.0) - Math.pow(A, 2.0) - Math.pow(C, 2.0)) / (-2 * A * C)));
+		//if (coxaChange >= coxalimH) 
+		//	set = !set;
+	}
 	
 	/**
 	 * calculate angles for turning
@@ -363,15 +465,23 @@ class SpiderLeg implements Runnable
 		final double scale = 1500.0;
 		int id = getFirstId() / 3;
 		// check if turn is right
+		
  		if(right > 0)
- 		{   // select the right id for a right turn
+ 		{  
+ 			System.out.println("RACHTS");
+ 			// select the right id for a right turn
  			if (id > 2)
  			    id -= 3; // 3 -> 0, 4 -> 1 , 5 -> 2
  			else
  			    id += 3; // 0 -> 3, 1 -> 4, 2 -> 5      
  		}
+ 		else
+ 		{
+ 			System.out.println("LAFT");
+ 		}
+ 		
 		//calculate the radius of turn
-		double r = 500.0 + (scale - scale*Math.abs(right)); //237 500
+		double r = 700; //500.0 + (scale - scale*Math.abs(right)); //237 500
 		/*
 		if (coxaChange >= coxalimH)
 		{
@@ -587,7 +697,7 @@ class SpiderLeg implements Runnable
 		*/
         if (set)
         {
-            t_e = eLocal - f_h;
+            t_e = 90 - f_h;
            // t_e = 75;
         }
         else

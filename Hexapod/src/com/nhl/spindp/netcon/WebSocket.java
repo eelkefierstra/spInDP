@@ -195,9 +195,10 @@ public class WebSocket
 	        	int id;
 	        	double forward, right;
 	        	String[] arr = data.split("&");
-	        	if (arr[0].startsWith("stab"))
+	        	if (data.contains("stab"))
 	        	{
 	        		Main.getInstance().stab(0);
+	        		response.setEntity(new StringEntity(data));
 	        	}
 	        	else
 	        	{

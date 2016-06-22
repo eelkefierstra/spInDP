@@ -1,7 +1,9 @@
 package com.nhl.spindp;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -38,7 +40,7 @@ public class Main
 	public  static List<Short> failedServos;
 	private volatile double forward = 0.0;
 	private volatile double right   = 0.0;
-	private volatile boolean crab   = false;
+	private volatile boolean stab   = false;
 	
 	static
 	{
@@ -116,7 +118,7 @@ public class Main
 			
 			//start distance meter
 			distance = new DistanceMeter();
-			//distance.start();
+			distance.start();
 			
 			//create and strat I2C communication
 			I2C i2c = new I2C();
@@ -154,7 +156,7 @@ public class Main
 		//conn.moveMultiple(ids, stand);
 		startStopper();
 		
-		body.stabbyStab();
+		//body.stabbyStab();
 		Thread.sleep(1000);
 		while (Utils.shouldRun)
 		{
@@ -168,9 +170,10 @@ public class Main
 
 			body.walk(instance.forward, instance.right);
 			
-			if ((info.getDistance() <= 10.0) && vision.isActive())
+			if ((info.getDistance() <= 10.0 && vision.isActive()) || instance.stab)
 			{
 				body.stabbyStab();
+				instance.stab = false;
 			}
 			
 			/*double[] adc = info.getAdc();
@@ -185,13 +188,20 @@ public class Main
 				if (conn.pingServo((byte) 1))
 				{
 					List<Byte> down = new ArrayList<>();
-					for (byte i = 2; i <= 19; i++) //19 is max servo ID
+					Process p = new ProcessBuilder("python",
+							"~/git/spInDP/python/search.py").start();
+					p.waitFor();
+					byte i = 2;
+					String line = "";
+					BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					while ((line = reader.readLine()) != null)
 					{
-						if (!conn.pingServo(i))
+						if (line.contains("Error")) continue;
+						if (!line.contains(String.valueOf(i) + '!'))
 						{
 							down.add(i);
 						}
-						
+						i++;
 					}
 					
 					if (down.size()==1)
@@ -201,7 +211,7 @@ public class Main
 					}
 					else
 					{
-						System.err.println("Multiple servo ID's changed");
+						//System.err.println("Multiple servo ID's changed");
 					}
 				}
 			}
@@ -320,11 +330,7 @@ public class Main
 	 */
 	public void stab(int id)
 	{
-		try
-		{
-			body.stabbyStab();
-		}
-		catch (InterruptedException e) { }
+		this.stab = true;
 	}
 	
 	public void updateAngle()
