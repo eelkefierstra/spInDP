@@ -37,6 +37,7 @@ public class ServoInfo extends AppCompatActivity {
         });
         ServoInfoRecieved(conn.getAllServoInfo());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //Start the thread that askes for servo info
         ServoInfoThread = new Thread()
         {
             public void run(){
@@ -51,6 +52,7 @@ public class ServoInfo extends AppCompatActivity {
             }
         };
         ServoInfoThread.start();
+        //Stop all the threads that are asking for the wrong info
         if(HellingThread.isAlive()){
             HellingInfoRunning = false;
             try{
@@ -74,6 +76,7 @@ public class ServoInfo extends AppCompatActivity {
         }
     }
 
+    //Update the servo info
     private void UpdateServoInfo(){
         if(Connected){
             conn.sendString("ServoInfo");
@@ -92,6 +95,7 @@ public class ServoInfo extends AppCompatActivity {
                         Id = s.getId();
                         hoek = s.getHoek();
                         Temperatuur = s.getTemperatuur();
+                        //Set all textviews to the correct value
                         switch(Id){
                             case 1:
                                 if(true){

@@ -24,6 +24,7 @@ public class XMLreader{
     int temperatuur;
     int count = 0;
     public XMLreader(String input){
+        //xml reader for servo info
         if(input.length() >20){
             String woord = "";
             String tag = "";
@@ -65,6 +66,7 @@ public class XMLreader{
             }
             servo[18] =  new Servo(id, hoek, temperatuur);
         }
+        //xml reader for helling info
         else if(input.length() <20){
             String woord = "";
             for(char c : input.toCharArray()){
@@ -94,6 +96,7 @@ public class XMLreader{
 
     }
 
+    //getters
     public Servo[] getServo(){
         return this.servo;
     }/**/

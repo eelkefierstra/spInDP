@@ -19,7 +19,7 @@ import static com.example.aldert.spindpappandroidstudio22.HellingInfo.HellingInf
 import static com.example.aldert.spindpappandroidstudio22.ServoInfo.ServoInfoRunning;
 
 public class MainActivity extends AppCompatActivity {
-    static String ipAdress = "141.252.236.130";
+    static String ipAdress = "141.252.236.31";
     static final ServerConnection conn = new ServerConnection(ipAdress, 1338);
     static boolean Connected = false;
     static Thread AdcThread = new Thread();
@@ -36,11 +36,12 @@ public class MainActivity extends AppCompatActivity {
         if(!Connected){
             Connect();
         }
+        //thread to ask Acd info
         AdcThread = new Thread()
         {
             public void run(){
                 while(AcdInfoRunning){
-                    askAdcInfo();
+                    //askAdcInfo();
                     try {
                         Thread.sleep(1000);                 //1000 milliseconds is one second.
                     } catch(InterruptedException ex) {
@@ -49,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        AdcThread.start();
+        //AdcThread.start();
+        //Check if other threads are alive and close them
         if(HellingThread.isAlive()){
 
             HellingInfoRunning = false;
@@ -67,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
             catch(Exception e){
             }
         }
+
+        //buttons for changing view
         Button ServoInfoBtn = (Button) findViewById(R.id.ServoInfoBtn);
         ServoInfoBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -107,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //ask ADC info
     public void askAdcInfo(){
         if(Connected){
             conn.sendString("ADC");
@@ -114,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //draw info
     public void drawAdcInfo(final String input){
         runOnUiThread(new Runnable() {
             public void run() {
@@ -122,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    //Connect to the server
     public void Connect() {
         new Thread(new Runnable() {
             public void run() {

@@ -27,13 +27,10 @@ public class LiveStream extends AppCompatActivity {
     private Socket socket;
     Thread liveStreamThread = new Thread();
     static boolean liveStreamRunning = true;
-    boolean connected = false;
     private ImageView liveStream;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
+        //Connect to livestream server
         liveStreamConnect();
         try {
             Thread.sleep(1000);                 //1000 milliseconds is one second.
@@ -57,6 +54,7 @@ public class LiveStream extends AppCompatActivity {
 
     }
 
+    //While live stream is running read the data we get from the server
     public void liveStreamConnection(){
         liveStreamThread = new Thread()
         {
@@ -64,16 +62,11 @@ public class LiveStream extends AppCompatActivity {
             while(liveStreamRunning){
                 if(socket!=null){
                     try{
+                        //read data
                         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                        //InputStream inputStream = new ByteArrayInputStream(((Frame)in.readObject()).getFrameBuff());
                         byte[] message = ((Frame)in.readObject()).getFrameBuff();
-                        liveStream = (ImageView) findViewById(R.id.liveStream);
-                        //screen.SetImage(ImageIO.read(inputStream));
-                        //InputStream inputStream  = new ByteArrayInputStream(decodedString);
                         Bitmap bitmap  = BitmapFactory.decodeByteArray(message, 0, message.length);
                         displayStream(bitmap);
-                        //liveStream.setImageBitmap(bitmap);
-                        //liveStream.invalidate();
                     }
                     catch (Exception e){
                         e.printStackTrace();
@@ -85,6 +78,7 @@ public class LiveStream extends AppCompatActivity {
         liveStreamThread.start();
     }
 
+    //Connect with the server
     public void liveStreamConnect(){
         liveStreamThread = new Thread()
         {
@@ -98,13 +92,13 @@ public class LiveStream extends AppCompatActivity {
                 {
                     System.out.println("Maybe you should start the other program...");
                     showToast("Niet connected Live");
-                    //System.exit(-1);
                 }
             }
         };
         liveStreamThread.start();
     }
 
+    //Show toast, when connected or not connected
     public void showToast(final String toast)
     {
         runOnUiThread(new Runnable() {
@@ -115,10 +109,12 @@ public class LiveStream extends AppCompatActivity {
         });
     }
 
+    //Display the data from the bitmap on the imageview
     public void displayStream(final Bitmap bitmap){
         runOnUiThread(new Runnable() {
             public void run()
             {
+                liveStream = (ImageView) findViewById(R.id.liveStream);
                 liveStream.setImageBitmap(bitmap);
                 liveStream.invalidate();
             }
@@ -126,48 +122,3 @@ public class LiveStream extends AppCompatActivity {
     }
 
 }
-
-/*import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.net.ConnectException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
-import javax.imageio.ImageIO;
-
-//import org.opencv.core.Core;
-
-public class Main
-{
-	private static Main instance;
-	private Screen screen;
-	private Socket socket;
-
-	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException
-	{
-		instance = new Main();
-		try
-		{
-			instance.socket = new Socket("localhost", 1339);
-		}
-		catch (ConnectException ex)
-		{
-			System.out.println("Maybe you should start the other program...");
-			System.exit(-1);
-		}
-		instance.screen = new Screen();
-		int imageSize = 52227;
-
-		while (true)
-		{
-			ObjectInputStream in = new ObjectInputStream(instance.socket.getInputStream());
-			InputStream inputStream = new ByteArrayInputStream(((Frame)in.readObject()).getFrameBuff());
-			instance.screen.SetImage(ImageIO.read(inputStream));
-		}
-	}
-}
-*/
